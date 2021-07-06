@@ -1,7 +1,7 @@
 <template>
-  <div class="login-container">
+  <div class="back">
     <el-form ref="form" :model="form" label-width="80px" class="login-form">
-      <h2 class="login-title">图书管理系统</h2>
+      <h2 class="login-title">教我编程图书商城</h2>
       <el-form-item label="用户名">
         <el-input v-model="form.username"></el-input>
       </el-form-item>
@@ -10,10 +10,10 @@
       </el-form-item>
       <el-form-item>
         <el-row>
-          <el-col span="10">
+          <el-col :span="10">
             <el-button @click="onSign">注册</el-button>
           </el-col>
-          <el-col span="10">
+          <el-col :span="10">
             <el-button type="primary" @click="onSubmit">登录</el-button>
           </el-col>
         </el-row>
@@ -55,14 +55,14 @@ export default {
 <style acoped>
 .login-form {
   width: 350px;
-  margin: 160px auto; /* 上下间距160px，左右自动居中*/
-  background-color: rgb(255, 255, 255, 0.8); /* 透明背景色 */
+  margin: auto; /* 上下间距160px，左右自动居中*/
+  background-color: rgb(255, 255, 255); /* 透明背景色 */
   padding: 30px;
-  border-radius: 20px; /* 圆角 */
+  border-radius: 10px; /* 圆角 */
 }
 
 /* 背景 */
-.login-container {
+.back {
   display:flex;
   justify-content: center;
   position: absolute;

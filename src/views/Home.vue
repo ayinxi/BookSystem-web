@@ -1,21 +1,27 @@
 <template>
   <div class="header">
-    <div>
+    <div class="logo">
       <img src="../assets/kuku.png" />
     </div>
-    <div>
-      <el-input placeholder="请输入内容" v-model="input" clearable>
+    <div class="search">
+      <el-input placeholder="请输入内容" v-model="input" clearable style="width:500px">
         <el-button slot="append" icon="el-icon-search"> </el-button>
       </el-input>
     </div>
     <div>
-      <el-badge :value="12" class="item">
-        <el-button size="meduim" icon="el-icon-shopping-cart-2"></el-button>
-      </el-badge>
+      <el-row class="shopping">
+        <el-col :span="10">
+          <el-badge :value="12" class="shopping">
+            <el-button size="meduim" icon="el-icon-shopping-cart-2"></el-button>
+          </el-badge>
+        </el-col>
+        <el-col :span="5"  class="pageperson">
+          <el-button size="meduim" type="text" class="pageperson"
+            >个人主页</el-button
+          >
+        </el-col>
+      </el-row>
     </div>
-	<div>
-		<el-button size="meduim" type="text" >个人主页</el-button>
-	</div>
   </div>
 </template>
 
@@ -26,17 +32,39 @@ export default {
       input: " ",
     };
   },
-  methods: {
-    
-  },
+  methods: {},
 };
 </script>
 
 <style>
 .header {
-	display: flex;
-	justify-content:space-around;
-	margin-top:20px;
-	max-width:80%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.logo {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+.search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+.shopping {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+.pageperson {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
 }
 </style>
