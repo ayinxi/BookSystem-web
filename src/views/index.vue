@@ -233,7 +233,7 @@ export default {
 .book-name {
   font-size: 200%;
 }
-img {
+.img {
   width: 100%;
   height: 95%;
 }
