@@ -32,9 +32,9 @@ const routes = [
        component: () => import('../views/index.vue')
    },
    {
-       path:'/bookDetailedInfo',
-       name:'bookDetailedInfo',
-       component: () => import('../views/bookDetailedInfo.vue')
+       path:'/bookInfo',
+       name:'bookInfo',
+       component: () => import('../views/bookInfo.vue')
    }
 ]
 

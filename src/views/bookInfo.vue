@@ -20,7 +20,7 @@
         ></el-header>
         <el-container>
           <el-aside width="25%">
-            <img src="../assets/kuku.png" />
+            <img class="imgStyle" src="../assets/kuku.png" />
           </el-aside>
           <el-main>
             <h2>图书名称</h2>
@@ -54,7 +54,7 @@
   </div>
 </template>
 <script>
-import Home from "../views/Home.vue";
+import Home from "./Home.vue";
 export default {
   components: {
     Home,
@@ -79,7 +79,7 @@ export default {
 };
 </script>
 <style acoped>
-img {
+.imgStyle {
   width: 100%;
   height: 95%;
 }
