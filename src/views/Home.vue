@@ -16,7 +16,7 @@
           </el-badge>
         </el-col>
         <el-col :span="5"  class="pageperson">
-          <el-button size="meduim" class="pageperson"  icon="el-icon-s-custom"
+          <el-button size="meduim" class="pageperson"  icon="el-icon-s-custom" @click="gotoPersonPage"
             >个人主页</el-button
           >
         </el-col>
@@ -32,7 +32,11 @@ export default {
       input: " ",
     };
   },
-  methods: {},
+  methods: {
+    gotoPersonPage(){
+       this.$router.push("/person");
+    }
+  },
 };
 </script>
 

@@ -35,7 +35,7 @@
                         <i class="el-icon-unlock" style="font-size: 20px" />
                       </el-col>
                       <el-col :span="10">
-                        <el-input v-model="form.password" placeholder="密码">
+                        <el-input v-model="form.password" placeholder="密码" type="password">
                         </el-input>
                       </el-col>
                     </el-row>

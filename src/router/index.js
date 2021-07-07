@@ -22,6 +22,11 @@ const routes = [
         component: () => import('../components/personPage.vue')
     },
     {
+        path:'/shoppingTrolley',
+        name:'shoppingTrolley',
+        component: () => import('../components/shoppingTrolley.vue')
+    },
+  {
        path:'/pickBook',
        name:'pickBook',
        component: () => import('../components/pickBook.vue')
