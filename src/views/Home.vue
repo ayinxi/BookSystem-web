@@ -1,10 +1,10 @@
 <template>
   <div class="header">
     <div class="logo">
-      <img src="../assets/kuku.png" />
+      <img width="250px" src="../assets/logo.png" />
     </div>
     <div class="search">
-      <el-input placeholder="请输入内容" v-model="input" clearable style="width:500px">
+      <el-input placeholder="给孩子的第一本编程书籍" v-model="input" style="width:500px">
         <el-button slot="append" icon="el-icon-search"> </el-button>
       </el-input>
     </div>
@@ -12,11 +12,11 @@
       <el-row class="shopping">
         <el-col :span="10">
           <el-badge :value="12" class="shopping">
-            <el-button size="meduim" icon="el-icon-shopping-cart-2"></el-button>
+            <el-button size="meduim" icon="el-icon-shopping-cart-2">我的购物车</el-button>
           </el-badge>
         </el-col>
         <el-col :span="5"  class="pageperson">
-          <el-button size="meduim" type="text" class="pageperson"
+          <el-button size="meduim" class="pageperson"  icon="el-icon-s-custom"
             >个人主页</el-button
           >
         </el-col>

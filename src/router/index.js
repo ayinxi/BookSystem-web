@@ -17,20 +17,10 @@ const routes = [
 
     },
     {
-        path: '/pick',
-        name: 'pick',
-        component: () => import('../views/pick.vue')
-    },
-    {
         path:'/person',
         name:'person',
         component: () => import('../components/personPage.vue')
     },
-    {
-       path:'/pickBook',
-       name:'pickBook',
-       component: () => import('../components/pickBook.vue')
-   },
 ]
 
 const router = new VueRouter({
