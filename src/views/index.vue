@@ -77,116 +77,116 @@
           </el-aside>
           <el-main>
             <el-container>
-              <el-aside style="width: 14%; float: left; height: 200px">
-                <img src="../assets/kuku.png" />
+              <el-aside style="width: 14%; float: left; height: 200px" @click.native="goToBookInfo">
+                <img  class="imgStyle" src="../assets/kuku.png" />
               </el-aside>
               <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
               </el-main>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
               </el-aside>
               <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
               </el-main>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
               </el-aside>
               <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
-                <p>作者</p>
-                <p>图书分类1分类2</p>
-                <p>价格</p>
-              </el-main>
-            </el-container>
-            <el-container>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
-              </el-aside>
-              <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
-                <p>作者</p>
-                <p>图书分类1分类2</p>
-                <p>价格</p>
-              </el-main>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
-              </el-aside>
-              <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
-                <p>作者</p>
-                <p>图书分类1分类2</p>
-                <p>价格</p>
-              </el-main>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
-              </el-aside>
-              <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
               </el-main>
             </el-container>
             <el-container>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
               </el-aside>
               <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
               </el-main>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
               </el-aside>
               <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
               </el-main>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
               </el-aside>
               <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
               </el-main>
             </el-container>
             <el-container>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
               </el-aside>
               <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
               </el-main>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
               </el-aside>
               <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
               </el-main>
-              <el-aside style="width: 14%; float: left">
-                <img src="../assets/kuku.png" />
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
               </el-aside>
               <el-main style="width: 10%; float: left">
-                <el-link :underline="false" class="book-name">图书名称</el-link>
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
+                <p>作者</p>
+                <p>图书分类1分类2</p>
+                <p>价格</p>
+              </el-main>
+            </el-container>
+            <el-container>
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
+              </el-aside>
+              <el-main style="width: 10%; float: left">
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
+                <p>作者</p>
+                <p>图书分类1分类2</p>
+                <p>价格</p>
+              </el-main>
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
+              </el-aside>
+              <el-main style="width: 10%; float: left">
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
+                <p>作者</p>
+                <p>图书分类1分类2</p>
+                <p>价格</p>
+              </el-main>
+              <el-aside style="width: 14%; float: left" @click.native="goToBookInfo">
+                <img class="imgStyle" src="../assets/kuku.png" />
+              </el-aside>
+              <el-main style="width: 10%; float: left">
+                <el-link :underline="false" class="book-name" @click.native="goToBookInfo">图书名称</el-link>
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
@@ -208,12 +208,14 @@ export default {
   },
   data() {
     return {
-      bookImgList: [], //图书图片
-      bookNameList: [], //图书名称
-      bookAuthorList: [], //图书作者
-      bookClassificationList: [], //图书所属种类
-      bookPublicationTime: [], //图书出版时间
-      bookPrice: [], //图书价格
+      Lists:[{
+      Img: [], //图书图片
+      Name: [], //图书名称
+      Authort:[] , //图书作者
+      Class: [], //图书所属种类
+      PubTime:[] , //图书出版时间
+      Price: [], //图书价格
+      }]
     };
   },
   methods: {
@@ -221,6 +223,9 @@ export default {
     handleClick(){},
     goBackToIndex(){
       this.$router.push("/index");
+    },
+    goToBookInfo(){
+      this.$router.push("/bookInfo")
     }
   },
 };
@@ -233,7 +238,7 @@ export default {
 .book-name {
   font-size: 200%;
 }
-.img {
+.imgStyle {
   width: 100%;
   height: 95%;
 }
