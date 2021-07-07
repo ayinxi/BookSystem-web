@@ -21,6 +21,11 @@ const routes = [
         name:'person',
         component: () => import('../components/personPage.vue')
     },
+    {
+        path:'/shoppingTrolley',
+        name:'shoppingTrolley',
+        component: () => import('../components/shoppingTrolley.vue')
+    },
 ]
 
 const router = new VueRouter({
