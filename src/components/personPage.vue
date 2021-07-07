@@ -1,11 +1,17 @@
 <template>
-  <div>个人主页</div>
+  <div>
+    <Home/>
+    
+  </div>
 </template>
 
 <script>
-import { Button, Row, Col, Form, FormItem } from "element-ui";
+import Home from "../views/Home.vue"
+
 export default {
-  components: {},
+  components: {
+    Home,
+  },
   data() {
     return {};
   },

@@ -1,43 +1,103 @@
 <template>
-  <div class="login-container">
-    <el-form ref="form" :model="form" label-width="80px" class="login-form">
-      <h2 class="login-title">图书管理系统</h2>
-      <el-form-item label="用户名">
-        <el-input v-model="form.username"></el-input>
-      </el-form-item>
-      <el-form-item label="密码">
-        <el-input v-model="form.password"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-row>
-          <el-col span="10">
-            <el-button @click="onSign">注册</el-button>
-          </el-col>
-          <el-col span="10">
-            <el-button type="primary" @click="onSubmit">登录</el-button>
-          </el-col>
-        </el-row>
-      </el-form-item>
-    </el-form>
+  <div>
+    <div class="header">
+      <div class="logo">
+        <img width="250px" src="../assets/logo.png" />
+      </div>
+    </div>
+    <div>
+      <div class="back">
+        <div
+          style="display: flex; justify-content: center; align-items: center"
+        >
+          <div style="margin: 5%">
+            <img src="../assets/login.png" />
+          </div>
+          <div>
+            <el-card shadow="always">
+              <div>
+                <h2 class="login-title">教我编程图书商城</h2>
+                <el-form :model="form" status-icon :rules="rules" ref="form">
+                  <el-form-item prop="username">
+                    <el-row class="inputContent">
+                      <el-col :span="2">
+                        <i class="el-icon-user" style="font-size: 20px" />
+                      </el-col>
+                      <el-col :span="10">
+                        <el-input v-model="form.username" placeholder="用户名">
+                        </el-input>
+                      </el-col>
+                    </el-row>
+                  </el-form-item>
+                  <el-form-item prop="password">
+                    <el-row class="inputContent">
+                      <el-col :span="2">
+                        <i class="el-icon-unlock" style="font-size: 20px" />
+                      </el-col>
+                      <el-col :span="10">
+                        <el-input v-model="form.password" placeholder="密码">
+                        </el-input>
+                      </el-col>
+                    </el-row>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-row class="inputContent">
+                      <el-col :span="8">
+                        <el-button
+                          @click="onSign"
+                          style="
+                            width: 80%;
+                            margin-top: 10px;
+                            margin-left: 30px;
+                            margin-right: 10px;
+                          "
+                          >注册
+                        </el-button>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-button
+                          type="primary"
+                          @click="onSubmit"
+                          style="
+                            width: 80%;
+                            margin-top: 10px;
+                            margin-left: 20px;
+                            margin-right: 10px;
+                          "
+                          >登录
+                        </el-button>
+                      </el-col>
+                    </el-row>
+                  </el-form-item>
+                </el-form>
+              </div>
+            </el-card>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 
 <script>
-import { Button, Row, Col, Form, FormItem } from "element-ui";
 export default {
-  components: {
-    "el-button": Button,
-    "el-col": Col,
-    "el-row": Row,
-    "el-form": Form,
-    "el-form-item": FormItem,
-  },
+  components: {},
   data() {
     return {
       form: {
         username: "",
         password: "",
+      },
+      rules: {
+        username: [
+          { required: true, message: "用户名不能为空", trigger: "blur" },
+          { max: 10, message: "用户名最多10位！", trigger: "blur" },
+        ],
+        password: [
+           { required: true, message: "密码不能为空", trigger: "blur" },
+            {min: 3, message: "密码不得低于3位！", trigger: 'blur'}
+          ],
       },
     };
   },
@@ -46,7 +106,7 @@ export default {
       this.$router.push("/home");
     },
     onSign() {
-      this.$router.push("/pick");
+      this.$router.push("/sign");
     },
   },
 };
@@ -54,26 +114,64 @@ export default {
 
 <style acoped>
 .login-form {
-  width: 350px;
-  margin: 160px auto; /* 上下间距160px，左右自动居中*/
-  background-color: rgb(255, 255, 255, 0.8); /* 透明背景色 */
+  width: 500px;
+  margin: auto; /* 上下间距160px，左右自动居中*/
+  background-color: rgb(255, 255, 255); /* 透明背景色 */
   padding: 30px;
-  border-radius: 20px; /* 圆角 */
 }
 
 /* 背景 */
-.login-container {
-  display:flex;
+.back {
+  display: flex;
   justify-content: center;
+  align-items: center;
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background: url("../assets/login.png");
+  margin-left: 8%;
+  margin-right: 8%;
+  width: 81%;
+  height: 70%;
 }
 
 /* 标题 */
 .login-title {
   color: #303133;
   text-align: center;
+}
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.logo {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+.el-input {
+  width: 200px;
+  margin: 20px;
+}
+.inputContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.el-card {
+  margin: 5%;
+  width: 500px;
+  height: 400px;
+}
+.submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.el-form-item__error {
+  top: 80%;
+  right: 25% !important;
+  left: unset;
 }
 </style> 

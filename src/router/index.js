@@ -17,11 +17,6 @@ const routes = [
 
     },
     {
-        path: '/pick',
-        name: 'pick',
-        component: () => import('../views/pick.vue')
-    },
-    {
         path:'/person',
         name:'person',
         component: () => import('../components/personPage.vue')
