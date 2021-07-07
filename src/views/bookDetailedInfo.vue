@@ -5,7 +5,7 @@
       <el-container style="margin: 0% 5%">
         <el-header
           ><el-row style="display: flex">
-            <el-col :span="5" @click="goBackToIndex" style="text-align: center;"
+            <el-col :span="5" @click.native="goBackToIndex" style="text-align: center;"
               >全部商品分类</el-col
             >
             <el-col>
