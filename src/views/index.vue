@@ -2,29 +2,30 @@
   <div>
     <Home />
     <div>
-      <el-container style="margin: 5%">
+      <el-container style="margin: 0% 5%">
         <el-header>
-          <el-container>
-            <el-aside width="18%" height="50px" float="left">
-              全部商品分类
-            </el-aside>
-            <el-main float="left">
-              <el-menu :default-active="activeIndex" mode="horizontal">
-                <el-menu-item index="1">网络文学</el-menu-item>
-                <el-menu-item index="2">教育</el-menu-item>
-                <el-menu-item index="3">小说</el-menu-item>
-                <el-menu-item index="4">文艺</el-menu-item>
-                <el-menu-item index="5">青春文学/动漫</el-menu-item>
-              </el-menu>
-            </el-main>
-          </el-container>
+          <el-row style="display:flex;justify-content:center;align-items:center">
+            <el-col :span="5" style="text-align:center" @click="goBackToIndex">全部商品分类</el-col>
+            <el-col>
+              <el-tabs
+                v-model="activeName"
+                @tab-click="handleClick"
+              >
+                <el-tab-pane label="网络文学" name="first"></el-tab-pane>
+                <el-tab-pane label="教育" name="second"></el-tab-pane>
+                <el-tab-pane label="小说" name="third"></el-tab-pane>
+                <el-tab-pane label="文艺" name="fourth"></el-tab-pane>
+                <el-tab-pane label="青春文学/动漫" name="fifth"></el-tab-pane>
+              </el-tabs>
+            </el-col>
+          </el-row>
         </el-header>
         <el-container>
-          <el-aside width="18%" style="background-color: rgb(238, 241, 246)">
+          <el-aside width="18%" style="background-color: white">
             <el-menu :default-active="2" class="el-menu-vertical-demo">
               <el-submenu index="1">
                 <template slot="title">
-                  <i class="el-icon-location"></i>
+                  <i class="el-icon-reading"></i>
                   <span>网络文学</span>
                 </template>
                 <el-menu-item-group>
@@ -34,7 +35,7 @@
               </el-submenu>
               <el-submenu index="2">
                 <template slot="title">
-                  <i class="el-icon-location"></i>
+                  <i class="el-icon-medal-1"></i>
                   <span>教育</span>
                 </template>
                 <el-menu-item-group>
@@ -44,7 +45,7 @@
               </el-submenu>
               <el-submenu index="3">
                 <template slot="title">
-                  <i class="el-icon-location"></i>
+                  <i class="el-icon-notebook-1"></i>
                   <span>小说</span>
                 </template>
                 <el-menu-item-group>
@@ -54,7 +55,7 @@
               </el-submenu>
               <el-submenu index="4">
                 <template slot="title">
-                  <i class="el-icon-location"></i>
+                  <i class="el-icon-collection"></i>
                   <span>文艺</span>
                 </template>
                 <el-menu-item-group>
@@ -64,7 +65,7 @@
               </el-submenu>
               <el-submenu index="5">
                 <template slot="title">
-                  <i class="el-icon-location"></i>
+                  <i class="el-icon-magic-stick"></i>
                   <span>青春文学/动漫</span>
                 </template>
                 <el-menu-item-group>
@@ -200,7 +201,7 @@
 </template>
 
 <script>
-import Home from "../views/Home.vue";
+import Home from "./Home.vue";
 export default {
   components: {
     Home,
@@ -217,6 +218,10 @@ export default {
   },
   methods: {
     onClick() {},
+    handleClick(){},
+    goBackToIndex(){
+      this.$router.push("/index");
+    }
   },
 };
 </script>
