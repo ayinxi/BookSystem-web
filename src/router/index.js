@@ -17,30 +17,45 @@ const routes = [
 
     },
     {
-        path:'/person',
-        name:'person',
+        path: '/person',
+        name: 'person',
         component: () => import('../components/personPage.vue')
     },
     {
-        path:'/shoppingTrolley',
-        name:'shoppingTrolley',
+        path: '/shoppingTrolley',
+        name: 'shoppingTrolley',
         component: () => import('../components/shoppingTrolley.vue')
     },
-  {
-       path:'/pickBook',
-       name:'pickBook',
-       component: () => import('../components/pickBook.vue')
-   },
-   {
-       path:'/index', 
-       name:'index',
-       component: () => import('../views/index.vue')
-   },
-   {
-       path:'/bookInfo',
-       name:'bookInfo',
-       component: () => import('../views/bookInfo.vue')
-   }
+    {
+        path: '/pickBook',
+        name: 'pickBook',
+        component: () => import('../components/pickBook.vue')
+    },
+    {
+        path: '/',
+        name: 'index',
+        component: () => import('../views/index.vue')
+    },
+    {
+        path: '/bookInfo',
+        name: 'bookInfo',
+        component: () => import('../views/bookInfo.vue')
+    },
+    {
+        path: '/manage',
+        name: 'manage',
+        component: () => import('../views/manage.vue')
+    },
+    {
+        path: '/bookM',
+        name: 'bookM',
+        component: () => import('../views/bookM.vue')
+    },
+    {
+        path: '/orderM',
+        name: 'orderM',
+        component: () => import('../views/orderM.vue')
+    }
 ]
 
 const router = new VueRouter({

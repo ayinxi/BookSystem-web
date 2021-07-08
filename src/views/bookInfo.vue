@@ -73,7 +73,7 @@ export default {
   },
   methods: {
       goBackToIndex(){
-       this.$router.push("/index");
+       this.$router.push("/");
     }
   },
 };
