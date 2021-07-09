@@ -22,12 +22,14 @@
     <div style="margin: 5% 18%">
       <el-col class="el-colStyle">
         <el-card class="el-cardStyle" shadow="hover" @click.native="goToBookM"
-          >图书管理
+          ><span class="el-icon-s-management"></span>
+          <span class="spanStyle">图书管理</span>
         </el-card>
       </el-col>
       <el-col class="el-colStyle">
         <el-card class="el-cardStyle" shadow="hover" @click.native="goToOrderM"
-          >订单管理</el-card
+          ><span class="el-icon-s-order"></span>
+          <span class="spanStyle">订单管理</span></el-card
         >
       </el-col>
     </div>
@@ -97,7 +99,9 @@ export default {
   align-items: center;
   text-align: center;
   vertical-align: middle;
-  background-color: rgb(171, 222, 241);
+}
+.spanStyle {
+  font-size: 30px;
 }
 </style>
 

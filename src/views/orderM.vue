@@ -82,7 +82,8 @@ export default {
       this.$router.push("/manage")
     },
     handleSelectionChange() {},
-    handleInfo() {//弹出一个详情页面
+    handleInfo() {
+    this.$router.push('/orderInfo');
     },
     handleConfirm() {
       this.$confirm("是否确认订单?", "提示", {

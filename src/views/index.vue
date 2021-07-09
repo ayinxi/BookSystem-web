@@ -287,29 +287,33 @@
                 <p>作者</p>
                 <p>图书分类1分类2</p>
                 <p>价格</p>
+              </el-main> </el-container
+            ><el-container
+              v-for="book in Lists"
+              :key="book"
+              display="flex"
+              float="left"
+              width="24%"
+            >
+              <el-aside
+                style="width: 14%; float: left"
+                @click.native="goToBookInfo"
+              >
+                <img class="imgStyle" :src="book.Img" />
+              </el-aside>
+              <el-main style="width: 10%; float: left">
+                <el-link
+                  :underline="false"
+                  class="book-name"
+                  @click.native="goToBookInfo"
+                  >{{ book.Name }}</el-link
+                >
+                <p>{{ book.Author }}</p>
+                <p>{{ book.ClassOne }}->{{ book.ClassTwo }}</p>
+                <p>{{ book.Price }}</p>
               </el-main>
-              <ul>
-                <li v-for="item in tests" :key="item">
-                  <el-aside
-                    style="width: 14%; float: left"
-                    @click.native="goToBookInfo"
-                  >
-                    <img class="imgStyle" src="../assets/kuku.png" />
-                  </el-aside>
-                  <el-main style="width: 10%; float: left">
-                    <el-link
-                      :underline="false"
-                      class="book-name"
-                      @click.native="goToBookInfo"
-                      >图书名称</el-link
-                    >
-                    <p>作者</p>
-                    <p>图书分类1分类2</p>
-                    <p>价格</p>
-                  </el-main>
-                </li>
-              </ul> </el-container
-            ><el-pagination layout="prev, pager, next" :total="500">
+            </el-container>
+            <el-pagination layout="prev, pager, next" :total="500">
             </el-pagination>
           </el-main>
         </el-container>
@@ -328,15 +332,39 @@ export default {
     return {
       Lists: [
         {
-          Img: [], //图书图片
-          Name: [], //图书名称
-          Author: [], //图书作者
-          ClassOne: [], //图书所属种类一
-          ClassTwo: [],//图书所属种类二
-          Price: [], //图书价格
+          Img: require("../assets/kuku.png"),
+          Name: "书本1号",
+          Author: "张三",
+          ClassOne: "小说",
+          ClassTwo: "男频",
+          Price: 10,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本2号",
+          Author: "李四",
+          ClassOne: "小说",
+          ClassTwo: "女频",
+          Price: 11,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本3号",
+          Author: "王五",
+          ClassOne: "小说",
+          ClassTwo: "中国小说",
+          Price: 12,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本4号",
+          Author: "赵六",
+          ClassOne: "小说",
+          ClassTwo: "外国小说",
+          Price: 13,
         },
       ],
-      tests:[1,2,3,4,5],
+      tests: [1, 2, 3, 4, 5],
       activeName: "",
     };
   },

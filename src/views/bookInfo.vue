@@ -5,7 +5,10 @@
       <el-container style="margin: 0% 5%">
         <el-header
           ><el-row style="display: flex">
-            <el-col :span="5" @click.native="goBackToIndex" style="text-align: center;"
+            <el-col
+              :span="5"
+              @click.native="goBackToIndex"
+              style="text-align: center"
               >全部商品分类</el-col
             >
             <el-col>
@@ -16,8 +19,12 @@
                 <el-tab-pane label="文艺" name="fourth"></el-tab-pane>
                 <el-tab-pane label="青春文学/动漫" name="fifth"></el-tab-pane>
               </el-tabs>
-            </el-col> </el-row
-        ></el-header>
+            </el-col>
+          </el-row>
+          <el-row style="display: flex;padding:0% 26%" >
+            <p>店铺名称</p>
+          </el-row>
+        </el-header>
         <el-container>
           <el-aside width="25%">
             <img class="imgStyle" src="../assets/kuku.png" />
@@ -66,15 +73,15 @@ export default {
           num: 1,
         },
         {
-            num:2,
-        }
+          num: 2,
+        },
       ],
     };
   },
   methods: {
-      goBackToIndex(){
-       this.$router.push("/");
-    }
+    goBackToIndex() {
+      this.$router.push("/");
+    },
   },
 };
 </script>
