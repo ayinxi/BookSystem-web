@@ -113,10 +113,10 @@ export default {
       this.multipleSelection = val;
     },
     handleDelete(index, row) {
-      console.log(index, row);
+      
     },
     handleChange(value) {
-      console.log(value);
+    
     }
   }
 };

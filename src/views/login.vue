@@ -24,7 +24,7 @@
                         <i class="el-icon-user" style="font-size: 20px" />
                       </el-col>
                       <el-col :span="10">
-                        <el-input v-model="form.username" placeholder="用户名">
+                        <el-input v-model="form.username" placeholder="邮箱" >
                         </el-input>
                       </el-col>
                     </el-row>
@@ -42,24 +42,12 @@
                   </el-form-item>
                   <el-form-item>
                     <el-row class="inputContent">
-                      <el-col :span="8">
-                        <el-button
-                          @click="onSign"
-                          style="
-                            width: 80%;
-                            margin-top: 10px;
-                            margin-left: 30px;
-                            margin-right: 10px;
-                          "
-                          >注册
-                        </el-button>
-                      </el-col>
-                      <el-col :span="8">
+                      <el-col :offset="2">
                         <el-button
                           type="primary"
                           @click="onSubmit"
                           style="
-                            width: 80%;
+                            width:60%;
                             margin-top: 10px;
                             margin-left: 20px;
                             margin-right: 10px;
@@ -91,13 +79,8 @@ export default {
       },
       rules: {
         username: [
-          { required: true, message: "用户名不能为空", trigger: "blur" },
-          { max: 10, message: "用户名最多10位！", trigger: "blur" },
+          { required: true, message: "邮箱格式不正确！", trigger: "blur" ,type:"email"},
         ],
-        password: [
-           { required: true, message: "密码不能为空", trigger: "blur" },
-            {min: 3, message: "密码不得低于3位！", trigger: 'blur'}
-          ],
       },
     };
   },
@@ -151,13 +134,15 @@ export default {
   margin: 20px;
 }
 .el-input {
-  width: 200px;
-  margin: 20px;
+  width: 250px;
+  margin: 10px 20px;
 }
 .inputContent {
   display: flex;
-  justify-content: center;
+  justify-content:flex-start;
   align-items: center;
+  width: 100%;
+  margin-left:20%;
 }
 .el-card {
   margin: 5%;
