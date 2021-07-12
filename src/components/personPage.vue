@@ -4,7 +4,9 @@
       <div class="logo">
         <img width="250px" src="../assets/logo.png" />
       </div>
+      <el-header>
       <el-page-header @back="goBack" content="个人主页"> </el-page-header>
+      </el-header>
     </div>
     <el-tabs class="tab" v-model="activeName">
       <el-tab-pane label="首页" name="first">
@@ -94,11 +96,11 @@
                   />
                 </el-col>
               </el-row>
-              <el-row style="display: flex; justify-content: space-between">
+              <el-row style="display: flex; justify-content: space-between" :offset="6">
                 <el-col :span="8" style="margin-left: 20px">
                   <el-button
                     type="text"
-                    style="font-size: 15px; margin: 20px 50px"
+                    style="font-size: 15px; margin: 10px 50px"
                     @click="gotoDaishouhuo"
                     >全部订单</el-button
                   >
@@ -216,7 +218,84 @@
           </el-form>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="申请成为商家" name="third"> </el-tab-pane>
+      <el-tab-pane v-if="this.userInfo.identity" label="申请成为商家" name="third"> 
+        <div
+          style="display: flex; justify-content: center; align-items: center"
+          v-if="this.userInfo.apply_pass==0"
+        >
+          <el-form ref="userInfo" :model="userInfo" label-width="80px">
+             <el-row>
+              <el-col>
+                <el-form-item>
+                  <i
+                    class="el-icon-warning-outline"
+                    style="margin-right: 5px"
+                  ></i>
+                  <i style="color: #909399"
+                    >在此，您可以申请成为商家。请仔细考虑店铺封面，认真填写店铺名称和申请理由。否则，您将有可能遭到拒绝。</i
+                  >
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row style="margin-top: 20px">
+              <el-col>
+                <el-form-item label="店铺封面" prop="avatar_b">
+                  <el-upload
+                    class="avatar-uploader"
+                    ref="upload"
+                    action="http://47.94.131.208:8888"
+                    :show-file-list="false"
+                    :on-change="changePhotoFile"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload"
+                    :auto-upload="false"
+                    :name="avatar_b"
+                  >
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                    <img v-else src="../assets/avatar.jpg" class="avatar" />
+                    <div class="avatar-uploader-icon">
+                      <i
+                        class="el-icon-warning-outline"
+                        style="margin-right: 5px"
+                      ></i>
+                      <i style="color: #909399">点击图片进行修改</i>
+                    </div>
+                  </el-upload>
+                  <my-cropper
+                    ref="myCropper"
+                    @getFile="getFile"
+                    @upAgain="upAgain"
+                  ></my-cropper>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col>
+                <el-form-item label="店铺名称" prop="name">
+                  <el-input v-model="userInfo.name"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+             <el-row>
+              <el-col>
+                <el-form-item label="申请理由" prop="apply_reason">
+                  <el-input v-model="userInfo.apply_reason"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>       
+            <el-row>
+              <el-col>
+                <el-form-item>
+                  <el-button type="primary" @click="confirmApply"
+                    >确认申请</el-button
+                  >
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane v-else label="我的店铺" name="third"> </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -236,7 +315,9 @@ export default {
         name: "",
         password: "",
         imageUrl: "",
-        
+        identity:"0",
+        apply_reason:"",
+        apply_pass:"0",
       },
       //
       dialogVisible: false,
@@ -256,6 +337,8 @@ export default {
     },
     //确认修改个人信息
     confirmChange() {},
+    //确认申请成为商家
+    confirmApply(){},
     uploadAvatar(formData) {
       
     },
