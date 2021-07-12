@@ -29,10 +29,10 @@ const routes = [
         component: () => import('../components/personPage.vue')
     },
     {
-        path: '/shoppingTrolley',
-        name: 'shoppingTrolley',
+        path: '/shopping',
+        name: 'shopping',
       //meta: { auth: true },//登录鉴权
-        component: () => import('../components/shoppingTrolley.vue')
+        component: () => import('../components/shopping.vue')
     },
     {
         path: '/',

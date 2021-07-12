@@ -228,7 +228,7 @@
               <el-col>
                 <el-form-item>
                   <i
-                    class="el-icon-warning-outline"
+                    class="el-icon-bell"
                     style="margin-right: 5px"
                   ></i>
                   <i style="color: #909399"
