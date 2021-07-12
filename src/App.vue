@@ -1,18 +1,15 @@
 <template>
-  <div >
-    <router-view></router-view>
+  <div>
+    <router-view> </router-view>
   </div>
 </template>
 
 <script>
 export default {
   name: "app",
-  components: {
-  },
+  components: {},
   computed: {
-    hasLogin() {
-      return this.$store.state.token;
-    }
+   
   },
 };
 </script>
@@ -21,6 +18,6 @@ export default {
 body {
   margin: 0;
   padding: 0;
-  background:rgb(255, 255, 255);
+  background: rgb(255, 255, 255);
 }
 </style>

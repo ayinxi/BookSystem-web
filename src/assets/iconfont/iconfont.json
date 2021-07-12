@@ -1,0 +1,58 @@
+{
+  "id": "2660429",
+  "name": "booksell",
+  "font_family": "iconfont",
+  "css_prefix_text": "iconfont-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "17967617",
+      "name": "商铺",
+      "font_class": "shangpu",
+      "unicode": "ee9a",
+      "unicode_decimal": 61082
+    },
+    {
+      "icon_id": "17967630",
+      "name": "分类",
+      "font_class": "fenlei",
+      "unicode": "eea7",
+      "unicode_decimal": 61095
+    },
+    {
+      "icon_id": "17967618",
+      "name": "反馈",
+      "font_class": "fankui",
+      "unicode": "ee9b",
+      "unicode_decimal": 61083
+    },
+    {
+      "icon_id": "17967608",
+      "name": "订单",
+      "font_class": "dingdan",
+      "unicode": "ee91",
+      "unicode_decimal": 61073
+    },
+    {
+      "icon_id": "17967605",
+      "name": "待发货",
+      "font_class": "daifahuo",
+      "unicode": "ee8e",
+      "unicode_decimal": 61070
+    },
+    {
+      "icon_id": "17967606",
+      "name": "待收货",
+      "font_class": "daishouhuo",
+      "unicode": "ee8f",
+      "unicode_decimal": 61071
+    },
+    {
+      "icon_id": "17967614",
+      "name": "售后",
+      "font_class": "shouhou",
+      "unicode": "ee97",
+      "unicode_decimal": 61079
+    }
+  ]
+}

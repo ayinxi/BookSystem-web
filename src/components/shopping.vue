@@ -1,10 +1,6 @@
 <template>
   <div>
     <!--header-->
-    <div class="header">
-      <div class="logo">
-        <img width="250px" src="../assets/logo.png" />
-      </div>
       <div class="title">
         <el-page-header v-if="page==0" content="购物车"></el-page-header>
         <el-page-header v-if="page==1" @back="page=0" content="填写订单"></el-page-header>
@@ -332,6 +328,47 @@ export default {
       }
       return price_total;
     },
+export default {
+  components: {
+  },
+  data() {
+    return {
+      multipleSelection: [],
+      bookList: [
+        {
+          book_img: "0",
+          book_name: "C++从入门到放弃",
+          book_unitPrice: 50,
+          book_num: 2,
+        }, {
+          book_img: "0",
+          book_name: "C++从入门到放弃",
+          book_unitPrice: 50,
+          book_num: 2,
+        }, {
+          book_img: "1",
+          book_name: "java从跨平台到跨行业",
+          book_unitPrice: 100,
+          book_num: 3,
+        }, {
+          book_img: "1",
+          book_name: "java从跨平台到跨行业",
+          book_unitPrice: 100,
+          book_num: 3,
+        }
+      ],
+      book: {
+        book_img: "",//图书图片
+        book_name: "",//图书名称
+        book_unitPrice: "",//图书单价
+        book_num: "",//图书数量
+      }
+    };
+  },
+  computed: {
+    book_totalPrice(){
+      return this.bookList.book_num * this.bookList.book_unitPrice;
+    }
   },
   methods: {
     toggleSelection(rows) {
@@ -344,7 +381,6 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-  }
 };
 </script>
 
