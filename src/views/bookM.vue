@@ -190,7 +190,7 @@ export default {
   },
   methods: {
     goToManage() {
-      this.$router.push("/manage");
+      this.$router.push("/shopManage");
     },
     handleChange(index) {
       this.lists1.bookImg = this.tableData[index].bookimg;

@@ -42,9 +42,9 @@ const routes = [
         component: () => import('../views/bookInfo.vue')
     },
     {
-        path: '/manage',
-        name: 'manage',
-        component: () => import('../views/manage.vue')
+        path: '/shopManage',
+        name: 'shopManage',
+        component: () => import('../views/shopManage.vue')
     },
     {
         path: '/bookM',

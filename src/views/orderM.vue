@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     goToManage() {
-      this.$router.push("/manage")
+      this.$router.push("/shopManage")
     },
     handleSelectionChange() {},
     handleInfo() {

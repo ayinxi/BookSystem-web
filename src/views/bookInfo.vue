@@ -12,16 +12,30 @@
               >全部商品分类</el-col
             >
             <el-col>
-              <el-tabs v-model="activeName" @tab-click="handleClick">
-                <el-tab-pane label="网络文学" name="first"></el-tab-pane>
-                <el-tab-pane label="教育" name="second"></el-tab-pane>
-                <el-tab-pane label="小说" name="third"></el-tab-pane>
-                <el-tab-pane label="文艺" name="fourth"></el-tab-pane>
-                <el-tab-pane label="青春文学/动漫" name="fifth"></el-tab-pane>
-              </el-tabs>
+              <el-menu
+                :default-active="activeIndex1"
+                class="el-menu-demo"
+                mode="horizontal"
+              >
+                <el-menu-item index="1" @click.native="NetworkFilter"
+                  >网络文学</el-menu-item
+                >
+                <el-menu-item index="2" @click.native="EducationFilter"
+                  >教育</el-menu-item
+                >
+                <el-menu-item index="3" @click.native="NovelFilter"
+                  >小说</el-menu-item
+                >
+                <el-menu-item index="4" @click.native="LandAFilter"
+                  >文艺</el-menu-item
+                >
+                <el-menu-item index="5" @click.native="YandCFilter"
+                  >青春/动漫</el-menu-item
+                >
+              </el-menu>
             </el-col>
           </el-row>
-          <el-row style="display: flex;padding:0% 26%" >
+          <el-row style="display: flex; padding: 0% 26%">
             <p>店铺名称</p>
           </el-row>
         </el-header>
@@ -68,6 +82,7 @@ export default {
   },
   data() {
     return {
+      activeIndex1: "",
       lists: [
         {
           num: 1,
@@ -82,7 +97,23 @@ export default {
     goBackToIndex() {
       this.$router.push("/");
     },
+    NetworkFilter() {
+      this.$router.push({ path: "/", query: { activeIndex1: "1" } });
+    },
+    EducationFilter(){
+      this.$router.push({ path: "/", query: { activeIndex1: "2" } });
+    },
+    NovelFilter(){
+      this.$router.push({ path: "/", query: { activeIndex1: "3" } });
+    },
+    LandAFilter(){
+      this.$router.push({ path: "/", query: { activeIndex1: "4" } });
+    },
+    YandCFilter(){
+      this.$router.push({ path: "/", query: { activeIndex1: "5" } });
+    }
   },
+  
 };
 </script>
 <style acoped>
