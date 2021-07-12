@@ -4,7 +4,11 @@
       <img width="250px" src="../assets/logo.png" />
     </div>
     <div class="search">
-      <el-input placeholder="给孩子的第一本编程书籍" v-model="input" style="width:500px">
+      <el-input
+        placeholder="给孩子的第一本编程书籍"
+        v-model="input"
+        style="width: 500px"
+      >
         <el-button slot="append" icon="el-icon-search"> </el-button>
       </el-input>
     </div>
@@ -12,11 +16,17 @@
       <el-row class="shopping">
         <el-col :span="10">
           <el-badge :value="12" class="shopping">
-            <el-button size="meduim" icon="el-icon-shopping-cart-2">我的购物车</el-button>
+            <el-button size="meduim" icon="el-icon-shopping-cart-2"
+              >我的购物车</el-button
+            >
           </el-badge>
         </el-col>
-        <el-col :span="5"  class="pageperson">
-          <el-button size="meduim" class="pageperson"  icon="el-icon-s-custom" @click="gotoPersonPage"
+        <el-col :span="5" class="pageperson">
+          <el-button
+            size="meduim"
+            class="pageperson"
+            icon="el-icon-s-custom"
+            @click="gotoPersonPage"
             >个人主页</el-button
           >
         </el-col>
@@ -32,10 +42,15 @@ export default {
       input: " ",
     };
   },
+  computed: {
+    hasLogin() {
+      return this.$store.state.token;
+    },
+  },
   methods: {
-    gotoPersonPage(){
-       this.$router.push("/person");
-    }
+    gotoPersonPage() {
+      this.$router.push("/person");
+    },
   },
 };
 </script>
