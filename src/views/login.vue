@@ -85,8 +85,30 @@ export default {
     };
   },
   methods: {
-    onSubmit() {
-      this.$router.push("/home");
+    async onSubmit(e) {
+      e.preventDefault();
+      let parmas = {
+        username: this.form.username,
+        password: this.form.password
+      };
+      const res = await this.$http.get("/api/login", parmas);
+      const { code, token, massage } = res.data;
+      //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
+      //else 弹出错误提示
+      if (code == "0") {
+        this.$store.commit("token", res.data.token);
+        localStorage.setItem("token", token);
+        //如果是由需要鉴权的页面跳转到登录页面 则redirect= this.$route.query.redirect，如果是直接点击登录跳转到登录页面，则redirect= '/'
+        //const redirect = this.$route.query.redirect || "/";
+        //this.$router.push(redirect);
+      } else {
+        const toast = this.$createToast({
+          time: 2000,
+          txt: massage || "登录失败",
+          type: "error"
+        });
+        toast.show();
+      }
     },
     onSign() {
       this.$router.push("/sign");

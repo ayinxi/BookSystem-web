@@ -10,7 +10,6 @@
         <el-step title="完成订单"></el-step>
       </el-steps>
     </div>
-
     <div class=“shoppingTrolley_container” style="margin:0 5%">
       <el-row class="shopingTrolley_content" :gutter="20">
         <el-col>
@@ -51,16 +50,8 @@
 </template>
 
 <script>
-import { Button, Row, Col, Form, FormItem } from "element-ui";
-import Home from '../views/Home.vue';
 export default {
   components: {
-    "el-button": Button,
-    "el-col": Col,
-    "el-row": Row,
-    "el-form": Form,
-    "el-form-item": FormItem,
-    Home,
   },
   data() {
     return {

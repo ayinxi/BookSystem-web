@@ -28,60 +28,46 @@
                   flex-wrap: wrap;
                 "
               >
-                <el-row>
-                  <el-col>
-                    <el-form-item>
-                      <h2 class="login-title">新用户注册</h2>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col>
-                    <el-form-item label="昵称" prop="name">
-                      <el-input :value="userInfo.name"> </el-input>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col>
-                    <el-form-item label="绑定邮箱" prop="username">
-                      <el-input :value="userInfo.username"> </el-input>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col>
-                    <el-form-item label="密码" prop="password">
-                      <el-input :value="userInfo.password" type="password">
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col>
-                    <el-form-item label="确认密码" prop="checkpass">
-                      <el-input :value="userInfo.checkpass" type="password">
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col>
-                    <el-form-item>
-                      <el-button
-                        type="primary"
-                        @click="onSign"
-                        style="
-                          width: 250px;
-                          margin-top: 10px;
-                          margin-left: 20px;
-                          margin-right: 10px;
-                        "
-                        >注册</el-button
-                      >
-                    </el-form-item>
-                  </el-col>
-                </el-row>
+                <el-form-item>
+                  <h2 class="login-title">新用户注册</h2>
+                </el-form-item>
+                <el-form-item label="昵称" prop="name">
+                  <el-input v-model="userInfo.name"> </el-input>
+                </el-form-item>
+                <el-form-item label="绑定邮箱" prop="username">
+                  <el-input v-model="userInfo.username"> </el-input>
+                </el-form-item>
+                <el-form-item>
+                  <i
+                    class="el-icon-warning-outline"
+                    style="margin-right: 5px"
+                  ></i>
+                  <i style="color: #909399"
+                    >邮箱一旦绑定不得更改，如有需要请联系管理员</i
+                  >
+                </el-form-item>
+                <el-form-item label="密码" prop="password">
+                  <el-input v-model="userInfo.password" type="password">
+                  </el-input>
+                </el-form-item>
+
+                <el-form-item label="确认密码" prop="checkpass">
+                  <el-input v-model="userInfo.checkpass" type="password">
+                  </el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button
+                    type="primary"
+                    @click="onSign"
+                    style="
+                      width: 250px;
+                      margin-top: 10px;
+                      margin-left: 20px;
+                      margin-right: 10px;
+                    "
+                    >注册</el-button
+                  >
+                </el-form-item>
               </el-form>
             </el-card>
           </div>
@@ -123,7 +109,7 @@ export default {
             validator: (rule, value, callback) => {
               if (value === "") {
                 callback(new Error("请再次输入密码"));
-              } else if (value !== this.ruleForm.pwd) {
+              } else if (value !== this.userInfo.password) {
                 callback(new Error("两次输入密码不一致"));
               } else {
                 callback();
@@ -195,7 +181,7 @@ export default {
 .el-card {
   margin: 5%;
   width: 500px;
-  height: 530px;
+  height: 550px;
 }
 .submit {
   display: flex;
@@ -206,5 +192,8 @@ export default {
   top: 80%;
   right: 25% !important;
   left: unset;
+}
+.el-form-item{
+  margin-bottom: 10px;
 }
 </style> 

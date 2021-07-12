@@ -145,19 +145,19 @@
           style="display: flex; justify-content: center; align-items: center"
         >
           <el-form ref="userInfo" :model="userInfo" label-width="80px">
-            <el-row style="margin-top:20px">
+            <el-row style="margin-top: 20px">
               <el-col>
-                <el-form-item label="用户头像" prop="avator">
+                <el-form-item label="用户头像" prop="avatar_b">
                   <el-upload
                     class="avatar-uploader"
                     ref="upload"
-                    :action="uploadLogo"
+                    action="http://47.94.131.208:8888"
                     :show-file-list="false"
                     :on-change="changePhotoFile"
                     :on-success="handleAvatarSuccess"
                     :before-upload="beforeAvatarUpload"
-                    :headers="headerObj"
                     :auto-upload="false"
+                    :name="avatar_b"
                   >
                     <img v-if="imageUrl" :src="imageUrl" class="avatar" />
                     <img v-else src="../assets/avatar.jpg" class="avatar" />
@@ -207,13 +207,16 @@
             <el-row>
               <el-col>
                 <el-form-item>
-                  <el-button type="primary" @click="confirmChange">确认修改</el-button>
+                  <el-button type="primary" @click="confirmChange"
+                    >确认修改</el-button
+                  >
                 </el-form-item>
               </el-col>
             </el-row>
           </el-form>
         </div>
       </el-tab-pane>
+      <el-tab-pane label="申请成为商家" name="third"> </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -228,30 +231,17 @@ export default {
     return {
       activeName: "first",
       userInfo: {
-        avator: "",
+        avatar_b: "",
         username: "",
         name: "",
         password: "",
         imageUrl: "",
+        
       },
       //
       dialogVisible: false,
-      option: {
-        img: "", //裁剪图片地址
-        info: true, //裁剪框大小信息
-        outputSize: 1, //裁剪生成图片质量
-        outputType: "jpeg", //裁剪生成图片格式
-        canScale: true, //图片是否允许缩放
-        autoCrop: true, //是否默认生成截图框
-        autoCropWidth: 200, //默认生成截图框宽度
-        autoCropHeight: 200, //默认生成截图框高度
-        fixedBox: false, //固定截图框大小
-        full: false, //是否输出原图比例截图,
-        canMove: true, //截图框是否可移动
-        canMoveBox: true, //截图框是否拖动
-        original: false, //上传图片按照原始比例渲染
-        centerBox: true, //截图框是否被限制在图片里面
-        infoTrue: true, //true 为展示真实输出图片宽高
+      httpHeaders: {
+        "X-token": this.$store.token,
       },
     };
   },
@@ -265,8 +255,9 @@ export default {
       this.$router.push("/");
     },
     //确认修改个人信息
-    confirmChange(){
-
+    confirmChange() {},
+    uploadAvatar(formData) {
+      
     },
     //裁剪
     //上传图片触发
@@ -281,10 +272,10 @@ export default {
     },
     getFile(file) {
       const formData = new FormData();
-      formData.append("file", file);
-      uploadSelfAvator(formData).then((res) => {
+      formData.append("avatar_b", file);
+      uploadAvatar(formData).then((res) => {
         if (res.code === 0) {
-          this.userInfo.avatar = res.filename;
+          this.userInfo.avatar_b = res.filename;
           this.userInfo.imageUrl = res.url;
           this.imageUrl = res.url;
           //上传成功后，关闭弹框组件
@@ -299,7 +290,7 @@ export default {
     //头像上传成功之后的方法,进行回调
     handleAvatarSuccess(res) {
       if (res.code === 0) {
-        this.userInfo.avatar = res.filename;
+        this.userInfo.avatar_b = res.filename;
         this.userInfo.imageUrl = res.url;
         this.imageUrl = res.url;
         // this.handleCrop(file);
@@ -313,7 +304,8 @@ export default {
     },
     //头像上传之前的方法
     beforeAvatarUpload(file) {
-      const isJPG =file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      const isJPG =
+        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
       const isLt6M = file.size / 1024 / 1024 < 6;
 
       if (!isJPG) {
