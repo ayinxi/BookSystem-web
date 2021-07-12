@@ -227,13 +227,15 @@
              <el-row>
               <el-col>
                 <el-form-item>
+                  <div>
                   <i
                     class="el-icon-bell"
                     style="margin-right: 5px"
                   ></i>
-                  <i style="color: #909399"
-                    >在此，您可以申请成为商家。请仔细考虑店铺封面，认真填写店铺名称和申请理由。否则，您将有可能遭到拒绝。</i
+                  <h3 style="color: #909399"
+                    >在此，您可以申请成为商家。请仔细考虑店铺封面，认真填写店铺名称和申请理由。否则，您将有可能遭到拒绝。</h3
                   >
+                  </div>
                 </el-form-item>
               </el-col>
             </el-row>

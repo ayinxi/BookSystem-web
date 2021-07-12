@@ -42,6 +42,7 @@ const routes = [
         name:'manageMerchant',
         component: () => import('../components/manageMerchant.vue')
     },
+    {
         path: '/shopping',
         name: 'shopping',
       //meta: { auth: true },//登录鉴权
