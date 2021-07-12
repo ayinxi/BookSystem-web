@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "22781007",
+      "name": "创业项目",
+      "font_class": "chuangyexiangmu",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
       "icon_id": "17967617",
       "name": "商铺",
       "font_class": "shangpu",

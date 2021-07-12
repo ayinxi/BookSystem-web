@@ -24,7 +24,7 @@
                         <i class="el-icon-user" style="font-size: 20px" />
                       </el-col>
                       <el-col :span="10">
-                        <el-input v-model="form.username" placeholder="邮箱" >
+                        <el-input v-model="form.username" placeholder="邮箱">
                         </el-input>
                       </el-col>
                     </el-row>
@@ -35,7 +35,11 @@
                         <i class="el-icon-unlock" style="font-size: 20px" />
                       </el-col>
                       <el-col :span="10">
-                        <el-input v-model="form.password" placeholder="密码" type="password">
+                        <el-input
+                          v-model="form.password"
+                          placeholder="密码"
+                          type="password"
+                        >
                         </el-input>
                       </el-col>
                     </el-row>
@@ -47,7 +51,7 @@
                           type="primary"
                           @click="onSubmit"
                           style="
-                            width:60%;
+                            width: 60%;
                             margin-top: 10px;
                             margin-left: 20px;
                             margin-right: 10px;
@@ -69,6 +73,7 @@
 
 
 <script>
+import axios from 'axios'
 export default {
   components: {},
   data() {
@@ -79,33 +84,54 @@ export default {
       },
       rules: {
         username: [
-          { required: true, message: "邮箱格式不正确！", trigger: "blur" ,type:"email"},
+          {
+            required: true,
+            message: "邮箱格式不正确！",
+            trigger: "blur",
+            type: "email",
+          },
         ],
       },
     };
   },
   methods: {
-    async onSubmit(e) {
-      e.preventDefault();
+    onSubmit() {
+      axios({
+        url: "http://127.0.0.1:8088/login",
+        method: "POST",
+        params: {
+          username: this.form.username,
+          password: this.form.password,
+        },
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async Submit() {
       let parmas = {
         username: this.form.username,
-        password: this.form.password
+        password: this.form.password,
       };
-      const res = await this.$http.get("/api/login", parmas);
-      const { code, token, massage } = res.data;
+      let res = await this.$axios.post("http://127.0.0.1:8088/login", parmas);
+      console.log(res);
+      const { code, token, msg } = res.data;
       //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
       //else 弹出错误提示
-      if (code == "0") {
+      if (code == "200") {
         this.$store.commit("token", res.data.token);
         localStorage.setItem("token", token);
         //如果是由需要鉴权的页面跳转到登录页面 则redirect= this.$route.query.redirect，如果是直接点击登录跳转到登录页面，则redirect= '/'
         //const redirect = this.$route.query.redirect || "/";
-        //this.$router.push(redirect);
+        this.$router.push("/");
       } else {
         const toast = this.$createToast({
           time: 2000,
-          txt: massage || "登录失败",
-          type: "error"
+          txt: msg || "登录失败",
+          type: "error",
         });
         toast.show();
       }
@@ -161,10 +187,10 @@ export default {
 }
 .inputContent {
   display: flex;
-  justify-content:flex-start;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
-  margin-left:20%;
+  margin-left: 20%;
 }
 .el-card {
   margin: 5%;
