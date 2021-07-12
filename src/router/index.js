@@ -23,27 +23,47 @@ const routes = [
 
     },
     {
-        path:'/person',
-        name:'person',
-        //meta: { auth: true },//登录鉴权
+        path: '/person',
+        name: 'person',
+      //meta: { auth: true },//登录鉴权
         component: () => import('../components/personPage.vue')
     },
     {
-        path:'/shoppingTrolley',
-        name:'shoppingTrolley',
-        //meta: { auth: true },//登录鉴权
+        path: '/shoppingTrolley',
+        name: 'shoppingTrolley',
+      //meta: { auth: true },//登录鉴权
         component: () => import('../components/shoppingTrolley.vue')
     },
-   {
-       path:'/', 
-       name:'index',
-       component: () => import('../views/index.vue')
-   },
-   {
-       path:'/bookInfo',
-       name:'bookInfo',
-       component: () => import('../views/bookInfo.vue')
-   }
+    {
+        path: '/',
+        name: 'index',
+        component: () => import('../views/index.vue')
+    },
+    {
+        path: '/bookInfo',
+        name: 'bookInfo',
+        component: () => import('../views/bookInfo.vue')
+    },
+    {
+        path: '/shopManage',
+        name: 'shopManage',
+        component: () => import('../views/shopManage.vue')
+    },
+    {
+        path: '/bookM',
+        name: 'bookM',
+        component: () => import('../views/bookM.vue')
+    },
+    {
+        path: '/orderM',
+        name: 'orderM',
+        component: () => import('../views/orderM.vue')
+    },
+    {
+        path:'/orderInfo',
+        name:'orderInfo',
+        component: () => import('../views/orderInfo.vue')
+    }
 ]
 
 const router = new VueRouter({
