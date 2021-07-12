@@ -22,6 +22,7 @@
                 :data="bookList"
                 style="width:100%"
                 @selection-change="handleSelectionChange">
+                <el-table-column type="index" width="55"></el-table-column>
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column label="书籍信息" prop="book_name"></el-table-column>
                 <el-table-column label="单价（元）" prop="book_unitPrice"></el-table-column>
