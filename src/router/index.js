@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -22,25 +21,40 @@ const routes = [
         component: () => import('../components/personPage.vue')
     },
     {
-        path:'/shoppingTrolley',
-        name:'shoppingTrolley',
-        component: () => import('../components/shoppingTrolley.vue')
+        path:'/shopping',
+        name:'shopping',
+        component: () => import('../components/shopping.vue'),
     },
-  {
+    {
        path:'/pickBook',
        name:'pickBook',
        component: () => import('../components/pickBook.vue')
-   },
-   {
+    },
+    {
        path:'/index', 
        name:'index',
        component: () => import('../views/index.vue')
-   },
-   {
+    },
+    {
        path:'/bookDetailedInfo',
        name:'bookDetailedInfo',
        component: () => import('../views/bookDetailedInfo.vue')
-   }
+    },
+    {
+        path:'/adminManage',
+        name:'adminManage',
+        component: () => import('../components/adminManage.vue')
+    },
+    {
+        path:'/manageClass',
+        name:'manageClass',
+        component: () => import('../components/manageClass.vue')
+    },
+    {
+        path:'/manageMerchant',
+        name:'manageMerchant',
+        component: () => import('../components/manageMerchant.vue')
+    },
 ]
 
 const router = new VueRouter({
