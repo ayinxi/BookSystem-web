@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -29,6 +28,20 @@ const routes = [
         component: () => import('../components/personPage.vue')
     },
     {
+        path:'/adminManage',
+        name:'adminManage',
+        component: () => import('../components/adminManage.vue')
+    },
+    {
+        path:'/manageClass',
+        name:'manageClass',
+        component: () => import('../components/manageClass.vue')
+    },
+    {
+        path:'/manageMerchant',
+        name:'manageMerchant',
+        component: () => import('../components/manageMerchant.vue')
+    },
         path: '/shopping',
         name: 'shopping',
       //meta: { auth: true },//登录鉴权
