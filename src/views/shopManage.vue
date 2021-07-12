@@ -19,26 +19,38 @@
         </el-row>
       </div>
     </div>
-    <div style="margin: 5% 18%">
+    <div style="margin: 0% 18%">
+      <el-row style="margin: 0% 12% 5%">
+        <el-card>
+          <span style="font-weight:1000">欢迎你，亲爱的店家   </span><span style="font-weight:1000;color:#ff623e;font-size:30px">{{ shopname }}</span>
+          <p style="font-weight:1000">你可以在本页面使用如下功能:图书管理或订单管理</p>
+        </el-card>
+      </el-row>
+      <el-row>
       <el-col class="el-colStyle">
         <el-card class="el-cardStyle" shadow="hover" @click.native="goToBookM"
-          ><span class="el-icon-s-management"></span>
-          <span class="spanStyle">图书管理</span>
+          ><p class="el-icon-s-management"></p>
+          <p class="spanStyle">图书管理</p>
         </el-card>
       </el-col>
       <el-col class="el-colStyle">
         <el-card class="el-cardStyle" shadow="hover" @click.native="goToOrderM"
-          ><span class="el-icon-s-order"></span>
-          <span class="spanStyle">订单管理</span></el-card
+          ><p class="iconfont-dingdan" style="font-size:40px"></p>
+          <p class="spanStyle">订单管理</p></el-card
         >
       </el-col>
+      </el-row>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  data() {},
+  data() {
+    return{
+      shopname:"这是一家好店",
+    }
+  },
   methods: {
     gotoPersonPage() {
       this.$router.push("/person");
