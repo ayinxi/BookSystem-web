@@ -49,7 +49,7 @@
                       <el-col :offset="2">
                         <el-button
                           type="primary"
-                          @click="onSubmit"
+                          @click="Submit"
                           style="
                             width: 60%;
                             margin-top: 10px;
@@ -73,7 +73,7 @@
 
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 export default {
   components: {},
   data() {
@@ -105,10 +105,25 @@ export default {
         },
       })
         .then((res) => {
-          console.log(res);
+          const { code, token, msg } = res.data;
+          //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
+          //else 弹出错误提示
+          if (code == "200") {
+            this.$store.commit("token", res.data.token);
+            localStorage.setItem("token", token);
+            //如果是由需要鉴权的页面跳转到登录页面 则redirect= this.$route.query.redirect，如果是直接点击登录跳转到登录页面，则redirect= '/'
+            //const redirect = this.$route.query.redirect || "/";
+            this.$router.push("/");
+          } else {
+            const toast = this.$createToast({
+              time: 2000,
+              txt: msg || "登录失败",
+              type: "error",
+            });
+            toast.show();
+          }
         })
         .catch((err) => {
-          console.log(err);
         });
     },
     async Submit() {
