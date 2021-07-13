@@ -67,7 +67,7 @@
                 <el-menu-item-group>
                   <el-menu-item
                     index="1-1"
-                    @click.native="NanPinFilter"
+                    @click.native="NanPinFilter(this.Lists)"
                     style="color: rgb(233, 150, 122); font-weight: 1000"
                     >男频</el-menu-item
                   >
@@ -245,7 +245,7 @@
               :page-size="pageSize"
               @current-change="handleCurrentChange"
               layout="prev, pager, next"
-              :total="this.Lists.length"
+              :total="length()"
             >
             </el-pagination>
           </el-main>
@@ -404,6 +404,7 @@ export default {
     showAll() {
       this.activeIndex1 = " ";
       this.activeIndex2 = " ";
+      this.currentPage = 1;
       for (let i = 0; i < this.Lists.length; i++) this.Lists[i].Show = true;
     },
     handleCurrentChange(val) {
@@ -420,12 +421,13 @@ export default {
     },
     NanPinFilter() {
       this.activeIndex1 = "";
-      //for (let i = 0; i < this.Lists.length; i++)
-      //return this.Lists[i].ClassTwo == "男频";
+      /*this.Lists = this.Lists.filter(
+        (item, index) => item.ClassTwo=="男频"
+      );
       for (let i = 0; i < this.Lists.length; i++) {
         if (this.Lists[i].ClassTwo == "男频") this.Lists[i].Show = true;
         else this.Lists[i].Show = false;
-      }
+      }*/
     },
     NvPinFilter() {
       this.activeIndex1 = "";
@@ -552,6 +554,13 @@ export default {
         if (this.Lists[i].ClassOne == "青春/动漫") this.Lists[i].Show = true;
         else this.Lists[i].Show = false;
       }
+    },
+    length() {
+      let temp = 0;
+      for (let i = 0; i < this.Lists.length; i++) {
+        if (this.Lists[i].Show == true) temp++;
+      }
+      return temp;
     },
   },
   created() {
