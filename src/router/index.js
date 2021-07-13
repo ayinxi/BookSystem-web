@@ -76,11 +76,6 @@ const routes = [
     //meta: { auth: true },//登录鉴权
     component: () => import('../components/shopping.vue')
   },
-  {
-    path: '/orderInfo',
-    name: 'orderInfo',
-    component: () => import('../views/orderInfo.vue')
-  }
 ]
 
 const router = new VueRouter({

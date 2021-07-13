@@ -1,14 +1,20 @@
 <template>
   <div>
     <div class="header">
-       <div class="logo">
+      <div class="logo">
         <img width="250px" src="../assets/logo.png" />
       </div>
       <el-button size="medium" @click.native="goToManage"
         >返回商家管理页面</el-button
       >
     </div>
-    <div style="margin: 5% 10%">
+    <div style="margin: 5% 10% 0%">
+      <el-button @click="batchConfirm" style="margin-left: 78.5%"
+        >批量确认订单</el-button
+      >
+      <el-button @click="batchRefuse">批量拒绝订单</el-button>
+    </div>
+    <div style="margin: 0% 10%">
       <el-table
         ref="multipleTable"
         :data="tableData"
@@ -41,6 +47,12 @@
               type="danger"
               @click="handleConfirm(scope.$index, scope.row)"
               >确认订单</el-button
+            >
+            <el-button
+              size="mini"
+              type="warning"
+              @click="handleRefuse(scope.$index, scope.row)"
+              >拒绝订单</el-button
             >
           </template>
         </el-table-column>
@@ -79,11 +91,11 @@ export default {
   },
   methods: {
     goToManage() {
-      this.$router.push("/shopManage")
+      this.$router.push("/shopManage");
     },
     handleSelectionChange() {},
     handleInfo() {
-    this.$router.push('/orderInfo');
+      this.$router.push("/orderInfo");
     },
     handleConfirm() {
       this.$confirm("是否确认订单?", "提示", {
@@ -104,6 +116,9 @@ export default {
           });
         });
     },
+    handleRefuse() {},
+    batchConfirm() {},
+    batchRefuse() {},
   },
 };
 </script>
