@@ -4,22 +4,8 @@
     <div>
       <el-container style="margin: 0% 5%">
         <el-header style="padding: 0">
-          <el-row
-            style="
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              background-color: rgb(32, 178, 170);
-            "
-          >
-            <el-col
-              style="
-                text-align: center;
-                font-weight: 1000;
-                width: 21.93%;
-                color: white;
-              "
-              @click.native="showAll"
+          <el-row class="rowStyle1">
+            <el-col class="colStyle" @click.native="showAll"
               >全部商品分类</el-col
             >
             <el-col>
@@ -32,31 +18,31 @@
                 <el-menu-item
                   index="1"
                   @click.native="NetworkFilter"
-                  style="color: #008b8b; font-weight: 1000"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
                   >网络文学</el-menu-item
                 >
                 <el-menu-item
                   index="2"
                   @click.native="EducationFilter"
-                  style="color: #008b8b; font-weight: 1000"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
                   >教育</el-menu-item
                 >
                 <el-menu-item
                   index="3"
                   @click.native="NovelFilter"
-                  style="color: #008b8b; font-weight: 1000"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
                   >小说</el-menu-item
                 >
                 <el-menu-item
                   index="4"
                   @click.native="LandAFilter"
-                  style="color: #008b8b; font-weight: 1000"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
                   >文艺</el-menu-item
                 >
                 <el-menu-item
                   index="5"
                   @click.native="YandCFilter"
-                  style="color: #008b8b; font-weight: 1000"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
                   >青春/动漫</el-menu-item
                 >
               </el-menu>
@@ -79,29 +65,31 @@
           <el-main>
             <el-row class="rowStyle" type="flex">
               <el-col
-                :span="8"
+                :span="6"
                 v-for="book in Lists"
                 :key="book.Name"
                 v-show="book.Show"
               >
                 <el-container>
-                  <el-aside style="width: 42%" @click.native="goToBookInfo">
-                    <img class="imgStyle" :src="book.Img" />
-                  </el-aside>
-                  <el-main style="width: 58%">
+                  <el-header
+                    style="width: 100%; height: 200px; align-items: center"
+                  >
+                    <el-image
+                      class="imgStyle"
+                      :src="book.Img"
+                      @click.native="goToBookInfo"
+                    >
+                    </el-image>
+                  </el-header>
+                  <el-main style="padding-top: 0; text-align: center">
                     <el-link
                       :underline="false"
                       class="book-name"
-                      @click.native="goToBookInfo"
+                      @click="goToBookInfo"
                       >{{ book.Name }}</el-link
                     >
-                    <p style="color: gray">{{ book.Author }}</p>
-                    <p>{{ book.PubTime }}</p>
-                    <el-tag type="success">{{ book.ClassOne }}</el-tag
-                    ><el-tag type="info" style="margin-left: 10px">{{
-                      book.ClassTwo
-                    }}</el-tag>
-                    <p style="color: red; font-weight: 1000">
+                    <p style="color: gray; margin: 0%">{{ book.Author }}</p>
+                    <p style="color: red; font-weight: 1000; margin: 0%">
                       ￥{{ book.Price }}
                     </p>
                   </el-main>
@@ -434,18 +422,33 @@ export default {
   text-align: center;
 }
 .book-name {
-  font-size: 200%;
+  font-size: 100%;
 }
 .imgStyle {
-  width: 100%;
-  height: 95%;
+  margin-left: 10%;
+  width: 80%;
+  height: 200px;
+  cursor: pointer;
 }
-.imgStyle2{
-    width: 80%;
-    height: 200px;
+.imgStyle2 {
+  width: 80%;
+  height: 200px;
 }
 .rowStyle {
   display: flex;
   flex-wrap: wrap;
+}
+.rowStyle1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(205, 92, 92);
+}
+.colStyle {
+  text-align: center;
+  font-weight: 1000;
+  width: 21.93%;
+  color: white;
+  cursor: pointer;
 }
 </style>
