@@ -22,23 +22,37 @@
     <div style="margin: 0% 18%">
       <el-row style="margin: 0% 12% 5%">
         <el-card>
-          <span style="font-weight:1000">欢迎你，亲爱的店家   </span><span style="font-weight:1000;color:#ff623e;font-size:30px">{{ shopname }}</span>
-          <p style="font-weight:1000">你可以在本页面使用如下功能:图书管理或订单管理</p>
+          <el-container>
+            <el-aside width="35px"><div class="verticalBar1"></div></el-aside>
+            <el-main>
+              <span style="font-weight: 1000">欢迎您，亲爱的店家 </span
+              ><span
+                style="font-weight: 1000; color: #ff623e; font-size: 30px"
+                >{{ shopname }}</span
+              >
+              <p style="font-weight: 1000">
+                你可以在本页面使用如下功能: 图书管理 或 订单管理
+              </p>
+            </el-main>
+          </el-container>
         </el-card>
       </el-row>
       <el-row>
-      <el-col class="el-colStyle">
-        <el-card class="el-cardStyle" shadow="hover" @click.native="goToBookM"
-          ><p class="el-icon-s-management"></p>
-          <p class="spanStyle">图书管理</p>
-        </el-card>
-      </el-col>
-      <el-col class="el-colStyle">
-        <el-card class="el-cardStyle" shadow="hover" @click.native="goToOrderM"
-          ><p class="iconfont-dingdan" style="font-size:40px"></p>
-          <p class="spanStyle">订单管理</p></el-card
-        >
-      </el-col>
+        <el-col class="el-colStyle">
+          <el-card class="el-cardStyle" shadow="hover" @click.native="goToBookM"
+            ><p class="iconfont-chuangyexiangmu" style="font-size: 40px"></p>
+            <p class="spanStyle">图书管理</p>
+          </el-card>
+        </el-col>
+        <el-col class="el-colStyle">
+          <el-card
+            class="el-cardStyle"
+            shadow="hover"
+            @click.native="goToOrderM"
+            ><p class="iconfont-dingdan" style="font-size: 40px"></p>
+            <p class="spanStyle">订单管理</p></el-card
+          >
+        </el-col>
       </el-row>
     </div>
   </div>
@@ -47,9 +61,9 @@
 <script>
 export default {
   data() {
-    return{
-      shopname:"这是一家好店",
-    }
+    return {
+      shopname: "这是一家好店",
+    };
   },
   methods: {
     gotoPersonPage() {
@@ -114,6 +128,16 @@ export default {
 }
 .spanStyle {
   font-size: 30px;
+}
+.verticalBar1 {
+  width: 3px;
+  height: 100%;
+  background: rgb(60, 59, 105);
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 0px;
+  margin-left: 30px;
+  border-radius: 20%;
 }
 </style>
 

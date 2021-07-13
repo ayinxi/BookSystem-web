@@ -36,7 +36,9 @@
             </el-col>
           </el-row>
           <el-row style="display: flex; padding: 0% 26%">
-            <p>店铺名称</p>
+            <el-link :underline="false" @click.native="goToShopIndex"
+              >店铺名称</el-link
+            >
           </el-row>
         </el-header>
         <el-container>
@@ -53,11 +55,7 @@
             <p>价格</p>
             <el-row :gutter="20" type="flex" padding="10px 0">
               <el-col :span="5"
-                ><el-input-number
-                  v-model="lists[0].num"
-                  :min="1"
-                  :max="10"
-                ></el-input-number
+                ><el-input-number v-model="num" :min="1"></el-input-number
               ></el-col>
               <el-col :span="3"
                 ><el-button type="primary" class="el-icon-shopping-cart-2"
@@ -83,14 +81,7 @@ export default {
   data() {
     return {
       activeIndex1: "",
-      lists: [
-        {
-          num: 1,
-        },
-        {
-          num: 2,
-        },
-      ],
+      num: 1,
     };
   },
   methods: {
@@ -100,20 +91,22 @@ export default {
     NetworkFilter() {
       this.$router.push({ path: "/", query: { activeIndex1: "1" } });
     },
-    EducationFilter(){
+    EducationFilter() {
       this.$router.push({ path: "/", query: { activeIndex1: "2" } });
     },
-    NovelFilter(){
+    NovelFilter() {
       this.$router.push({ path: "/", query: { activeIndex1: "3" } });
     },
-    LandAFilter(){
+    LandAFilter() {
       this.$router.push({ path: "/", query: { activeIndex1: "4" } });
     },
-    YandCFilter(){
+    YandCFilter() {
       this.$router.push({ path: "/", query: { activeIndex1: "5" } });
-    }
+    },
+    goToShopIndex() {
+      this.$router.push("/shopIndex");
+    },
   },
-  
 };
 </script>
 <style acoped>
