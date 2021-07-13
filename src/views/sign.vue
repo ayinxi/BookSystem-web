@@ -11,7 +11,7 @@
           style="display: flex; justify-content: center; align-items: center"
         >
           <div style="margin: 5%">
-            <img src="../assets/login.png" />
+            <img src="../assets/login.jpg" />
           </div>
           <div>
             <el-card shadow="always">

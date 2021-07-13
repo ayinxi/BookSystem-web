@@ -16,7 +16,7 @@ window.__global__ = {
   store
 }
 
-Vue.use(axios)
+Vue.prototype.axios = axios
 
 new Vue({
   router,

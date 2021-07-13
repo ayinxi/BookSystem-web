@@ -2,70 +2,69 @@
   <div>
     <div class="header">
       <div class="logo">
-        <img width="250px" src="../assets/logo.png" />
+        <img width="250px" src="../assets/jwbc.png" />
       </div>
     </div>
     <div>
-      <div class="back">
-        <div
-          style="display: flex; justify-content: center; align-items: center"
-        >
-          <div style="margin: 5%">
-            <img src="../assets/login.png" />
-          </div>
+      <div class="login"></div>
+      <div
+        style="display: flex; justify-content: flex-end; align-items: center"
+      >
+        <el-card shadow="always">
           <div>
-            <el-card shadow="always">
-              <div>
-                <h2 class="login-title">教我编程图书商城</h2>
-                <el-form :model="form" status-icon :rules="rules" ref="form">
-                  <el-form-item prop="username">
-                    <el-row class="inputContent">
-                      <el-col :span="2">
-                        <i class="el-icon-user" style="font-size: 20px" />
-                      </el-col>
-                      <el-col :span="10">
-                        <el-input v-model="form.username" placeholder="邮箱">
-                        </el-input>
-                      </el-col>
-                    </el-row>
-                  </el-form-item>
-                  <el-form-item prop="password">
-                    <el-row class="inputContent">
-                      <el-col :span="2">
-                        <i class="el-icon-unlock" style="font-size: 20px" />
-                      </el-col>
-                      <el-col :span="10">
-                        <el-input
-                          v-model="form.password"
-                          placeholder="密码"
-                          type="password"
-                        >
-                        </el-input>
-                      </el-col>
-                    </el-row>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-row class="inputContent">
-                      <el-col :offset="2">
-                        <el-button
-                          type="primary"
-                          @click="Submit"
-                          style="
-                            width: 60%;
-                            margin-top: 10px;
-                            margin-left: 20px;
-                            margin-right: 10px;
-                          "
-                          >登录
-                        </el-button>
-                      </el-col>
-                    </el-row>
-                  </el-form-item>
-                </el-form>
-              </div>
-            </el-card>
+            <h2 class="login-title">教我编程图书商城</h2>
+            <el-form :model="form" status-icon :rules="rules" ref="form">
+              <el-form-item prop="username">
+                <el-row class="inputContent">
+                  <el-col :span="2">
+                    <i class="el-icon-user" style="font-size: 20px" />
+                  </el-col>
+                  <el-col :span="10">
+                    <el-input
+                      v-model="form.username"
+                      placeholder="邮箱"
+                      clearable
+                    >
+                    </el-input>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-row class="inputContent">
+                  <el-col :span="2">
+                    <i class="el-icon-unlock" style="font-size: 20px" />
+                  </el-col>
+                  <el-col :span="10">
+                    <el-input
+                      v-model="form.password"
+                      placeholder="密码"
+                      type="password"
+                      clearable
+                    >
+                    </el-input>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+              <el-form-item>
+                <el-row class="inputContent">
+                  <el-col :offset="2">
+                    <el-button
+                      type="primary"
+                      @click="onSubmit"
+                      style="
+                        width: 75%;
+                        margin-top: 10px;
+                        margin-left: 20px;
+                        margin-right: 10px;
+                      "
+                      >登录
+                    </el-button>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+            </el-form>
           </div>
-        </div>
+        </el-card>
       </div>
     </div>
   </div>
@@ -73,6 +72,7 @@
 
 
 <script>
+//接口示例，引入axios
 import axios from "axios";
 export default {
   components: {},
@@ -95,6 +95,7 @@ export default {
     };
   },
   methods: {
+    //接口示例函数
     onSubmit() {
       axios({
         url: "http://127.0.0.1:8088/login",
@@ -103,56 +104,42 @@ export default {
           username: this.form.username,
           password: this.form.password,
         },
-      })
-        .then((res) => {
-          const { code, token, msg } = res.data;
-          //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
-          //else 弹出错误提示
-          if (code == "200") {
-            this.$store.commit("token", res.data.token);
-            localStorage.setItem("token", token);
-            //如果是由需要鉴权的页面跳转到登录页面 则redirect= this.$route.query.redirect，如果是直接点击登录跳转到登录页面，则redirect= '/'
-            //const redirect = this.$route.query.redirect || "/";
-            this.$router.push("/");
-          } else {
-            const toast = this.$createToast({
-              time: 2000,
-              txt: msg || "登录失败",
-              type: "error",
+      }).then((res) => {
+        const { code, token, identity } = res.data;
+        //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
+        //else 弹出错误提示
+        if (code == "200") {
+          this.$store.commit("token", res.data.token);
+          this.$store.commit("role", res.data.identity);
+          this.$store.commit("roleHasLoad", true);
+          //localStorage.setItem("token", token);
+          //如果是由需要鉴权的页面跳转到登录页面 则redirect= this.$route.query.redirect，如果是直接点击登录跳转到登录页面，则redirect= '/'
+          if (this.$route.query.redirect) {
+            let redirect = this.$route.query.redirect;
+            this.$message({
+              message: "登陆成功",
+              type: "success",
             });
-            toast.show();
+            this.$router.push(redirect);
+          } else {
+            this.$message({
+              message: "登陆成功",
+              type: "success",
+            });
+            if (res.data.identity != 3) {
+              this.$router.push("/");
+            }
+            else{
+              this.$router.push("/adminManage");
+            }
           }
-        })
-        .catch((err) => {
-        });
-    },
-    async Submit() {
-      let parmas = {
-        username: this.form.username,
-        password: this.form.password,
-      };
-      let res = await this.$axios.post("http://127.0.0.1:8088/login", parmas);
-      console.log(res);
-      const { code, token, msg } = res.data;
-      //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
-      //else 弹出错误提示
-      if (code == "200") {
-        this.$store.commit("token", res.data.token);
-        localStorage.setItem("token", token);
-        //如果是由需要鉴权的页面跳转到登录页面 则redirect= this.$route.query.redirect，如果是直接点击登录跳转到登录页面，则redirect= '/'
-        //const redirect = this.$route.query.redirect || "/";
-        this.$router.push("/");
-      } else {
-        const toast = this.$createToast({
-          time: 2000,
-          txt: msg || "登录失败",
-          type: "error",
-        });
-        toast.show();
-      }
-    },
-    onSign() {
-      this.$router.push("/sign");
+        } else {
+          this.$message({
+            message: "登陆失败",
+            type: "success",
+          });
+        }
+      });
     },
   },
 };
@@ -165,19 +152,24 @@ export default {
   background-color: rgb(255, 255, 255); /* 透明背景色 */
   padding: 30px;
 }
-
+.login {
+  background: url("../assets/login.jpg") no-repeat;
+  background-position: center;
+  height: 70%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
+}
 /* 背景 */
 .back {
   display: flex;
   justify-content: center;
   align-items: center;
   position: absolute;
-  margin-left: 8%;
-  margin-right: 8%;
-  width: 81%;
-  height: 70%;
+  width: 100%;
+  height: 100%;
 }
-
 /* 标题 */
 .login-title {
   color: #303133;
@@ -205,11 +197,11 @@ export default {
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  margin-left: 20%;
+  margin-left: 10%;
 }
 .el-card {
-  margin: 5%;
-  width: 500px;
+  margin: 5% 7%;
+  width: 400px;
   height: 400px;
 }
 .submit {
