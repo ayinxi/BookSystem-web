@@ -1,7 +1,10 @@
 <template>
   <div>
     <!--header-->
-    <div>
+    <div class="header">
+      <div class="logo">
+        <img width="250px" src="../assets/logo.png" />
+      </div>
       <div class="title">
         <el-page-header v-if="page == 0" content="购物车"></el-page-header>
         <el-page-header
