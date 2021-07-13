@@ -55,32 +55,32 @@ const routes = [
     name: 'shopIndex',
     component: () => import('../views/shopIndex.vue')
   },
-    {
-        path:'/adminManage',
-        name:'adminManage',
-        component: () => import('../components/adminManage.vue')
-    },
-    {
-        path:'/manageClass',
-        name:'manageClass',
-        component: () => import('../components/manageClass.vue')
-    },
-    {
-        path:'/manageMerchant',
-        name:'manageMerchant',
-        component: () => import('../components/manageMerchant.vue')
-    },
-    {
-        path: '/shopping',
-        name: 'shopping',
-      //meta: { auth: true },//登录鉴权
-        component: () => import('../components/shopping.vue')
-    },
-    {
-        path:'/orderInfo',
-        name:'orderInfo',
-        component: () => import('../views/orderInfo.vue')
-    }
+  {
+    path: '/adminManage',
+    name: 'adminManage',
+    component: () => import('../components/adminManage.vue')
+  },
+  {
+    path: '/manageClass',
+    name: 'manageClass',
+    component: () => import('../components/manageClass.vue')
+  },
+  {
+    path: '/manageMerchant',
+    name: 'manageMerchant',
+    component: () => import('../components/manageMerchant.vue')
+  },
+  {
+    path: '/shopping',
+    name: 'shopping',
+    //meta: { auth: true },//登录鉴权
+    component: () => import('../components/shopping.vue')
+  },
+  {
+    path: '/orderInfo',
+    name: 'orderInfo',
+    component: () => import('../views/orderInfo.vue')
+  }
 ]
 
 const router = new VueRouter({
