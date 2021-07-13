@@ -1,11 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-
 Vue.use(VueRouter)
 
 const routes = [
-
   {
     path: '/login',
     name: 'login',
@@ -17,22 +15,10 @@ const routes = [
     component: () => import('../views/sign.vue')
   },
   {
-    path: '/home',
-    name: 'home',
-    component: () => import('../views/Home.vue'),
-
-  },
-  {
     path: '/person',
     name: 'person',
     //meta: { auth: true },//登录鉴权
     component: () => import('../components/personPage.vue')
-  },
-  {
-    path: '/shoppingTrolley',
-    name: 'shoppingTrolley',
-    //meta: { auth: true },//登录鉴权
-    component: () => import('../components/shoppingTrolley.vue')
   },
   {
     path: '/',
@@ -68,7 +54,33 @@ const routes = [
     path: '/shopIndex',
     name: 'shopIndex',
     component: () => import('../views/shopIndex.vue')
-  }
+  },
+    {
+        path:'/adminManage',
+        name:'adminManage',
+        component: () => import('../components/adminManage.vue')
+    },
+    {
+        path:'/manageClass',
+        name:'manageClass',
+        component: () => import('../components/manageClass.vue')
+    },
+    {
+        path:'/manageMerchant',
+        name:'manageMerchant',
+        component: () => import('../components/manageMerchant.vue')
+    },
+    {
+        path: '/shopping',
+        name: 'shopping',
+      //meta: { auth: true },//登录鉴权
+        component: () => import('../components/shopping.vue')
+    },
+    {
+        path:'/orderInfo',
+        name:'orderInfo',
+        component: () => import('../views/orderInfo.vue')
+    }
 ]
 
 const router = new VueRouter({

@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "22781007",
+      "name": "创业项目",
+      "font_class": "chuangyexiangmu",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "17967617",
+      "name": "商铺",
+      "font_class": "shangpu",
+      "unicode": "ee9a",
+      "unicode_decimal": 61082
+    },
+    {
+      "icon_id": "17967630",
+      "name": "分类",
+      "font_class": "fenlei",
+      "unicode": "eea7",
+      "unicode_decimal": 61095
+    },
+    {
       "icon_id": "17967618",
       "name": "反馈",
       "font_class": "fankui",
