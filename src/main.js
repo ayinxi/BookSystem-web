@@ -6,11 +6,13 @@ import axios from 'axios'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import "./assets/iconfont/iconfont.css"
+import Avue from '@smallwei/avue';
+import '@smallwei/avue/lib/index.css';
 
 //axios赋值给变量http		将axios挂到vue原型上
 Vue.prototype.$axios = axios
 
-Vue.use(ElementUI);
+Vue.use(ElementUI,Avue,{axios});
 Vue.config.productionTip = false
 //定义全局默认配置
 //axios.defaults.headers.common['Authentication'] = store.state.token;
