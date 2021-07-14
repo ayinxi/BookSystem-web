@@ -11,7 +11,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   plugins: [vuexLocalStorage.plugin],
   state: {
-    token: localStorage.getItem('token') || '',
+    token: '',
     gobalSearchText: "",
     gobalSearchType: "",
     hasUnfinishedRoute: false,
@@ -20,8 +20,9 @@ export default new Vuex.Store({
     roleHasLoad: false,
     function: {},
     role: {},
+    username: "",
     setToken: {},
-    delToken: {},
+    detToken: {},
   },
   mutations: {
     setToken(state, payload) {
@@ -40,6 +41,7 @@ export default new Vuex.Store({
       state.hasUnfinishedRoute = false
     },
     clearCache(state) {
+      sessionStorage.removeItem('token')
       state.hasUnfinishedRoute = false
       state.unfinishedRoute = {}
       state.ainiyou = ''
@@ -64,6 +66,9 @@ export default new Vuex.Store({
     },
     token(state, payload) {
       state.token = payload
+    },
+    username(state, payload) {
+      state.username = payload
     },
     roleHasLoad(state, payload) {
       state.roleHasLoad = payload

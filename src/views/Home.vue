@@ -2,7 +2,7 @@
   <div v-loading="isLoading">
     <div class="bbb"></div>
     <div class="header">
-      <div class="search">
+      <div class="hasRole ? search2 :search2">
         <el-input
           placeholder="给孩子的第一本编程书籍"
           v-model="input"
@@ -11,7 +11,7 @@
           <el-button slot="append" icon="el-icon-search"> </el-button>
         </el-input>
       </div>
-      <div v-if="!hasRole">
+      <div v-if="hasRole">
         <el-row class="shopping">
           <el-col :span="10">
             <el-badge :value="12" class="shopping">
@@ -23,7 +23,6 @@
           <el-col :span="4" class="pageperson">
             <el-button
               size="meduim"
-              type="text"
               class="pageperson"
               icon="el-icon-s-custom"
               @click="gotoPersonPage"
@@ -36,12 +35,12 @@
         </el-row>
       </div>
       <div v-else>
-        <el-row class="shopping">
-          <el-col :span="10">
-            <el-button size="meduim" type="text" style="font-size:30px">注册</el-button>
+        <el-row class="hasNoRole">
+          <el-col >
+            <el-button size="meduim" @click="gotoSign">注册</el-button>
           </el-col>
-          <el-col :span="4" class="pageperson">
-            <el-button size="meduim" class="pageperson" @click="gotoPersonPage"  type="text"
+          <el-col  style="margin:20px 0">
+            <el-button size="meduim" class="pageperson" @click="gotoLogin"
               >登陆</el-button
             >
           </el-col>
@@ -68,6 +67,12 @@ export default {
     },
   },
   methods: {
+    gotoSign() {
+      this.$router.push("/sign");
+    },
+    gotoLogin() {
+      this.$router.push("/login");
+    },
     gotoPersonPage() {
       this.$router.push("/person");
     },
@@ -98,25 +103,32 @@ export default {
   margin-right: 10%;
   height: 20%;
 }
-.logo {
-  display: flex;
-  justify-content: center;
-  height: 100px;
-  width: 200px;
-  margin: 20px 100px;
-}
 .search {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px;
-  margin-left: 500px;
+  margin-left:500px;
+}
+.search2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  margin-left:350px;
 }
 .shopping {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px;
+}
+.hasNoRole{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  margin-left:50px;
 }
 .pageperson {
   display: flex;

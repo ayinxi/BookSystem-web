@@ -113,7 +113,9 @@ export default {
           //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
           //else 弹出错误提示
           if (code == "200") {
+            sessionStorage.setItem("token",res.data.token);
             this.$store.commit("token", res.data.token);
+            this.$store.commit("username", this.form.username);
             this.$store.commit("role", res.data.identity);
             this.$store.commit("roleHasLoad", true);
             //localStorage.setItem("token", token);

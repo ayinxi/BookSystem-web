@@ -31,20 +31,17 @@
               <el-input v-model="userInfo.name"> </el-input>
             </el-form-item>
             <el-form-item label="绑定邮箱" prop="username">
-              <el-input v-model="userInfo.username"> </el-input>
-            </el-form-item>
-            <el-form-item>
-              <i class="el-icon-warning-outline" style="margin-right: 5px"></i>
-              <i style="color: #909399"
-                >邮箱一旦绑定不得更改，如有需要请联系管理员</i
-              >
+              <el-input v-model="userInfo.username" placeholder="邮箱一旦绑定不得更改"> </el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <el-input v-model="userInfo.password" type="password"> </el-input>
             </el-form-item>
-
             <el-form-item label="确认密码" prop="checkpass">
               <el-input v-model="userInfo.checkpass" type="password">
+              </el-input>
+            </el-form-item>
+            <el-form-item label="验证码" prop="activationCode"> 
+              <el-input v-model="userInfo.activationCode">
               </el-input>
             </el-form-item>
             <el-form-item>
@@ -78,6 +75,7 @@ export default {
         username: "",
         password: "",
         checkpass: "",
+        activationCode:"",
       },
       rules: {
         name: [{ required: true, message: "昵称不得为空", trigger: "blur" }],
@@ -108,6 +106,7 @@ export default {
             trigger: "blur",
           },
         ],
+        activationCode: [{ required: true, message: "验证码不得为空", trigger: "blur" }],
       },
     };
   },
@@ -159,7 +158,7 @@ export default {
 .el-card {
   margin: 1% 3%;
   width: 500px;
-  height: 480px;
+  height: 500px;
 }
 .submit {
   display: flex;
@@ -172,7 +171,7 @@ export default {
   left: unset;
 }
 .el-form-item {
-  margin-bottom: 0px;
+  margin-bottom: 5px;
 }
 .login {
   background: url("../assets/login.jpg") no-repeat;

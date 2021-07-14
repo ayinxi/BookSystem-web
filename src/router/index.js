@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 if (sessionStorage.getItem('token')) {
-  store.commit('set_token', sessionStorage.getItem('token'))
+  store.commit('setToken', sessionStorage.getItem('token'))
 }
 
 
