@@ -67,7 +67,7 @@
                 <el-menu-item-group>
                   <el-menu-item
                     index="1-1"
-                    @click.native="NanPinFilter(this.Lists)"
+                    @click.native="NanPinFilter"
                     style="color: rgb(233, 150, 122); font-weight: 1000"
                     >男频</el-menu-item
                   >
@@ -207,12 +207,11 @@
             <el-row class="rowStyle" type="flex">
               <el-col
                 :span="6"
-                v-for="book in Lists.slice(
+                v-for="book in displayList.slice(
                   (currentPage - 1) * pageSize,
                   currentPage * pageSize
                 )"
                 :key="book.Name"
-                v-show="book.Show"
               >
                 <el-container>
                   <el-header
@@ -221,7 +220,7 @@
                     <el-image
                       class="imgStyle1"
                       :src="book.Img"
-                      @click.native="goToBookInfo"
+                      @click.native="goToBookInfo()"
                     >
                     </el-image>
                   </el-header>
@@ -229,7 +228,7 @@
                     <el-link
                       :underline="false"
                       class="book-name"
-                      @click="goToBookInfo"
+                      @click="goToBookInfo()"
                       >{{ book.Name }}</el-link
                     >
                     <p style="color: gray; margin: 0%">{{ book.Author }}</p>
@@ -245,7 +244,7 @@
               :page-size="pageSize"
               @current-change="handleCurrentChange"
               layout="prev, pager, next"
-              :total="length()"
+              :total="this.displayList.length"
             >
             </el-pagination>
           </el-main>
@@ -275,7 +274,6 @@ export default {
           ClassTwo: "男频",
           Price: 10,
           PubTime: 2021,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -285,7 +283,6 @@ export default {
           ClassTwo: "女频",
           Price: 11,
           PubTime: 2020,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -295,7 +292,6 @@ export default {
           ClassTwo: "中国小说",
           Price: 12,
           PubTime: 2019,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -305,7 +301,6 @@ export default {
           ClassTwo: "外国小说",
           Price: 13,
           PubTime: 2018,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -315,7 +310,6 @@ export default {
           ClassTwo: "教材",
           Price: 13,
           PubTime: 2021,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -325,7 +319,6 @@ export default {
           ClassTwo: "教辅资料",
           Price: 13,
           PubTime: 2020,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -335,7 +328,6 @@ export default {
           ClassTwo: "文学",
           Price: 13,
           PubTime: 2019,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -345,7 +337,6 @@ export default {
           ClassTwo: "艺术",
           Price: 13,
           PubTime: 2018,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -355,7 +346,6 @@ export default {
           ClassTwo: "青春",
           Price: 13,
           PubTime: 2021,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -365,7 +355,6 @@ export default {
           ClassTwo: "动漫",
           Price: 13,
           PubTime: 2020,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -375,7 +364,6 @@ export default {
           ClassTwo: "外国小说",
           Price: 13,
           PubTime: 2019,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -385,7 +373,6 @@ export default {
           ClassTwo: "外国小说",
           Price: 13,
           PubTime: 2018,
-          Show: true,
         },
         {
           Img: require("../assets/kuku.png"),
@@ -395,7 +382,125 @@ export default {
           ClassTwo: "外国小说",
           Price: 13,
           PubTime: 2021,
-          Show: true,
+        },
+      ],
+      displayList: [
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本1号",
+          Author: "张三",
+          ClassOne: "网络文学",
+          ClassTwo: "男频",
+          Price: 10,
+          PubTime: 2021,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本2号",
+          Author: "李四",
+          ClassOne: "网络文学",
+          ClassTwo: "女频",
+          Price: 11,
+          PubTime: 2020,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本3号",
+          Author: "王五",
+          ClassOne: "小说",
+          ClassTwo: "中国小说",
+          Price: 12,
+          PubTime: 2019,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本4号",
+          Author: "赵六",
+          ClassOne: "小说",
+          ClassTwo: "外国小说",
+          Price: 13,
+          PubTime: 2018,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本5号",
+          Author: "赵六",
+          ClassOne: "教育",
+          ClassTwo: "教材",
+          Price: 13,
+          PubTime: 2021,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本6号",
+          Author: "赵六",
+          ClassOne: "教育",
+          ClassTwo: "教辅资料",
+          Price: 13,
+          PubTime: 2020,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本7号",
+          Author: "赵六",
+          ClassOne: "文艺",
+          ClassTwo: "文学",
+          Price: 13,
+          PubTime: 2019,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本8号",
+          Author: "赵六",
+          ClassOne: "文艺",
+          ClassTwo: "艺术",
+          Price: 13,
+          PubTime: 2018,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本9号",
+          Author: "赵六",
+          ClassOne: "青春/动漫",
+          ClassTwo: "青春",
+          Price: 13,
+          PubTime: 2021,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本10号",
+          Author: "赵六",
+          ClassOne: "青春/动漫",
+          ClassTwo: "动漫",
+          Price: 13,
+          PubTime: 2020,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本11号",
+          Author: "赵六",
+          ClassOne: "小说",
+          ClassTwo: "外国小说",
+          Price: 13,
+          PubTime: 2019,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本12号",
+          Author: "赵六",
+          ClassOne: "小说",
+          ClassTwo: "外国小说",
+          Price: 13,
+          PubTime: 2018,
+        },
+        {
+          Img: require("../assets/kuku.png"),
+          Name: "书本13号",
+          Author: "赵六",
+          ClassOne: "小说",
+          ClassTwo: "外国小说",
+          Price: 13,
+          PubTime: 2021,
         },
       ],
     };
@@ -405,7 +510,7 @@ export default {
       this.activeIndex1 = " ";
       this.activeIndex2 = " ";
       this.currentPage = 1;
-      for (let i = 0; i < this.Lists.length; i++) this.Lists[i].Show = true;
+      this.displayList = this.Lists;
     },
     handleCurrentChange(val) {
       this.currentPage = val;
@@ -421,146 +526,89 @@ export default {
     },
     NanPinFilter() {
       this.activeIndex1 = "";
-      /*this.Lists = this.Lists.filter(
-        (item, index) => item.ClassTwo=="男频"
-      );
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "男频") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }*/
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "男频");
     },
     NvPinFilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "女频") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "女频");
     },
     JiaoCaiFilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "教材") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "教材");
     },
     JiaoFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "教辅资料") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassTwo == "教辅资料"
+      );
     },
     ChinaFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "中国小说") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassTwo == "中国小说"
+      );
     },
     ForeginFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "外国小说") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassTwo == "外国小说"
+      );
     },
     LiteratureFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "文学") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "文学");
     },
     ArtFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "艺术") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "艺术");
     },
     YouthFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "青春") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "青春");
     },
     CartoonFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "动漫") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "动漫");
     },
     TwoZeroTwoOneFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].PubTime == 2021) this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.PubTime == 2021);
     },
     TwoZeroTwoZeroFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].PubTime == 2020) this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.PubTime == 2020);
     },
     TwoZeroOneNineFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].PubTime == 2019) this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.PubTime == 2019);
     },
     TwoZeroOneEightFuilter() {
       this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].PubTime <= 2018) this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.PubTime <= 2018);
     },
     NetworkFilter() {
       this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "网络文学") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "网络文学"
+      );
     },
     EducationFilter() {
       this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "教育") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "教育");
     },
     NovelFilter() {
       this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "小说") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "小说");
     },
     LandAFilter() {
       this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "文艺") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "文艺");
     },
     YandCFilter() {
       this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "青春/动漫") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    length() {
-      let temp = 0;
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].Show == true) temp++;
-      }
-      return temp;
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "青春/动漫"
+      );
     },
   },
   created() {
