@@ -68,7 +68,7 @@
         </el-header>
         <el-container style="margin-top: 3%">
           <el-aside width="25%">
-            <img class="imgStyle" src="../assets/kuku.png" />
+            <img class="imgStyle3" src="../assets/kuku.png" />
           </el-aside>
           <el-main
             ><el-link :underline="false" @click.native="goToShopIndex"
@@ -152,7 +152,7 @@ export default {
 };
 </script>
 <style acoped>
-.imgStyle {
+.imgStyle3 {
   width: 100%;
   height: 95%;
 }

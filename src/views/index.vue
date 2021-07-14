@@ -67,7 +67,7 @@
                 <el-menu-item-group>
                   <el-menu-item
                     index="1-1"
-                    @click.native="NanPinFilter"
+                    @click.native="NanPinFilter(this.Lists)"
                     style="color: rgb(233, 150, 122); font-weight: 1000"
                     >男频</el-menu-item
                   >
@@ -207,7 +207,10 @@
             <el-row class="rowStyle" type="flex">
               <el-col
                 :span="6"
-                v-for="book in Lists"
+                v-for="book in Lists.slice(
+                  (currentPage - 1) * pageSize,
+                  currentPage * pageSize
+                )"
                 :key="book.Name"
                 v-show="book.Show"
               >
@@ -237,7 +240,13 @@
                 </el-container>
               </el-col>
             </el-row>
-            <el-pagination layout="prev, pager, next" :total="500">
+            <el-pagination
+              :current-page="currentPage"
+              :page-size="pageSize"
+              @current-change="handleCurrentChange"
+              layout="prev, pager, next"
+              :total="length()"
+            >
             </el-pagination>
           </el-main>
         </el-container>
@@ -255,6 +264,8 @@ export default {
     return {
       activeIndex1: " ",
       activeIndex2: " ",
+      currentPage: 1,
+      pageSize: 8,
       Lists: [
         {
           Img: require("../assets/kuku.png"),
@@ -393,7 +404,11 @@ export default {
     showAll() {
       this.activeIndex1 = " ";
       this.activeIndex2 = " ";
+      this.currentPage = 1;
       for (let i = 0; i < this.Lists.length; i++) this.Lists[i].Show = true;
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
     },
     handleSelect1() {
       this.activeIndex2 = " ";
@@ -406,10 +421,13 @@ export default {
     },
     NanPinFilter() {
       this.activeIndex1 = "";
+      /*this.Lists = this.Lists.filter(
+        (item, index) => item.ClassTwo=="男频"
+      );
       for (let i = 0; i < this.Lists.length; i++) {
         if (this.Lists[i].ClassTwo == "男频") this.Lists[i].Show = true;
         else this.Lists[i].Show = false;
-      }
+      }*/
     },
     NvPinFilter() {
       this.activeIndex1 = "";
@@ -536,6 +554,13 @@ export default {
         if (this.Lists[i].ClassOne == "青春/动漫") this.Lists[i].Show = true;
         else this.Lists[i].Show = false;
       }
+    },
+    length() {
+      let temp = 0;
+      for (let i = 0; i < this.Lists.length; i++) {
+        if (this.Lists[i].Show == true) temp++;
+      }
+      return temp;
     },
   },
   created() {
