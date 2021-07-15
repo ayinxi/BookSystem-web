@@ -14,13 +14,6 @@ Vue.prototype.$axios = axios
 
 Vue.use(ElementUI);
 
-<<<<<<< HEAD
-=======
-/*import Avue from '@smallwei/avue';
-import '@smallwei/avue/lib/index.css';
-Vue.use(Avue);
-*/
->>>>>>> 05b6f6f40af3205946532276a964a432cd707e5e
 Vue.config.productionTip = false
 //定义全局默认配置
 //axios.defaults.headers.common['Authentication'] = store.state.token;
