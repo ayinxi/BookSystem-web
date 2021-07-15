@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div class="bbb"></div>
     <div class="header">
       <div class="logo3">
         <img src="../assets/jwbc.png" />
@@ -9,123 +8,145 @@
         >返回商家管理页面</el-button
       >
     </div>
-    <avue-data-rotate :option="option"></avue-data-rotate>
-    <div style="margin: 3% 10% 0%">
-      <el-button @click="batchConfirm" style="margin-left: 78.5%" type="danger"
+    <div style="margin: 3% 18%">
+      <el-row style="margin: 0% 12% 5%">
+        <el-card>
+          <el-container>
+            <el-aside width="35px"><div class="verticalBar1"></div></el-aside>
+            <el-main>
+              <span style="font-weight: 1000">欢迎您，亲爱的店家 </span>
+              <p style="font-weight: 1000">
+                您可以在本页面进行订单管理，包括: 查看订单详情 确认订单 取消订单
+              </p>
+            </el-main>
+          </el-container>
+        </el-card>
+      </el-row>
+    </div>
+    <div style="margin: 3% 18% 0%">
+      <el-row style="margin: 0% 12% 5%">
+        <el-card>
+          <el-col :span="8" style="text-align: center">
+            <p>今日新增订单数</p>
+            <p style="font-size: 40px">{{ newOrder }}</p>
+          </el-col>
+          <el-col :span="16" style="text-align: center">
+            <p>各订单类型所占比例</p>
+            <div>
+              <div id="chartPie" class="pie-wrap"></div>
+            </div>
+          </el-col>
+        </el-card>
+      </el-row>
+    </div>
+
+    <div style="margin: 1.5% 10%">
+      <el-card>
+        <el-table
+          ref="multipleTable"
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55"> </el-table-column>
+          <el-table-column
+            label="日期"
+            prop="date"
+            sortable
+            width="200"
+            :filters="[
+              { text: '2021-07-08', value: '2021-07-08' },
+              { text: '2021-07-09', value: '2021-07-09' },
+            ]"
+            :filter-method="filterDate"
+          >
+            <template slot-scope="scope">{{ scope.row.date }}</template>
+          </el-table-column>
+          <el-table-column label="用户名" width="200">
+            <template slot-scope="scope">{{ scope.row.username }}</template>
+          </el-table-column>
+          <el-table-column
+            label="总价"
+            width="200"
+            prop="totalprice"
+            sortable
+            :filters="[
+              { text: '0-50元', value: 50 },
+              { text: '50-100元', value: 100 },
+            ]"
+            :filter-method="filterTotalprice"
+          >
+            <template slot-scope="scope">￥{{ scope.row.totalprice }}</template>
+          </el-table-column>
+          <el-table-column
+            label="订单状态"
+            width="200"
+            prop="state"
+            :filters="[
+              { text: '未发货', value: '未发货' },
+              { text: '已发货', value: '已发货' },
+              { text: '正在申请退款', value: '正在申请退款' },
+              { text: '已退款', value: '已退款' },
+              { text: '已拒绝退款', value: '已拒绝退款' },
+              { text: '已收货', value: '已收货' },
+            ]"
+            :filter-method="filterState"
+          >
+            <template slot-scope="scope">{{ scope.row.state }}</template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope"
+              ><el-button
+                size="mini"
+                type="text"
+                @click="handleInfo(scope.$index, scope.row)"
+                >查看详情</el-button
+              >
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleConfirm(scope.$index, scope.row)"
+                :disabled="
+                  scope.row.state == '已退款' ||
+                  scope.row.state == '已发货' ||
+                  scope.row.state == '已收货'
+                "
+                >确认订单</el-button
+              >
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleRefuse(scope.$index, scope.row)"
+                :disabled="
+                  scope.row.state == '已退款' ||
+                  scope.row.state == '已发货' ||
+                  scope.row.state == '已收货'
+                "
+                >取消订单</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table></el-card
+      >
+    </div>
+    <div style="margin: 0% 10% 3%">
+      <el-button @click="batchConfirm" style="margin-left: 78%" type="danger"
         >批量确认订单</el-button
       >
       <el-button @click="batchRefuse" type="warning">批量取消订单</el-button>
-    </div>
-    <div style="margin: 0% 10%">
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        :row-class-name="tableRowClassName"
-      >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column
-          label="日期"
-          prop="date"
-          sortable
-          width="200"
-          :filters="[
-            { text: '2021-07-08', value: '2021-07-08' },
-            { text: '2021-07-09', value: '2021-07-09' },
-          ]"
-          :filter-method="filterDate"
-        >
-          <template slot-scope="scope">{{ scope.row.date }}</template>
-        </el-table-column>
-        <el-table-column label="用户名" width="200">
-          <template slot-scope="scope">{{ scope.row.username }}</template>
-        </el-table-column>
-        <el-table-column
-          label="总价"
-          width="200"
-          prop="totalprice"
-          sortable
-          :filters="[
-            { text: '0-50元', value: 50 },
-            { text: '50-100元', value: 100 },
-          ]"
-          :filter-method="filterTotalprice"
-        >
-          <template slot-scope="scope">￥{{ scope.row.totalprice }}</template>
-        </el-table-column>
-        <el-table-column
-          label="订单状态"
-          width="200"
-          prop="state"
-          :filters="[
-            { text: '未发货', value: '未发货' },
-            { text: '已发货', value: '已发货' },
-            { text: '正在申请退款', value: '正在申请退款' },
-            { text: '已退款', value: '已退款' },
-            { text: '已拒绝退款', value: '已拒绝退款' },
-            { text: '已收货', value: '已收货' },
-          ]"
-          :filter-method="filterState"
-        >
-          <template slot-scope="scope">{{ scope.row.state }}</template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope"
-            ><el-button
-              size="mini"
-              type="primary"
-              @click="handleInfo(scope.$index, scope.row)"
-              >查看详情</el-button
-            >
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleConfirm(scope.$index, scope.row)"
-              :disabled="
-                scope.row.state == '已退款' ||
-                scope.row.state == '已发货' ||
-                scope.row.state == '已收货'
-              "
-              >确认订单</el-button
-            >
-            <el-button
-              size="mini"
-              type="warning"
-              @click="handleRefuse(scope.$index, scope.row)"
-              :disabled="
-                scope.row.state == '已退款' ||
-                scope.row.state == '已发货' ||
-                scope.row.state == '已收货'
-              "
-              >取消订单</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
     </div>
   </div>
 </template>
 
 <script>
+import echarts from "echarts";
 export default {
   data() {
     return {
-      option: {
-        span: 8,
-        data: [
-          {
-            click: function (item) {
-              alert(JSON.stringify(item));
-            },
-            count: "150",
-            title: "新订单",
-            icon: "el-icon-warning",
-            color: "rgb(49, 180, 141)",
-          },
-        ],
-      },
+      newOrder: 12345,
       tableData: [
         {
           date: "2021-07-08",
@@ -196,6 +217,11 @@ export default {
       ],
     };
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.drawPieChart();
+    });
+  },
   methods: {
     goToManage() {
       this.$router.push("/shopManage");
@@ -204,13 +230,14 @@ export default {
     handleInfo() {
       this.$router.push("/orderInfo");
     },
-    handleConfirm() {
+    handleConfirm(index, row) {
       this.$confirm("是否确认订单?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
+          row.state = "已发货";
           this.$message({
             type: "success",
             message: "确认成功!",
@@ -223,6 +250,7 @@ export default {
           });
         });
     },
+    handleRefuse() {},
     filterDate(value, row, column) {
       const property = column["property"];
       return row[property] === value;
@@ -234,17 +262,99 @@ export default {
       const property = column["property"];
       return row[property] === value;
     },
-    handleRefuse() {},
+
     batchConfirm() {},
     batchRefuse() {},
-    tableRowClassName({ rowIndex }) {
-      if (rowIndex % 2 === 1) return "warning-row";
+    drawPieChart() {
+      this.chartPie = echarts.init(
+        document.getElementById("chartPie"),
+        "macarons"
+      );
+      this.chartPie.setOption({
+        //显示在上面的文字
+        tooltip: {
+          trigger: "item",
+          // formatter: "{a}<br/>{b}: <br/>{c}({d}%)",  其中 {a}指向name名称（访问来源）
+          formatter: "{b}: <br/>{c}({d}%)",
+        },
+        legend: {
+          data: [
+            "未发货",
+            "已发货",
+            "正在申请退款",
+            "已退款",
+            "已拒绝退款",
+            "已收货",
+          ],
+          right: 500,
+          orient: "vertical",
+          // 下面注释的代码是控制分类放在哪个地方,需要体验的话，直接把上面的代码注释，把下面的代码解开注释即可
+          //   data: ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"],
+          //   left: "center",
+          //   top: "bottom",
+          //   orient: "horizontal"
+        },
+        series: [
+          {
+            name: "访问来源",
+            type: "pie",
+            //圆圈的粗细
+            radius: ["50%", "80%"],
+            //圆圈的位置
+            center: ["50%", "50%"],
+            data: [
+              {
+                value: 335,
+                name: "未发货",
+              },
+              {
+                value: 310,
+                name: "已发货",
+              },
+              {
+                value: 234,
+                name: "正在申请退款",
+              },
+              {
+                value: 135,
+                name: "已退款",
+              },
+              {
+                value: 548,
+                name: "已拒绝退款",
+              },
+              {
+                value: 532,
+                name: "已收货",
+              },
+            ],
+            //动画持续时间：2秒
+            animationDuration: 2000,
+            //控制是否显示指向文字的,默认为true
+            label: {
+              show: false,
+              position: "center",
+              //以下代码可以代表指向小文字的
+              //   show: true,
+              //   formatter: "{b} : {c} ({d}%)",
+              //   textStyle: {
+              //     color: "#333",
+              //     fontSize: 14,
+              //   },
+            },
+          },
+        ],
+      });
     },
   },
 };
 </script>
 
 <style acoped>
+.pie-wrap {
+  width: 100%;
+  height: 126px;
+}
 .header {
   display: flex;
   justify-content: space-around;
@@ -261,16 +371,17 @@ export default {
   position: relative;
   right: 306px;
 }
-.bbb {
-  background: url("../assets/blank.jpg") no-repeat;
-  background-position: center;
-  height: 20%;
-  width: 100%;
-  background-size: cover;
-  position: absolute;
-  z-index: -1;
-}
 .el-table .warning-row {
   background: oldlace;
+}
+.verticalBar1 {
+  width: 3px;
+  height: 100%;
+  background: rgb(60, 59, 105);
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 0px;
+  margin-left: 30px;
+  border-radius: 20%;
 }
 </style>

@@ -11,6 +11,7 @@
     "@smallwei/avue": "^2.8.16",
     "axios": "^0.21.1",
     "core-js": "^2.6.5",
+    "echarts": "^4.9.0",
     "element-ui": "^2.15.3",
     "vue": "^2.6.14",
     "vue-cropper": "^0.5.6",
