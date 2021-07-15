@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="logo4">
-        <img src="../assets/jwbc.png" />
+        <img width="250px" src="../assets/jwbc.png" />
       </div>
       <div>
             <el-button
@@ -97,7 +97,6 @@ export default {
 .logo4 {
   display: flex;
   justify-content: center;
-  height: 100px;
   width: 200px;
   margin: 20px 100px;
   position: relative;
