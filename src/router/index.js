@@ -81,6 +81,16 @@ const routes = [
     //meta: { auth: true },//登录鉴权
     component: () => import('../components/shopping.vue')
   },
+  {
+    path: '/refundM',
+    name: 'refundM',
+    component: () => import('../views/refundM.vue')
+  },
+  {
+    path: '/refundInfo',
+    name: 'refundInfo',
+    component: () => import('../views/refundInfo.vue')
+  }
 ]
 
 const router = new VueRouter({

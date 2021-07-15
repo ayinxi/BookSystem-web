@@ -1,13 +1,11 @@
 <template>
   <div>
-    <div class="header1">
-      <div class="logo">
-        <img width="250px" src="../assets/logo.png" />
+    <div class="bbb"></div>
+    <div class="header">
+      <div class="logo4">
+        <img src="../assets/jwbc.png" />
       </div>
       <div>
-        <el-row class="shopping">
-          <el-col :span="10"> </el-col>
-          <el-col :span="5" class="pageperson">
             <el-button
               size="meduim"
               class="pageperson"
@@ -15,11 +13,9 @@
               @click="gotoPersonPage"
               >个人主页</el-button
             >
-          </el-col>
-        </el-row>
       </div>
     </div>
-    <div style="margin: 0% 18%">
+    <div style="margin: 3% 18%">
       <el-row style="margin: 0% 12% 5%">
         <el-card>
           <el-container>
@@ -31,26 +27,35 @@
                 >{{ shopname }}</span
               >
               <p style="font-weight: 1000">
-                你可以在本页面使用如下功能: 图书管理 或 订单管理
+                你可以在本页面使用如下功能: 图书管理 或 订单管理 或 退款管理
               </p>
             </el-main>
           </el-container>
         </el-card>
       </el-row>
       <el-row>
-        <el-col class="el-colStyle">
+        <el-col :span="8" class="el-colStyle">
           <el-card class="el-cardStyle" shadow="hover" @click.native="goToBookM"
             ><p class="iconfont-chuangyexiangmu" style="font-size: 40px"></p>
             <p class="spanStyle">图书管理</p>
           </el-card>
         </el-col>
-        <el-col class="el-colStyle">
+        <el-col :span="8" class="el-colStyle">
           <el-card
             class="el-cardStyle"
             shadow="hover"
             @click.native="goToOrderM"
             ><p class="iconfont-dingdan" style="font-size: 40px"></p>
             <p class="spanStyle">订单管理</p></el-card
+          >
+        </el-col>
+        <el-col :span="8" class="el-colStyle">
+          <el-card
+            class="el-cardStyle"
+            shadow="hover"
+            @click.native="goToRefundM"
+            ><p class="iconfont-shouhou" style="font-size: 40px"></p>
+            <p class="spanStyle">退款管理</p></el-card
           >
         </el-col>
       </el-row>
@@ -69,32 +74,44 @@ export default {
     gotoPersonPage() {
       this.$router.push("/person");
     },
-    goToIndex() {
-      this.$router.push("/");
-    },
     goToBookM() {
       this.$router.push("/bookM");
     },
     goToOrderM() {
       this.$router.push("/orderM");
     },
+    goToRefundM(){
+      this.$router.push("/refundM");
+    }
   },
 };
 </script>
 
 <style acoped>
-.header1 {
+.header {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-top: 20px;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin-left: 10%;
+  margin-right: 10%;
 }
-.logo {
+.logo4 {
   display: flex;
   justify-content: center;
-  margin: 20px;
+  height: 100px;
+  width: 200px;
+  margin: 20px 100px;
+  position: relative;
+  right:315px;
+}
+.bbb {
+  background: url("../assets/blank.jpg") no-repeat;
+  background-position: center;
+  height: 20%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
 }
 .shopping {
   display: flex;
@@ -107,20 +124,14 @@ export default {
   justify-content: center;
   margin: 20px;
 }
-.pageperson {
-  display: flex;
-  justify-content: center;
-  margin: 20px;
-}
 .el-colStyle {
   display: flex;
-  width: 50%;
   justify-content: center;
 }
 .el-cardStyle {
-  min-width: 50%;
+  min-width: 70%;
   display: flex;
-  min-height: 300px;
+  min-height: 100px;
   justify-content: center;
   align-items: center;
   text-align: center;

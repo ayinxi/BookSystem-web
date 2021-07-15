@@ -1,14 +1,15 @@
 <template>
   <div>
+    <div class="bbb"></div>
     <div class="header">
-      <div class="logo">
-        <img width="250px" src="../assets/logo.png" />
+      <div class="logo3">
+        <img src="../assets/jwbc.png" />
       </div>
       <el-button size="medium" @click.native="goToManage"
         >返回商家管理页面</el-button
       >
     </div>
-    <div style="margin: 0% 10%">
+    <div style="margin: 3% 10%">
       <el-row>
         <el-col :span="21" align="right">
           <el-button size="medium" @click.native="addBook">新增图书</el-button>
@@ -214,14 +215,26 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-top: 20px;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin-left: 10%;
+  margin-right: 10%;
 }
-.logo {
+.logo3 {
   display: flex;
   justify-content: center;
-  margin: 20px;
+  height: 100px;
+  width: 200px;
+  margin: 20px 100px;
+  position: relative;
+  right:306px;
+}
+.bbb {
+  background: url("../assets/blank.jpg") no-repeat;
+  background-position: center;
+  height: 20%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
 }
 .imgStyle {
   width: 100px;
