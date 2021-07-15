@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div class="bbb"></div>
     <div class="header">
       <div class="logo3">
         <img src="../assets/jwbc.png" />
@@ -178,14 +177,5 @@ export default {
   margin: 20px 100px;
   position: relative;
   right: 306px;
-}
-.bbb {
-  background: url("../assets/blank.jpg") no-repeat;
-  background-position: center;
-  height: 20%;
-  width: 100%;
-  background-size: cover;
-  position: absolute;
-  z-index: -1;
 }
 </style>
