@@ -16,10 +16,6 @@ Vue.prototype.$axios = axios
 
 Vue.use(ElementUI);
 
-/*import Avue from '@smallwei/avue';
-import '@smallwei/avue/lib/index.css';
-Vue.use(Avue);
-*/
 Vue.config.productionTip = false
 //定义全局默认配置
 //axios.defaults.headers.common['Authentication'] = store.state.token;
@@ -29,12 +25,25 @@ window.__global__ = {
   store
 }
 
-//Vue.prototype.axios = axios
+Vue.prototype.axios = axios
+
 
 new Vue({
   router,
   store,
   render: h => h(App),
 }).$mount('#app')
+
+
+axios.interceptors.request.use(
+  config => {
+    if (store.state.token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
+      config.headers.token = `${store.state.token}`;
+    }
+    return config;
+  },
+  err => {
+    return Promise.reject(err);
+  });
 
 

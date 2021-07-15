@@ -1,9 +1,12 @@
 <template>
   <div>
+    <!--
+    <div class="bbb"></div>
+    -->
     <!--header-->
     <div class="header">
       <div class="logo">
-        <img width="250px" src="../assets/logo.png" />
+        <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
       </div>
       <div class="title">
         <el-page-header v-if="page == 0" content="购物车"></el-page-header>
@@ -27,45 +30,71 @@
       </div>
     </div>
     <!--content-->
-    <div style="margin: 0 5%">
+    <div style="margin:0 10%">
+    <header class="table-header">
+      <el-row>
+        <el-col span="2" class="table-header-item">全选</el-col>
+        <el-col span="8" class="table-header-item">商品信息</el-col>
+        <el-col span="4" class="table-header-item">价格(元)</el-col>
+        <el-col span="4" class="table-header-item">数量</el-col>
+        <el-col span="4" class="table-header-item">小计(元)</el-col>
+        <el-col span="2" class="table-header-item">操作</el-col>
+      </el-row>
+    </header>
+    <container>
+      <el-row>
+        <el-col>新华书店网上商城自营好物</el-col>
+      </el-row>
+      <el-row>
+        <el-col span="2" class="table-header-item">全选</el-col>
+        <el-col span="8" class="table-header-item">商品信息</el-col>
+        <el-col span="4" class="table-header-item">价格(元)</el-col>
+        <el-col span="4" class="table-header-item">数量</el-col>
+        <el-col span="4" class="table-header-item">小计(元)</el-col>
+        <el-col span="2" class="table-header-item">操作</el-col>
+      </el-row>
+    </container>
+
+
+
+
+
+
       <!--我的购物车-->
       <el-row v-if="page == 0">
         <el-col>
           <el-container>
             <el-main>
               <el-table
-                ref="multipleTable"
-                row-key="id"
-                :data="bookList"
-                style="width: 100%"
-                :tree-props="{
-                  children: 'children',
-                  hasChildren: 'hasChildren',
-                }"
-                default-expand-all
-                :header-cell-class-name="handleHead"
-                @selection-change="handleSelectionChange"
+              ref="multipleTable"
+              row-key="id"
+              :data="bookList"
+              style="width: 100%"
+              :tree-props="{
+                children: 'children',
+                hasChildren: 'hasChildren',
+              }"
+              default-expand-all
+              :header-cell-class-name="handleHead"
+              @selection-change="handleSelectionChange"
               >
                 <el-table-column type="selection" width="50"></el-table-column>
-                <el-table-column label="商家">
+                <el-table-column label="店铺">
                   <template slot-scope="scope">
-                    <el-button size="medium" type="text">{{
-                      scope.row.book_merchant
-                    }}</el-button>
+                    <el-link :href="'http://localhost:8083/'+scope.row.book_shopAddr">{{scope.row.book_merchant}}</el-link>
                   </template>
                 </el-table-column>
                 <el-table-column show-overflow-tooltip width="400" label="商品">
                   <template slot-scope="scope">
                     <div style="display: inline-block">
-                      <img
-                        src="../assets/kuku.png"
-                        alt=""
-                        v-if="scope.row.book_num"
-                      />
-                      <!--v-if="scope.row.book_img"-->
-                      <el-button size="medium" type="text">{{
-                        scope.row.book_name
-                      }}</el-button>
+                      <el-row>
+                        <el-col span="12">
+                      <img :src="scope.row.book_img" v-if="scope.row.book_num"/>
+                        </el-col>
+                      <el-col span="12" style="text-align:center">
+                      <el-link :href="'http://localhost:8083/'+scope.row.bookAddr">{{scope.row.book_name}}</el-link>
+                      </el-col>
+                      </el-row>
                     </div>
                   </template>
                 </el-table-column>
@@ -139,6 +168,23 @@
           </el-container>
         </el-col>
       </el-row>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       <!--填写订单-->
       <div v-if="page == 1">
         <div style="margin-bottom: 20px">
@@ -322,6 +368,21 @@
           </el-row>
         </div>
       </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       <!--完成订单-->
       <div v-if="page == 2">
         <el-row class="orderFinish">
@@ -339,6 +400,17 @@
   </div>
 </template>
 
+
+
+
+
+
+
+
+
+
+
+
 <script>
 export default {
   components: {},
@@ -354,32 +426,36 @@ export default {
         {
           id: 1,
           book_merchant: "A",
+          book_shopAddr: "login",
           children:[
             {
               id: 11,
-              book_img: "../assets/kuku.png",
+              book_img: require("../assets/kuku.png"),
               book_name: "C++从入门到放弃",
               book_unitPrice: 50,
               book_num: 2,
               book_inventory: 19,
+              bookAddr: "login",
             },
             {
               id: 12,
-              book_img: "../assets/kuku.png",
+              book_img: require("../assets/kuku.png"),
               book_name: "C++从入门到放弃",
               book_unitPrice: 50,
               book_num: 2,
               book_inventory: 19,
+              bookAddr: "login",
             },
           ]
         },
         {
           id: 2,
           book_merchant: "B",
+          book_shopAddr: "login",
           children:[
             {
               id: 21,
-              book_img: "../assets/kuku.png",
+              book_img: require("../assets/kuku.png"),
               book_name: "C++从入门到放弃",
               book_unitPrice: 50,
               book_num: 2,
@@ -387,7 +463,7 @@ export default {
             },
             {
               id: 22,
-              book_img: "../assets/kuku.png",
+              book_img: require("../assets/kuku.png"),
               book_name: "C++从入门到放弃",
               book_unitPrice: 50,
               book_num: 2,
@@ -459,11 +535,28 @@ export default {
 }
 </script>
 <style>
+.bbb {
+  background: url("../assets/2.jpg") no-repeat;
+  background-position: center;
+  height: 20%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
+}
+
+.divider{
+  background-color: rgb(200,42,39);
+  height: 0.5%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+}
+
 .header {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-top: 20px;
   margin-left: 5%;
   margin-right: 5%;
 }
@@ -482,6 +575,7 @@ export default {
   justify-content: flex-end;
   flex-grow: 1;
 }
+
 .orderFinish {
   display: flex;
   justify-content: center;
@@ -503,5 +597,20 @@ export default {
 }
 .box-card {
   width: 200px;
+}
+
+.table-header{
+  text-align: center;
+  margin: 20px 0;
+  background: rgb(245,245,245);
+  color:#303133;
+  height: 40px;
+  border:1px solid rgb(221,221,221);
+}
+
+.table-header-item
+{
+  margin: 11px 0;
+  font-size: 11px;
 }
 </style>

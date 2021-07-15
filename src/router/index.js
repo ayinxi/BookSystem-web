@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 if (sessionStorage.getItem('token')) {
-  store.commit('set_token', sessionStorage.getItem('token'))
+  store.commit('setToken', sessionStorage.getItem('token'))
 }
 
 
@@ -74,6 +74,16 @@ const routes = [
     path: '/manageMerchant',
     name: 'manageMerchant',
     component: () => import('../components/manageMerchant.vue')
+  },
+  {
+    path: '/manageUser',
+    name: 'manageUser',
+    component: () => import('../components/manageUser.vue')
+  },
+  {
+    path: '/manageOrder',
+    name: 'manageOrder',
+    component: () => import('../components/manageOrder.vue')
   },
   {
     path: '/shopping',
