@@ -36,6 +36,11 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+          <el-form-item label="申请退款理由：" prop="reason">
+            <span>{{ tableData.reason }}</span>
+          </el-form-item>
+        </el-row>
         <el-form-item label-width="0">
           <el-table :data="tableData.bookList" border style="width: 100%">
             <el-table-column label="图书图片" width="180">
@@ -53,10 +58,10 @@
               >
             </el-table-column>
             <el-table-column prop="totalprice" label="总价">
-              <template slot-scope="scope"
-                >￥{{ scope.row.totalprice }}</template
-              >
-            </el-table-column>
+              <template slot-scope="scope">{{
+                scope.row.totalprice
+              }}</template></el-table-column
+            >
           </el-table>
         </el-form-item>
         <el-form-item align="center" label-width="0">
@@ -77,6 +82,7 @@ export default {
         consigneeName: "李四",
         address: "计算机楼001",
         telephone: 12345678901,
+        reason: "这是退款理由这是退款理由",
         bookList: [
           {
             bookname: "书本1号",
@@ -98,7 +104,7 @@ export default {
   },
   methods: {
     returnToM() {
-      this.$router.push("/orderM");
+      this.$router.push("/refundM");
     },
   },
 };
