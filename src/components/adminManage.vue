@@ -2,7 +2,7 @@
   <div class="home">
     <div class="content">
       <div class="header">
-        <img width="250px" src="../assets/logo.png" />
+        <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
         <div class="title">管理平台</div>
       </div>
       <div>
@@ -15,10 +15,25 @@
             <el-button type="text">退出登录</el-button>
           </div>
           <div class="item" style="font-size: 15px">
-            在此处，您可以选择使用 分类管理 或 商家管理 功能。
+            在此处，您可以选择使用 分类管理、商家管理、用户管理、订单管理功能。
           </div>
             </el-main>
           </el-container>
+        </el-card>
+      </div>
+      <div>
+        <el-card class="box-card1" style="background-color: #3d678a">
+          <el-row style="color: white">
+            <el-col span="8" style="text-align:center">
+              <el-row><h2>12345</h2></el-row><el-row><span>在线用户</span></el-row>
+            </el-col>
+            <el-col span="8" style="text-align:center">
+              <el-row><h2>12345</h2></el-row><el-row><span>今日订单</span></el-row>
+            </el-col>
+            <el-col span="8" style="text-align:center">
+              <el-row><h2>12345</h2></el-row><el-row><span>待处理申请</span></el-row>
+            </el-col>
+          </el-row>
         </el-card>
       </div>
       <div class="box2">
@@ -41,6 +56,26 @@
         </el-card>
         </el-button>
       </div>
+      <div class="box2">
+        <el-button type="text" @click="gotoUser">
+        <el-card class="box-card2">
+          <i class="iconfont-fenlei" style="font-size: 50px; margin: 50px"/>
+          <div class="text item">
+            用户管理
+          </div>
+          <i style="color: #909399">查看、查找、编辑、注销用户信息。</i>
+        </el-card>
+        </el-button>
+        <el-button type="text" @click="gotoOrder">
+        <el-card class="box-card2">
+          <i class="iconfont-shangpu" style="font-size: 50px; margin: 50px"/>
+          <div class="text item">
+            订单管理
+          </div>
+          <i style="color: #909399">查看、查找、编辑、删除订单。</i>
+        </el-card>
+        </el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -59,17 +94,19 @@ export default {
     gotoMerchant() {
       this.$router.push("/manageMerchant");
     },
+    gotoUser() {
+      this.$router.push("/manageUser");
+    },
+    gotoOrder() {
+      this.$router.push("/manageOrder");
+    },
   },
 };
 </script>
 
 <style>
+
 .home {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  background-color: #ffffff;
-  
   display: flex;
   justify-content: center;
 }
@@ -105,13 +142,13 @@ export default {
 }
 
 .box-card1 {
-  width: 700px;
-  margin: 20px;
+  width: 900px;
+  margin: 10px;
 }
 
 .box-card2 {
-  width: 340px;
-  margin: 10px;
+  width: 440px;
+  margin: 5px;
 }
 
 .box3{

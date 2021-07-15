@@ -12,7 +12,7 @@
             <el-aside width="35px"><div class="verticalBar2"></div></el-aside>
             <el-main>
           <div style="font-size: 15px padding: 18px 0">
-            在此处，您可以添加、修改、删除一、二级书籍分类。
+            在此处，您可以查看、查找、编辑、注销用户信息。。
           </div>
             </el-main>
           </el-container>
@@ -20,20 +20,7 @@
       </div>
       <div class="box2">
         <el-card class="box-card1">
-          <div class="block">
-            <el-tree
-            v-if="data!=''"
-            :data="data"
-            show-checkbox
-            node-key="id"
-            default-expand-all
-            :expand-on-click-node="false"
-            :render-content="renderContent">
-            </el-tree>
-            <el-empty v-if="data==''" :image-size="100">
-              <p>没有分类，您可以选择<el-button type="text">添加</el-button>一级分类。</p>
-            </el-empty>
-          </div>
+          
         </el-card>
       </div>
     </div>
@@ -89,36 +76,6 @@ export default {
     gotoAdmin() {
       this.$router.push("/adminManage");
     },
-    append(data) {
-        newChild = { id: id++, label: 'testtest', children: [] };
-        if (!data.children) {
-          this.$set(data, 'children', []);
-        }
-        data.children.push(newChild);
-      },
-
-      remove(node, data) {
-        const parent = node.parent;
-        const children = parent.data.children || parent.data;
-        const index = children.findIndex(d => d.id === data.id);
-        children.splice(index, 1);
-      },
-
-      rename(node, data){
-
-      },
-
-      renderContent(h, { node, data, store }) {
-        return (
-          <span class="custom-tree-node">
-            <span>{node.label}</span>
-            <span>
-              <el-button v-if="layer==1" size="mini" type="text" on-click={ () => this.append(data) }>添加</el-button>
-              <el-button size="mini" type="text" on-click={ () => this.rename(node, data) }>修改</el-button>
-              <el-button size="mini" type="text" on-click={ () => this.remove(node, data) }>删除</el-button>
-            </span>
-          </span>);
-      }
   },
 };
 </script>
@@ -164,11 +121,6 @@ export default {
   margin: 20px;
 }
 
-.box3{
-  display: flex;
-  justify-content: space-between;
-}
-
 .verticalBar2 {
   width: 4px;
   height: 50px;
@@ -180,14 +132,4 @@ export default {
   margin-left: 30px;
   border-radius: 20%;
 }
-
-.custom-tree-node {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-  padding-right: 8px;
-}
-
 </style>
