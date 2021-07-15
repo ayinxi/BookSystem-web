@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div class="bbb"></div>
     <div class="header">
       <div class="logo4">
         <img src="../assets/jwbc.png" />
@@ -27,7 +26,7 @@
                 >{{ shopname }}</span
               >
               <p style="font-weight: 1000">
-                你可以在本页面使用如下功能: 图书管理 或 订单管理 或 退款管理
+                您可以在本页面使用如下功能: 图书管理 或 订单管理 或 退款管理
               </p>
             </el-main>
           </el-container>
@@ -103,15 +102,6 @@ export default {
   margin: 20px 100px;
   position: relative;
   right:315px;
-}
-.bbb {
-  background: url("../assets/blank.jpg") no-repeat;
-  background-position: center;
-  height: 20%;
-  width: 100%;
-  background-size: cover;
-  position: absolute;
-  z-index: -1;
 }
 .shopping {
   display: flex;
