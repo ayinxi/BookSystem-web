@@ -2,9 +2,6 @@
   <div v-loading="isLoading">
     <div class="bbb"></div>
     <div class="header">
-      <div class="logo">
-        <img src="../assets/jwbc.png" />
-      </div>
       <div class="search">
         <el-input
           placeholder="给孩子的第一本编程书籍"
@@ -14,7 +11,7 @@
           <el-button slot="append" icon="el-icon-search"> </el-button>
         </el-input>
       </div>
-      <div v-if="hasRole==0||1">
+      <div v-if="!hasRole">
         <el-row class="shopping">
           <el-col :span="10">
             <el-badge :value="12" class="shopping">
@@ -23,27 +20,30 @@
               >
             </el-badge>
           </el-col>
-          <el-col :span="5" class="pageperson">
+          <el-col :span="4" class="pageperson">
             <el-button
               size="meduim"
+              type="text"
               class="pageperson"
               icon="el-icon-s-custom"
               @click="gotoPersonPage"
               >个人主页</el-button
             >
           </el-col>
-           <el-col class="pageperson">
-            <i class="iconfont-tuichu" style="font-size:20px" @click.native="loginOut" />
+          <el-col @click.native="loginOut" style="margin-left: 30px">
+            <i class="iconfont-tuichu" style="font-size: 20px" />
           </el-col>
         </el-row>
       </div>
       <div v-else>
         <el-row class="shopping">
-          <el-col>
-            <el-button size="meduim" type="text">注册</el-button>
+          <el-col :span="10">
+            <el-button size="meduim" type="text" style="font-size:30px">注册</el-button>
           </el-col>
-           <el-col>
-            <el-button size="meduim" type="text">登陆</el-button>
+          <el-col :span="4" class="pageperson">
+            <el-button size="meduim" class="pageperson" @click="gotoPersonPage"  type="text"
+              >登陆</el-button
+            >
           </el-col>
         </el-row>
       </div>
@@ -55,7 +55,7 @@
 export default {
   data() {
     return {
-      isLoading:false,
+      isLoading: false,
       input: " ",
     };
   },
@@ -71,18 +71,18 @@ export default {
     gotoPersonPage() {
       this.$router.push("/person");
     },
-    loginOut(){
-      this.isLoading=true;
+    loginOut() {
+      this.isLoading = true;
       this.$store.commit("clearCache");
-      this.isLoading=false;
-    }
+      this.isLoading = false;
+    },
   },
 };
 </script>
 
 <style>
 .bbb {
-  background: url("../assets/blank.jpg") no-repeat;
+  background: url("../assets/3.jpg") no-repeat;
   background-position: center;
   height: 20%;
   width: 100%;
@@ -96,6 +96,7 @@ export default {
   align-items: center;
   margin-left: 10%;
   margin-right: 10%;
+  height: 20%;
 }
 .logo {
   display: flex;
@@ -109,7 +110,7 @@ export default {
   justify-content: center;
   align-items: center;
   margin: 20px;
-  margin-left:100px;
+  margin-left: 500px;
 }
 .shopping {
   display: flex;

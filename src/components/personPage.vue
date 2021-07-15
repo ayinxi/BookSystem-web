@@ -319,9 +319,6 @@ export default {
       },
       //
       dialogVisible: false,
-      httpHeaders: {
-        "X-token": this.$store.token,
-      },
     };
   },
   computed: {},

@@ -2,76 +2,66 @@
   <div>
     <div class="header">
       <div class="logo">
-        <img width="250px" src="../assets/logo.png" />
+        <img width="250px" src="../assets/jwbc.png" />
       </div>
     </div>
     <div>
-      <div class="back">
-        <div
-          style="display: flex; justify-content: center; align-items: center"
-        >
-          <div style="margin: 5%">
-            <img src="../assets/login.jpg" />
-          </div>
-          <div>
-            <el-card shadow="always">
-              <el-form
-                ref="userInfo"
-                :rules="rules"
-                :model="userInfo"
-                label-width="80px"
-                label-position="left"
-                style="
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  flex-wrap: wrap;
-                "
+      <div class="login"></div>
+      <div
+        style="display: flex; justify-content: flex-end; align-items: center"
+      >
+        <el-card shadow="always">
+          <el-form
+            ref="userInfo"
+            :rules="rules"
+            :model="userInfo"
+            label-width="80px"
+            label-position="left"
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-wrap: wrap;
+            "
+          >
+            <el-form-item>
+              <h2 class="login-title">新用户注册</h2>
+            </el-form-item>
+            <el-form-item label="昵称" prop="name">
+              <el-input v-model="userInfo.name"> </el-input>
+            </el-form-item>
+            <el-form-item label="绑定邮箱" prop="username">
+              <el-input v-model="userInfo.username"> </el-input>
+            </el-form-item>
+            <el-form-item>
+              <i class="el-icon-warning-outline" style="margin-right: 5px"></i>
+              <i style="color: #909399"
+                >邮箱一旦绑定不得更改，如有需要请联系管理员</i
               >
-                <el-form-item>
-                  <h2 class="login-title">新用户注册</h2>
-                </el-form-item>
-                <el-form-item label="昵称" prop="name">
-                  <el-input v-model="userInfo.name"> </el-input>
-                </el-form-item>
-                <el-form-item label="绑定邮箱" prop="username">
-                  <el-input v-model="userInfo.username"> </el-input>
-                </el-form-item>
-                <el-form-item>
-                  <i
-                    class="el-icon-warning-outline"
-                    style="margin-right: 5px"
-                  ></i>
-                  <i style="color: #909399"
-                    >邮箱一旦绑定不得更改，如有需要请联系管理员</i
-                  >
-                </el-form-item>
-                <el-form-item label="密码" prop="password">
-                  <el-input v-model="userInfo.password" type="password">
-                  </el-input>
-                </el-form-item>
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+              <el-input v-model="userInfo.password" type="password"> </el-input>
+            </el-form-item>
 
-                <el-form-item label="确认密码" prop="checkpass">
-                  <el-input v-model="userInfo.checkpass" type="password">
-                  </el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button
-                    type="primary"
-                    @click="onSign"
-                    style="
-                      width: 250px;
-                      margin-top: 10px;
-                      margin-left: 20px;
-                      margin-right: 10px;
-                    "
-                    >注册</el-button
-                  >
-                </el-form-item>
-              </el-form>
-            </el-card>
-          </div>
-        </div>
+            <el-form-item label="确认密码" prop="checkpass">
+              <el-input v-model="userInfo.checkpass" type="password">
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                type="primary"
+                @click="onSign"
+                style="
+                  width: 250px;
+                  margin-top: 10px;
+                  margin-left: 20px;
+                  margin-right: 10px;
+                "
+                >注册</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </el-card>
       </div>
     </div>
   </div>
@@ -136,23 +126,11 @@ export default {
   background-color: rgb(255, 255, 255); /* 透明背景色 */
   padding: 30px;
 }
-
-/* 背景 */
-.back {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  margin-left: 8%;
-  margin-right: 8%;
-  width: 81%;
-  height: 70%;
-}
-
 /* 标题 */
 .login-title {
   color: #303133;
-  text-align: center;
+  display: flex;
+  justify-content:center;
 }
 .header {
   display: flex;
@@ -176,12 +154,12 @@ export default {
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  margin-left: 20%;
+  margin-left: 10%;
 }
 .el-card {
-  margin: 5%;
+  margin: 1% 3%;
   width: 500px;
-  height: 550px;
+  height: 480px;
 }
 .submit {
   display: flex;
@@ -193,7 +171,16 @@ export default {
   right: 25% !important;
   left: unset;
 }
-.el-form-item{
-  margin-bottom: 10px;
+.el-form-item {
+  margin-bottom: 0px;
+}
+.login {
+  background: url("../assets/login.jpg") no-repeat;
+  background-position: center;
+  height: 70%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
 }
 </style> 
