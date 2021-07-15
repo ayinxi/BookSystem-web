@@ -12,6 +12,7 @@ import "./assets/iconfont/iconfont.css"
 Vue.prototype.$axios = axios
 
 Vue.use(ElementUI);
+
 Vue.config.productionTip = false
 //定义全局默认配置
 //axios.defaults.headers.common['Authentication'] = store.state.token;
@@ -21,7 +22,8 @@ window.__global__ = {
   store
 }
 
-//Vue.prototype.axios = axios
+Vue.prototype.axios = axios
+
 
 new Vue({
   router,
@@ -30,5 +32,15 @@ new Vue({
 }).$mount('#app')
 
 
+axios.interceptors.request.use(
+  config => {
+    if (store.state.token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
+      config.headers.token = `${store.state.token}`;
+    }
+    return config;
+  },
+  err => {
+    return Promise.reject(err);
+  });
 
 

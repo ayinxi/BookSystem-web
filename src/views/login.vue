@@ -114,6 +114,7 @@ export default {
           //else 弹出错误提示
           if (code == "200") {
             sessionStorage.setItem("token",res.data.token);
+            localStorage.setItem("token",res.data.token);
             this.$store.commit("token", res.data.token);
             this.$store.commit("username", this.form.username);
             this.$store.commit("role", res.data.identity);

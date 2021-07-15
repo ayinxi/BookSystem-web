@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "17967612",
+      "name": "团队",
+      "font_class": "yonghu",
+      "unicode": "ee95",
+      "unicode_decimal": 61077
+    },
+    {
       "icon_id": "741952",
       "name": "退出",
       "font_class": "tuichu",
@@ -39,6 +46,13 @@
       "font_class": "fankui",
       "unicode": "ee9b",
       "unicode_decimal": 61083
+    },
+    {
+      "icon_id": "22905839",
+      "name": "订单",
+      "font_class": "dingdanlan-copy",
+      "unicode": "eea8",
+      "unicode_decimal": 61096
     },
     {
       "icon_id": "17967608",
