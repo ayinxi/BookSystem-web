@@ -5,15 +5,15 @@
       <div class="logo3">
         <img src="../assets/jwbc.png" />
       </div>
-      <el-button size="medium" @click.native="goToManage"
+      <el-button size="medium" @click.native="goToManage" type="danger" plain
         >返回商家管理页面</el-button
       >
     </div>
     <div style="margin: 3% 10% 0%">
-      <el-button @click="batchConfirm" style="margin-left: 78.5%"
+      <el-button @click="batchConfirm" style="margin-left: 78.5%" type="danger"
         >批量同意退款</el-button
       >
-      <el-button @click="batchRefuse">批量拒绝退款</el-button>
+      <el-button @click="batchRefuse" type="warning">批量拒绝退款</el-button>
     </div>
     <div style="margin: 0% 10%">
       <el-table
@@ -22,20 +22,39 @@
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column label="日期" width="200">
+        <el-table-column
+          prop="date"
+          label="日期"
+          width="200"
+          sortable
+          :filters="[
+            { text: '2021-07-08', value: '2021-07-08' },
+            { text: '2021-07-09', value: '2021-07-09' },
+          ]"
+          :filter-method="filterDate"
+        >
           <template slot-scope="scope">{{ scope.row.date }}</template>
         </el-table-column>
         <el-table-column label="用户名" width="200">
           <template slot-scope="scope">{{ scope.row.username }}</template>
         </el-table-column>
-        <el-table-column label="总价" width="200">
-          <template slot-scope="scope">{{
-            scope.row.totalprice
-          }}</template>
+        <el-table-column
+          label="总价"
+          width="200"
+          prop="totalprice"
+          sortable
+          :filters="[
+            { text: '0-50元', value: 50 },
+            { text: '50-100元', value: 100 },
+          ]"
+          :filter-method="filterTotalprice"
+        >
+          <template slot-scope="scope">{{ scope.row.totalprice }}</template>
         </el-table-column>
-        <el-table-column label="订单状态" width="200" >
+        <el-table-column label="订单状态" width="200">
           <template slot-scope="scope">{{ scope.row.state }}</template>
         </el-table-column>
         <el-table-column label="操作">
@@ -130,6 +149,16 @@ export default {
           });
         });
     },
+    tableRowClassName({ rowIndex }) {
+      if (rowIndex % 2 === 1) return "warning-row";
+    },
+    filterDate(value, row, column) {
+      const property = column["property"];
+      return row[property] === value;
+    },
+    filterTotalprice(value, row) {
+      return row.totalprice <= value && row.totalprice > value - 50;
+    },
   },
 };
 </script>
@@ -148,7 +177,7 @@ export default {
   width: 200px;
   margin: 20px 100px;
   position: relative;
-  right:306px;
+  right: 306px;
 }
 .bbb {
   background: url("../assets/blank.jpg") no-repeat;

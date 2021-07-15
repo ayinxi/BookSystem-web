@@ -5,7 +5,7 @@
       <div class="logo3">
         <img src="../assets/jwbc.png" />
       </div>
-      <el-button size="medium" @click.native="goToManage"
+      <el-button size="medium" @click.native="goToManage" type="danger" plain
         >返回商家管理页面</el-button
       >
     </div>
