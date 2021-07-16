@@ -59,7 +59,7 @@
       <div class="box2">
         <el-button type="text" @click="gotoUser">
         <el-card class="box-card2">
-          <i class="iconfont-fenlei" style="font-size: 50px; margin: 50px"/>
+          <i class="iconfont-yonghu" style="font-size: 50px; margin: 50px"/>
           <div class="text item">
             用户管理
           </div>
@@ -68,7 +68,7 @@
         </el-button>
         <el-button type="text" @click="gotoOrder">
         <el-card class="box-card2">
-          <i class="iconfont-shangpu" style="font-size: 50px; margin: 50px"/>
+          <i class="iconfont-dingdanlan-copy" style="font-size: 50px; margin: 50px"/>
           <div class="text item">
             订单管理
           </div>
@@ -143,12 +143,12 @@ export default {
 
 .box-card1 {
   width: 900px;
-  margin: 10px;
+  margin: 20px;
 }
 
 .box-card2 {
   width: 440px;
-  margin: 5px;
+  margin: 10px;
 }
 
 .box3{
