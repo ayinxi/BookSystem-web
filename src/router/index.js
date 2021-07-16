@@ -42,22 +42,22 @@ const routes = [
   {
     path: '/shopManage',
     name: 'shopManage',
-    component: () => import('../views/shopManage.vue')
+    component: () => import('../components/shopManage/shopManage.vue')
   },
   {
     path: '/bookM',
     name: 'bookM',
-    component: () => import('../views/bookM.vue')
+    component: () => import('../components/shopManage/bookM.vue')
   },
   {
     path: '/orderM',
     name: 'orderM',
-    component: () => import('../views/orderM.vue')
+    component: () => import('../components/shopManage/orderM.vue')
   },
   {
     path: '/orderInfo',
     name: 'orderInfo',
-    component: () => import('../views/orderInfo.vue')
+    component: () => import('../components/shopManage/orderInfo.vue')
   },
   {
     path: '/shopIndex',
@@ -98,12 +98,12 @@ const routes = [
   {
     path: '/refundM',
     name: 'refundM',
-    component: () => import('../views/refundM.vue')
+    component: () => import('../components/shopManage/refundM.vue')
   },
   {
     path: '/refundInfo',
     name: 'refundInfo',
-    component: () => import('../views/refundInfo.vue')
+    component: () => import('../components/shopManage/refundInfo.vue')
   },
   {
     path: '/userorder/:num',

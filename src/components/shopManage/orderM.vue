@@ -2,13 +2,13 @@
   <div>
     <div class="header">
       <div class="logo3">
-        <img src="../assets/jwbc.png" />
+        <img width="250px" src="../../assets/jwbc.png" />
       </div>
       <el-button size="medium" @click.native="goToManage" type="danger" plain
         >返回商家管理页面</el-button
       >
     </div>
-    <div style="margin: 3% 18%">
+    <div style="margin: 2% 18%">
       <el-row style="margin: 0% 12% 5%">
         <el-card>
           <el-container>
@@ -121,16 +121,14 @@
                 type="text"
                 @click="handleRefuse(scope.$index, scope.row)"
                 :disabled="
-                  scope.row.state == '已退款' ||
-                  scope.row.state == '已发货' ||
-                  scope.row.state == '已收货'
+                  scope.row.state == '已发货' || scope.row.state == '已收货'
                 "
                 >取消订单</el-button
               >
             </template>
           </el-table-column>
-        </el-table></el-card
-      >
+        </el-table>
+      </el-card>
     </div>
     <div style="margin: 0% 10% 3%">
       <el-button @click="batchConfirm" style="margin-left: 78%" type="danger"
@@ -143,7 +141,6 @@
 
 <script>
 import echarts from "echarts";
-require("echarts/theme/macarons");
 export default {
   data() {
     return {
@@ -285,7 +282,6 @@ export default {
       const property = column["property"];
       return row[property] === value;
     },
-
     batchConfirm() {
       this.$confirm("是否批量确认订单?", "提示", {
         confirmButtonText: "确定",
@@ -305,7 +301,7 @@ export default {
                 tableData1[y].state != "已收货" &&
                 tableData1[y].state != "已退款"
               ) {
-                //判断是否相等，相等就删除
+                //判断是否相等，相等就更改状态
                 this.tableData[y].state = "已发货";
               }
             }
@@ -442,7 +438,17 @@ export default {
               //这里是更改颜色
               normal: {
                 color: function (params) {
-                  var colorList = ["#5470c6","#91cc75","#fac858","#ee6666","#73c0de","#3ba272","#fc8452","#9a60b4","#ea7ccc"];
+                  var colorList = [
+                    "#5470c6",
+                    "#91cc75",
+                    "#fac858",
+                    "#ee6666",
+                    "#73c0de",
+                    "#3ba272",
+                    "#fc8452",
+                    "#9a60b4",
+                    "#ea7ccc",
+                  ];
                   return colorList[params.dataIndex];
                 },
               },
@@ -470,7 +476,6 @@ export default {
 .logo3 {
   display: flex;
   justify-content: center;
-  height: 100px;
   width: 200px;
   margin: 20px 100px;
   position: relative;
