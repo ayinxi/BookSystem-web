@@ -128,7 +128,7 @@
                     <el-button
                       type="text"
                       style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaishouhuo"
+                      @click="gotoDaifahuo"
                       >待发货</el-button
                     >
                   </el-col>
@@ -152,7 +152,7 @@
                     <el-button
                       type="text"
                       style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaishouhuo"
+                      @click="gotoDaipingjia"
                       >待评价</el-button
                     >
                   </el-col>
@@ -164,7 +164,7 @@
                     <el-button
                       type="text"
                       style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaishouhuo"
+                      @click="gotoTuikuan"
                     >
                       退款</el-button
                     >
@@ -294,6 +294,7 @@ export default {
   },
   data() {
     return {
+      orderId:"",
       isLoading: false,
       activeName: "first",
       imageUrl: "",
@@ -337,7 +338,7 @@ export default {
     gotoAddress() {},
     //跳转全部订单页面
     gotoAllOrder() {
-      this.$router.push("/");
+      this.$router.push("/userOrder?mun=${}");
     },
     //确认申请成为商家
     confirmApply() {},

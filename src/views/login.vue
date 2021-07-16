@@ -134,7 +134,7 @@ export default {
                 message: "登陆成功",
                 type: "success",
               });
-              if (res.data.identity != 3) {
+              if (res.data.identity != 2) {
                 this.$router.push("/");
               } else {
                 this.$router.push("/adminManage");
