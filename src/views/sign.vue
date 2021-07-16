@@ -31,7 +31,11 @@
               <el-input v-model="userInfo.name"> </el-input>
             </el-form-item>
             <el-form-item label="绑定邮箱" prop="username">
-              <el-input v-model="userInfo.username" placeholder="邮箱一旦绑定不得更改"> </el-input>
+              <el-input
+                v-model="userInfo.username"
+                placeholder="邮箱一旦绑定不得更改"
+              >
+              </el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <el-input v-model="userInfo.password" type="password"> </el-input>
@@ -40,9 +44,10 @@
               <el-input v-model="userInfo.checkpass" type="password">
               </el-input>
             </el-form-item>
-            <el-form-item label="验证码" prop="activationCode"> 
-              <el-input v-model="userInfo.activationCode">
+            <el-form-item label="验证码" prop="activationCode">
+              <el-input v-model="userInfo.activationCode" style="width: 140px">
               </el-input>
+              <el-button @click="sendActivationCode">发送验证码</el-button>
             </el-form-item>
             <el-form-item>
               <el-button
@@ -66,6 +71,7 @@
 
 
 <script>
+import axios from "axios";
 export default {
   components: {},
   data() {
@@ -75,7 +81,7 @@ export default {
         username: "",
         password: "",
         checkpass: "",
-        activationCode:"",
+        activationCode: "",
       },
       rules: {
         name: [{ required: true, message: "昵称不得为空", trigger: "blur" }],
@@ -106,13 +112,75 @@ export default {
             trigger: "blur",
           },
         ],
-        activationCode: [{ required: true, message: "验证码不得为空", trigger: "blur" }],
+        activationCode: [
+          { required: true, message: "验证码不得为空", trigger: "blur" },
+        ],
       },
     };
   },
   methods: {
+    //发送验证码
+    sendActivationCode() {
+      axios({
+        url: "http://127.0.0.1:8088/sendEmail",
+        method: "POST",
+        params: {
+          email: this.userInfo.username,
+          password: this.userInfo.password,
+          name: this.userInfo.name,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
+          //else 弹出错误提示
+          if (code == "200") {
+            this.$message({
+              message: "验证码发送成功",
+              type: "success",
+            });
+          } else {
+            this.$message.error("验证码发送失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
     onSign() {
-      this.$router.push("/sign");
+      axios({
+        url: "http://127.0.0.1:8088/registerUser",
+        method: "POST",
+        params: {
+          email: this.userInfo.username,
+          password: this.userInfo.password,
+          name: this.userInfo.name,
+          activationCode:this.userInfo.activationCode,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
+          //else 弹出错误提示
+          if (code == "200") {
+            this.$message({
+              message: "注册成功",
+              type: "success",
+            });
+            this.$router.push("/")
+          } else {
+            this.$message.error("注册失败,请稍候再试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
     },
   },
 };
@@ -129,7 +197,7 @@ export default {
 .login-title {
   color: #303133;
   display: flex;
-  justify-content:center;
+  justify-content: center;
 }
 .header {
   display: flex;

@@ -109,7 +109,7 @@ export default {
         },
       })
         .then((res) => {
-          const { code, token, identity } = res.data;
+          const { code} = res.data;
           //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
           //else 弹出错误提示
           if (code == "200") {
