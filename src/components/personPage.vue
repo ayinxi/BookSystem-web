@@ -336,9 +336,30 @@ export default {
     },
     //跳转收货地址页面
     gotoAddress() {},
-    //跳转全部订单页面
+    //跳转全部页面
     gotoAllOrder() {
-      this.$router.push("/userOrder?mun=${}");
+      this.orderId=0;
+      this.$router.push("/userOrder/"+this.orderId);
+    },
+    //跳转待发货
+    gotoDaifahuo() {
+      this.orderId=1;
+      this.$router.push("/userOrder/"+this.orderId);
+    },
+    //跳转待收货页面
+    gotoDaishouhuo() {
+      this.orderId=2;
+      this.$router.push("/userOrder/"+this.orderId);
+    },
+    //跳转全部页面
+    gotoDaipingjia() {
+      this.orderId=3;
+      this.$router.push("/userOrder/"+this.orderId);
+    },
+    //跳转退款页面
+    gotoTuikuan() {
+      this.orderId=4;
+      this.$router.push("/userOrder/"+this.orderId);
     },
     //确认申请成为商家
     confirmApply() {},

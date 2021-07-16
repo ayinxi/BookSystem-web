@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "6129213",
+      "name": "171会员、皇冠、冠军-线性",
+      "font_class": "guanjun",
+      "unicode": "e7a9",
+      "unicode_decimal": 59305
+    },
+    {
       "icon_id": "17967612",
       "name": "团队",
       "font_class": "yonghu",
