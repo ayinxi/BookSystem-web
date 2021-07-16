@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 if (sessionStorage.getItem('token')) {
-  store.commit('setToken', sessionStorage.getItem('token'))
+  this.$store.commit('setToken', sessionStorage.getItem('token'))
 }
 
 
@@ -24,6 +24,12 @@ const routes = [
     name: 'person',
     //meta: { auth: true },//登录鉴权
     component: () => import('../components/personPage.vue')
+  },
+  {
+    path: '/change',
+    name: 'change',
+    //meta: { auth: true },//登录鉴权
+    component: () => import('../components/userInfoChange.vue')
   },
   {
     path: '/',
