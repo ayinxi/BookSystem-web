@@ -23,6 +23,7 @@ export default new Vuex.Store({
     username: "",
     setToken: {},
     detToken: {},
+    myUrl:"http://127.0.0.1:8088"
   },
   mutations: {
     setToken(state, payload) {

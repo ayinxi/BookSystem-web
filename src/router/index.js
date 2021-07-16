@@ -3,9 +3,7 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-if (sessionStorage.getItem('token')) {
-  this.$store.commit('setToken', sessionStorage.getItem('token'))
-}
+
 
 
 const routes = [
