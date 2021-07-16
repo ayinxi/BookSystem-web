@@ -2,7 +2,7 @@
   <div>
     <div class="header2">
       <div class="logo2">
-        <img width="250px" src="../assets/jwbc.png" />
+        <img width="250px" src="../../assets/jwbc.png" />
       </div>
     </div>
     <div style="margin: 0% 5%">
@@ -83,14 +83,14 @@ export default {
             booknum: 5,
             bookprice: 10,
             totalprice: 50,
-            bookimg: require("../assets/kuku.png"),
+            bookimg: require("../../assets/kuku.png"),
           },
           {
             bookname: "书本2号",
             booknum: 6,
             bookprice: 11,
             totalprice: 66,
-            bookimg: require("../assets/kuku.png"),
+            bookimg: require("../../assets/kuku.png"),
           },
         ],
       },

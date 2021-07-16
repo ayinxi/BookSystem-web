@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="logo3">
-        <img width="250px" src="../assets/jwbc.png" />
+        <img width="250px" src="../../assets/jwbc.png" />
       </div>
       <el-button size="medium" @click.native="goToManage"
         >返回商家管理页面</el-button
@@ -361,7 +361,7 @@ export default {
       },
       tableData: [
         {
-          bookimg: require("../assets/kuku.png"),
+          bookimg: require("../../assets/kuku.png"),
           bookname: "书本1号",
           bookauthor: "张三",
           classone: "小说",
@@ -371,7 +371,7 @@ export default {
           bookPubTime: 2021,
         },
         {
-          bookimg: require("../assets/kuku.png"),
+          bookimg: require("../../assets/kuku.png"),
           bookname: "书本2号",
           bookauthor: "李四",
           classone: "小说",

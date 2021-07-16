@@ -204,6 +204,32 @@
             </el-menu>
           </el-aside>
           <el-main>
+            <el-row style="margin-bottom:5%">
+              <el-col :span="17">
+                <el-carousel
+                  :interval="5000"
+                  arrow="never"
+                  height="400px"
+                  class="carouselStyle"
+                >
+                  <el-carousel-item v-for="item in photoList" :key="item">
+                    <el-image class="imgStyle2" :src="item.Img"></el-image>
+                  </el-carousel-item>
+                </el-carousel>
+              </el-col>
+              <el-col :span="7">
+                <el-card class="cStyle">
+                  <p style="font-weight:1000;margin-top:0%">今日销量冠军</p>
+                  <el-row style="height:270px">
+                  <el-image class="tscStyle" :src="todaySalesChampion.Img"></el-image>
+                  </el-row>
+                  <el-row style="text-align:center">
+                  <p style="color: black; margin: 1%">{{ todaySalesChampion.Name }}</p>
+                  <p style="color: rgb(128, 192, 192); margin: 0%">{{ todaySalesChampion.Author }}</p>
+                  </el-row>
+                </el-card>
+              </el-col>
+            </el-row>
             <el-row class="rowStyle" type="flex">
               <el-col
                 :span="6"
@@ -224,14 +250,16 @@
                     >
                     </el-image>
                   </el-header>
-                  <el-main style="padding-top: 0; text-align: center">
+                  <el-main style="color:black;padding-top: 0; text-align: center">
                     <el-link
                       :underline="false"
                       class="book-name"
                       @click="goToBookInfo()"
                       >{{ book.Name }}</el-link
                     >
-                    <p style="color: gray; margin: 0%">{{ book.Author }}</p>
+                    <p style="color: rgb(128, 192, 192); margin: 0%">
+                      {{ book.Author }}
+                    </p>
                     <p style="color: red; font-weight: 1000; margin: 0%">
                       ￥{{ book.Price }}
                     </p>
@@ -265,18 +293,29 @@ export default {
       activeIndex2: " ",
       currentPage: 1,
       pageSize: 8,
+      todaySalesChampion: {
+        Img: require("../assets/youbenshi.jpg"),
+        Name: "有本事",
+        Author: "冯唐",
+      },
+      photoList: [
+        { Img: require("../assets/1.jpg") },
+        { Img: require("../assets/photo1.jpg") },
+        { Img: require("../assets/photo2.jpg") },
+        { Img: require("../assets/photo3.jpg") },
+      ],
       Lists: [
         {
-          Img: require("../assets/kuku.png"),
-          Name: "书本1号",
-          Author: "张三",
+          Img: require("../assets/youbenshi.jpg"),
+          Name: "有本事",
+          Author: "冯唐",
           ClassOne: "网络文学",
           ClassTwo: "男频",
           Price: 10,
           PubTime: 2021,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本2号",
           Author: "李四",
           ClassOne: "网络文学",
@@ -285,7 +324,7 @@ export default {
           PubTime: 2020,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本3号",
           Author: "王五",
           ClassOne: "小说",
@@ -294,7 +333,7 @@ export default {
           PubTime: 2019,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本4号",
           Author: "赵六",
           ClassOne: "小说",
@@ -303,7 +342,7 @@ export default {
           PubTime: 2018,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本5号",
           Author: "赵六",
           ClassOne: "教育",
@@ -312,7 +351,7 @@ export default {
           PubTime: 2021,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本6号",
           Author: "赵六",
           ClassOne: "教育",
@@ -321,7 +360,7 @@ export default {
           PubTime: 2020,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本7号",
           Author: "赵六",
           ClassOne: "文艺",
@@ -330,7 +369,7 @@ export default {
           PubTime: 2019,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本8号",
           Author: "赵六",
           ClassOne: "文艺",
@@ -339,7 +378,7 @@ export default {
           PubTime: 2018,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本9号",
           Author: "赵六",
           ClassOne: "青春/动漫",
@@ -348,7 +387,7 @@ export default {
           PubTime: 2021,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本10号",
           Author: "赵六",
           ClassOne: "青春/动漫",
@@ -357,7 +396,7 @@ export default {
           PubTime: 2020,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本11号",
           Author: "赵六",
           ClassOne: "小说",
@@ -366,7 +405,7 @@ export default {
           PubTime: 2019,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本12号",
           Author: "赵六",
           ClassOne: "小说",
@@ -375,7 +414,7 @@ export default {
           PubTime: 2018,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本13号",
           Author: "赵六",
           ClassOne: "小说",
@@ -386,16 +425,16 @@ export default {
       ],
       displayList: [
         {
-          Img: require("../assets/kuku.png"),
-          Name: "书本1号",
-          Author: "张三",
+          Img: require("../assets/youbenshi.jpg"),
+          Name: "有本事",
+          Author: "冯唐",
           ClassOne: "网络文学",
           ClassTwo: "男频",
           Price: 10,
           PubTime: 2021,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本2号",
           Author: "李四",
           ClassOne: "网络文学",
@@ -404,7 +443,7 @@ export default {
           PubTime: 2020,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本3号",
           Author: "王五",
           ClassOne: "小说",
@@ -413,7 +452,7 @@ export default {
           PubTime: 2019,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本4号",
           Author: "赵六",
           ClassOne: "小说",
@@ -422,7 +461,7 @@ export default {
           PubTime: 2018,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本5号",
           Author: "赵六",
           ClassOne: "教育",
@@ -431,7 +470,7 @@ export default {
           PubTime: 2021,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本6号",
           Author: "赵六",
           ClassOne: "教育",
@@ -440,7 +479,7 @@ export default {
           PubTime: 2020,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本7号",
           Author: "赵六",
           ClassOne: "文艺",
@@ -449,7 +488,7 @@ export default {
           PubTime: 2019,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本8号",
           Author: "赵六",
           ClassOne: "文艺",
@@ -458,7 +497,7 @@ export default {
           PubTime: 2018,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本9号",
           Author: "赵六",
           ClassOne: "青春/动漫",
@@ -467,7 +506,7 @@ export default {
           PubTime: 2021,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本10号",
           Author: "赵六",
           ClassOne: "青春/动漫",
@@ -476,7 +515,7 @@ export default {
           PubTime: 2020,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本11号",
           Author: "赵六",
           ClassOne: "小说",
@@ -485,7 +524,7 @@ export default {
           PubTime: 2019,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本12号",
           Author: "赵六",
           ClassOne: "小说",
@@ -494,7 +533,7 @@ export default {
           PubTime: 2018,
         },
         {
-          Img: require("../assets/kuku.png"),
+          Img: require("../assets/youbenshi.jpg"),
           Name: "书本13号",
           Author: "赵六",
           ClassOne: "小说",
@@ -671,5 +710,20 @@ export default {
 .menu-item {
   color: rgb(188, 143, 143);
   font-weight: 1000;
+}
+.imgStyle2 {
+  width: 100%;
+  height: 100%;
+}
+.carouselStyle {
+  border-radius: 10px;
+}
+.cStyle {
+  height: 400px;
+  position: relative;
+  left: 20px;
+}
+.tscStyle{
+  height: 100%;
 }
 </style>

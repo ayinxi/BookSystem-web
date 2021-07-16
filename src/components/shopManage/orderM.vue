@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="logo3">
-        <img width="250px" src="../assets/jwbc.png" />
+        <img width="250px" src="../../assets/jwbc.png" />
       </div>
       <el-button size="medium" @click.native="goToManage" type="danger" plain
         >返回商家管理页面</el-button

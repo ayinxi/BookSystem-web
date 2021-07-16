@@ -2,16 +2,16 @@
   <div>
     <div class="header">
       <div class="logo4">
-        <img width="250px" src="../assets/jwbc.png" />
+        <img width="250px" src="../../assets/jwbc.png" />
       </div>
       <div>
-            <el-button
-              size="meduim"
-              class="pageperson"
-              icon="el-icon-s-custom"
-              @click="gotoPersonPage"
-              >个人主页</el-button
-            >
+        <el-button
+          size="meduim"
+          class="pageperson"
+          icon="el-icon-s-custom"
+          @click="gotoPersonPage"
+          >个人主页</el-button
+        >
       </div>
     </div>
     <div style="margin: 3% 10%">
@@ -26,12 +26,42 @@
                 >{{ shopname }}</span
               >
               <p style="font-weight: 1000">
-                您可以在本页面使用如下功能: 图书管理 或 订单管理 或 退款管理
+                您可以在本页面使用如下功能: 图书管理 或 订单管理 或 退款管理 或
+                店铺管理
               </p>
             </el-main>
           </el-container>
         </el-card>
       </el-row>
+      4个小图加文字：书本总数，新增订单数，销售额，退款额
+      <el-row style="margin: 0% 10% 5%">
+        <el-col :span="12">
+          <el-card class="el-cardStyle">
+            <el-col :span="8" style="text-align: center">
+            <p>图书总数</p>
+            <p style="font-size: 40px">{{ this.length }}</p>
+          </el-col>
+          <el-col :span="16" style="text-align: center">
+            <p>各图书类别所占比例</p>
+            <div>
+              <div id="chartPie" class="pie-wrap"></div>
+            </div>
+          </el-col>
+           </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card class="el-cardStyle"> </el-card>
+        </el-col>
+      </el-row>
+      <el-row style="margin: 0% 10% 5%">
+        <el-col :span="12">
+          <el-card class="el-cardStyle"> </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card class="el-cardStyle"> </el-card>
+        </el-col>
+      </el-row>
+
       <el-row style="margin: 0% 10% 5%">
         <el-col :span="12" class="el-colStyle">
           <el-card class="el-cardStyle" shadow="hover" @click.native="goToBookM"
@@ -78,6 +108,7 @@ export default {
   data() {
     return {
       shopname: "这是一家好店",
+      length:12345,
     };
   },
   methods: {
@@ -90,9 +121,9 @@ export default {
     goToOrderM() {
       this.$router.push("/orderM");
     },
-    goToRefundM(){
+    goToRefundM() {
       this.$router.push("/refundM");
-    }
+    },
   },
 };
 </script>
@@ -111,7 +142,7 @@ export default {
   width: 200px;
   margin: 20px 100px;
   position: relative;
-  right:315px;
+  right: 315px;
 }
 .shopping {
   display: flex;
