@@ -149,7 +149,7 @@ export default {
     //发送验证码
     sendActivationCode() {
       axios({
-        url: "http://127.0.0.1:8088/sendEmail",
+        url: this.$store.state.myUrl+"/sendEmail",
         method: "POST",
         params: {
           email: this.userInfo.username,
@@ -179,7 +179,7 @@ export default {
     },
     onSign() {
       axios({
-        url: "http://127.0.0.1:8088/registerUser",
+        url: this.store.state.yuming+"/registerUser",
         method: "POST",
         params: {
           email: this.userInfo.username,

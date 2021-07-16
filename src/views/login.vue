@@ -97,11 +97,13 @@ export default {
   mounted(){
     
   },
+  computed:{
+  },
   methods: {
     //接口示例函数
     onSubmit() {
       axios({
-        url: "http://47.94.131.208:8088/login",
+        url: this.$store.state.yuming+"/login",
         method: "POST",
         params: {
           username: this.form.username,
