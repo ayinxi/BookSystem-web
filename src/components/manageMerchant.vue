@@ -2,7 +2,7 @@
   <div class="home">
     <div class="content">
       <div class="header">
-        <img width="250px" src="../assets/logo.png" />
+        <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
         <div class="title">管理平台</div>
       </div>
       <div style="margin: 10px 0"><el-page-header @back="gotoAdmin" content="商家管理"></el-page-header></div>
@@ -16,6 +16,21 @@
           </div>
             </el-main>
           </el-container>
+        </el-card>
+      </div>
+      <div>
+        <el-card class="box-card1">
+          <el-row>
+            <el-col span="8" style="text-align:center">
+              <el-row><h2>12345</h2></el-row><el-row><span>待审核</span></el-row>
+            </el-col>
+            <el-col span="8" style="text-align:center">
+              <el-row><h2>12345</h2></el-row><el-row><span>已审核</span></el-row>
+            </el-col>
+            <el-col span="8" style="text-align:center">
+              <el-row><h2>12345</h2></el-row><el-row><span>商家数</span></el-row>
+            </el-col>
+          </el-row>
         </el-card>
       </div>
       <div class="box2">
@@ -39,22 +54,31 @@
     </el-tab-pane>
     <el-tab-pane label="审核历史" name="third">
       <el-table :data="checkedList" style="width: 100%">
-        <el-table-column prop="applicant" label="申请人"></el-table-column>
-        <el-table-column label="店铺头像">
-          <template slot-scope="scope"><img :src="scope.row.shopImg"></template>
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="店铺封面"><img :src="scope.row.shopImg"></el-form-item>
+              <el-form-item label="店铺名称"><span>{{scope.row.shopName}}</span></el-form-item>
+              <el-form-item label="申请理由"><span>{{scope.row.applyReason}}</span></el-form-item>
+            </el-form>
+          </template>
         </el-table-column>
-        <el-table-column prop="shopName" label="店铺名称"></el-table-column>
-        <el-table-column prop="applyReason" label="申请理由"></el-table-column>
+        <el-table-column prop="applicant" label="申请人"></el-table-column>
         <el-table-column prop="checkResult" label="审核结果"></el-table-column>
+        <el-table-column prop="checkOpinion" label="审核意见"></el-table-column>
       </el-table>
     </el-tab-pane>
     <el-tab-pane label="现有商家" name="second">
       <el-table :data="shopList" style="width: 100%">
-        <el-table-column prop="keeper" label="申请人"></el-table-column>
+        <el-table-column prop="keeper" label="店铺"></el-table-column>
         <el-table-column label="店铺头像">
           <template slot-scope="scope"><img :src="scope.row.shopImg"></template>
         </el-table-column>
-        <el-table-column prop="shopName" label="店铺名称"></el-table-column>
+        <el-table-column label="店铺名称">
+          <template slot-scope="scope">
+            <el-link :href="'http://localhost:8083/'+scope.row.shopAddr">{{scope.row.shopName}}</el-link>
+          </template>
+        </el-table-column>
       </el-table>
     </el-tab-pane>
   </el-tabs>
@@ -73,7 +97,55 @@ export default {
       checkList: [
         {
           applicant: "aaa",//申请人
-          shopImg: require("../assets/kuku.png"),//店铺头像
+          shopImg: require("../assets/kuku.png"),//店铺封面
+          shopName: "ccc",//店铺名称
+          applyReason: "ddd",//申请理由
+        },
+        {
+          applicant: "aaa",
+          shopImg: require("../assets/kuku.png"),
+          shopName: "ccc",
+          applyReason: "ddd",
+        },
+        {
+          applicant: "aaa",//申请人
+          shopImg: require("../assets/kuku.png"),//店铺封面
+          shopName: "ccc",//店铺名称
+          applyReason: "ddd",//申请理由
+        },
+        {
+          applicant: "aaa",
+          shopImg: require("../assets/kuku.png"),
+          shopName: "ccc",
+          applyReason: "ddd",
+        },
+        {
+          applicant: "aaa",//申请人
+          shopImg: require("../assets/kuku.png"),//店铺封面
+          shopName: "ccc",//店铺名称
+          applyReason: "ddd",//申请理由
+        },
+        {
+          applicant: "aaa",
+          shopImg: require("../assets/kuku.png"),
+          shopName: "ccc",
+          applyReason: "ddd",
+        },
+        {
+          applicant: "aaa",//申请人
+          shopImg: require("../assets/kuku.png"),//店铺封面
+          shopName: "ccc",//店铺名称
+          applyReason: "ddd",//申请理由
+        },
+        {
+          applicant: "aaa",
+          shopImg: require("../assets/kuku.png"),
+          shopName: "ccc",
+          applyReason: "ddd",
+        },
+        {
+          applicant: "aaa",//申请人
+          shopImg: require("../assets/kuku.png"),//店铺封面
           shopName: "ccc",//店铺名称
           applyReason: "ddd",//申请理由
         },
@@ -84,20 +156,22 @@ export default {
           applyReason: "ddd",
         },
       ],
-      shopList: [
-        {
-          keeper: "aaa",//店主
-          shopImg: require("../assets/kuku.png"),//店铺头像
-          shopName: "ccc",//店铺名称
-        },
-      ],
       checkedList: [
         {
           applicant: "aaa",//申请人
-          shopImg: require("../assets/kuku.png"),//店铺头像
+          shopImg: require("../assets/kuku.png"),//店铺封面
           shopName: "ccc",//店铺名称
           applyReason: "ddd",//申请理由
           checkResult: "通过",//审核结果
+          checkOpinion: "",//审核意见
+        },
+      ],
+      shopList: [
+        {
+          keeper: "aaa",//店主
+          shopImg: require("../assets/kuku.png"),//店铺封面
+          shopName: "ccc",//店铺名称
+          shopAddr: "login",//店铺地址
         },
       ],
     };
@@ -114,11 +188,6 @@ export default {
 
 <style>
 .home {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  background-color: #ffffff;
-  
   display: flex;
   justify-content: center;
 }
@@ -154,13 +223,8 @@ export default {
 }
 
 .box-card1 {
-  width: 700px;
+  width: 900px;
   margin: 20px;
-}
-
-.box-card2 {
-  width: 340px;
-  margin: 10px;
 }
 
 .box3{
@@ -178,6 +242,19 @@ export default {
   margin-right: 0px;
   margin-left: 30px;
   border-radius: 20%;
+}
+
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
 }
 
 </style>

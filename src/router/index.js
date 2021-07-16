@@ -82,6 +82,16 @@ const routes = [
     component: () => import('../components/manageMerchant.vue')
   },
   {
+    path: '/manageUser',
+    name: 'manageUser',
+    component: () => import('../components/manageUser.vue')
+  },
+  {
+    path: '/manageOrder',
+    name: 'manageOrder',
+    component: () => import('../components/manageOrder.vue')
+  },
+  {
     path: '/shopping',
     name: 'shopping',
     //meta: { auth: true },//登录鉴权

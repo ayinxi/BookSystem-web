@@ -143,6 +143,7 @@
 
 <script>
 import echarts from "echarts";
+require("echarts/theme/macarons");
 export default {
   data() {
     return {
@@ -168,7 +169,7 @@ export default {
           bookprice: 14,
           telephone: 12345678902,
           totalprice: 84,
-          state: "已退款",
+          state: "已收货",
         },
         {
           date: "2021-07-09",
@@ -215,6 +216,7 @@ export default {
           state: "已拒绝退款",
         },
       ],
+      multipleSelection: [],
     };
   },
   mounted() {
@@ -226,7 +228,9 @@ export default {
     goToManage() {
       this.$router.push("/shopManage");
     },
-    handleSelectionChange() {},
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
     handleInfo() {
       this.$router.push("/orderInfo");
     },
@@ -250,7 +254,26 @@ export default {
           });
         });
     },
-    handleRefuse() {},
+    handleRefuse(index) {
+      this.$confirm("是否取消订单?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.tableData.splice(index, 1);
+          this.$message({
+            type: "success",
+            message: "取消成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已放弃取消",
+          });
+        });
+    },
     filterDate(value, row, column) {
       const property = column["property"];
       return row[property] === value;
@@ -263,8 +286,75 @@ export default {
       return row[property] === value;
     },
 
-    batchConfirm() {},
-    batchRefuse() {},
+    batchConfirm() {
+      this.$confirm("是否批量确认订单?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          let multData = this.multipleSelection;
+          let tableData1 = this.tableData;
+          let multDataLen = multData.length;
+          let tableDataLen = tableData1.length;
+          for (let i = 0; i < multDataLen; i++) {
+            for (let y = 0; y < tableDataLen; y++) {
+              if (
+                JSON.stringify(tableData1[y]) == JSON.stringify(multData[i]) &&
+                tableData1[y].state != "已发货" &&
+                tableData1[y].state != "已收货" &&
+                tableData1[y].state != "已退款"
+              ) {
+                //判断是否相等，相等就删除
+                this.tableData[y].state = "已发货";
+              }
+            }
+          }
+          this.$message({
+            type: "success",
+            message: "批量确认成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已放弃批量确认",
+          });
+        });
+    },
+    batchRefuse() {
+      this.$confirm("是否批量取消订单?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          let multData = this.multipleSelection;
+          let tableData1 = this.tableData;
+          let multDataLen = multData.length;
+          let tableDataLen = tableData1.length;
+          for (let i = 0; i < multDataLen; i++) {
+            for (let y = 0; y < tableDataLen; y++) {
+              if (
+                JSON.stringify(tableData1[y]) == JSON.stringify(multData[i])
+              ) {
+                //判断是否相等，相等就删除
+                this.tableData.splice(y, 1);
+              }
+            }
+          }
+          this.$message({
+            type: "success",
+            message: "批量取消成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已放弃批量取消",
+          });
+        });
+    },
     drawPieChart() {
       this.chartPie = echarts.init(
         document.getElementById("chartPie"),
@@ -341,6 +431,21 @@ export default {
               //     color: "#333",
               //     fontSize: 14,
               //   },
+            },
+            itemStyle: {
+              //这里是更添加阴影
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+              },
+              //这里是更改颜色
+              normal: {
+                color: function (params) {
+                  var colorList = ["#5470c6","#91cc75","#fac858","#ee6666","#73c0de","#3ba272","#fc8452","#9a60b4","#ea7ccc"];
+                  return colorList[params.dataIndex];
+                },
+              },
             },
           },
         ],
