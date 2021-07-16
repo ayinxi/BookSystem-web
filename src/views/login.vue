@@ -101,7 +101,7 @@ export default {
     //接口示例函数
     onSubmit() {
       axios({
-        url: "http://127.0.0.1:8088/login",
+        url: "http://47.94.131.208:8088/login",
         method: "POST",
         params: {
           username: this.form.username,
@@ -114,7 +114,6 @@ export default {
           //else 弹出错误提示
           if (code == "200") {
             sessionStorage.setItem("token",res.data.token);
-            localStorage.setItem("token",res.data.token);
             this.$store.commit("token", res.data.token);
             this.$store.commit("username", this.form.username);
             this.$store.commit("role", res.data.identity);

@@ -79,6 +79,7 @@ export default {
     loginOut() {
       this.isLoading = true;
       this.$store.commit("clearCache");
+      sessionStorage.removeItem('token')
       this.isLoading = false;
     },
   },

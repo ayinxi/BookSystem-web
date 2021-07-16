@@ -116,7 +116,7 @@
                     <el-button
                       type="text"
                       style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaishouhuo"
+                      @click="gotoAllOrder"
                       >全部订单</el-button
                     >
                   </el-col>
@@ -182,8 +182,14 @@
           <div
             style="display: flex; justify-content: center; align-items: center"
           >
-            <el-form ref="userInfo" :model="userInfo" label-width="80px">
-              <el-row>
+            <el-form
+              ref="shopInfo"
+              :model="shopInfo"
+              label-width="80px"
+              v-if="this.shopInfo.apply_pass == 0"
+            >
+              <el-row
+                >
                 <el-col>
                   <el-form-item>
                     <div>
@@ -247,6 +253,9 @@
                       v-model="shopInfo.shopReason"
                       maxlength="100"
                       show-word-limit
+                      clearable
+                      style="width: 500px"
+                      rows="5"
                     ></el-input>
                   </el-form-item>
                 </el-col>
@@ -261,15 +270,12 @@
                 </el-col>
               </el-row>
             </el-form>
+            <el-card v-else style="apply">
+              
+            </el-card>
           </div>
         </el-tab-pane>
-        <el-tab-pane
-          v-else
-          label="我的店铺"
-          name="second"
-          @tab-click="gotoShopManage"
-        >
-        </el-tab-pane>
+        <el-tab-pane v-else label="我的店铺" name="second"> </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -307,12 +313,17 @@ export default {
         shopavatar: "",
         shopname: "",
         shopReason: "",
+        apply_pass: "",
       },
       //
       dialogVisible: false,
     };
   },
-  computed: {},
+  computed: {
+    hasUsername(){
+      return this.$store.state.username
+    }
+  },
   methods: {
     //返回首页
     gotoIndex() {
@@ -324,11 +335,8 @@ export default {
     },
     //跳转收货地址页面
     gotoAddress() {},
-    //跳转店铺管理页面
-    gotoShopManage() {
-      this.$router.push("/shopManage");
-    },
-    gotoDaishouhuo() {
+    //跳转全部订单页面
+    gotoAllOrder() {
       this.$router.push("/");
     },
     //确认申请成为商家
@@ -339,7 +347,7 @@ export default {
         url: "http://127.0.0.1:8088/user/getByUsername",
         method: "GET",
         params: {
-          username: this.$store.state.username,
+          username: this.hasUsername,
         },
       })
         .then((res) => {

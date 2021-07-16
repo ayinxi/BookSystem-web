@@ -106,6 +106,11 @@ const routes = [
     path: '/refundInfo',
     name: 'refundInfo',
     component: () => import('../views/refundInfo.vue')
+  },
+  {
+    path: '/userorder/:num',
+    name: 'userorder',
+    component: () => import('../views/userOrder.vue')
   }
 ]
 
