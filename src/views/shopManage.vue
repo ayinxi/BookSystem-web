@@ -14,8 +14,8 @@
             >
       </div>
     </div>
-    <div style="margin: 3% 18%">
-      <el-row style="margin: 0% 12% 5%">
+    <div style="margin: 3% 10%">
+      <el-row style="margin: 0% 11.5% 5%">
         <el-card>
           <el-container>
             <el-aside width="35px"><div class="verticalBar1"></div></el-aside>
@@ -32,14 +32,14 @@
           </el-container>
         </el-card>
       </el-row>
-      <el-row>
-        <el-col :span="8" class="el-colStyle">
+      <el-row style="margin: 0% 10% 5%">
+        <el-col :span="12" class="el-colStyle">
           <el-card class="el-cardStyle" shadow="hover" @click.native="goToBookM"
             ><p class="iconfont-chuangyexiangmu" style="font-size: 40px"></p>
             <p class="spanStyle">图书管理</p>
           </el-card>
         </el-col>
-        <el-col :span="8" class="el-colStyle">
+        <el-col :span="12" class="el-colStyle">
           <el-card
             class="el-cardStyle"
             shadow="hover"
@@ -48,13 +48,24 @@
             <p class="spanStyle">订单管理</p></el-card
           >
         </el-col>
-        <el-col :span="8" class="el-colStyle">
+      </el-row>
+      <el-row style="margin: 0% 10% 5%">
+        <el-col :span="12" class="el-colStyle">
           <el-card
             class="el-cardStyle"
             shadow="hover"
             @click.native="goToRefundM"
             ><p class="iconfont-shouhou" style="font-size: 40px"></p>
             <p class="spanStyle">退款管理</p></el-card
+          >
+        </el-col>
+        <el-col :span="12" class="el-colStyle">
+          <el-card
+            class="el-cardStyle"
+            shadow="hover"
+            @click.native="goToRefundM"
+            ><p class="iconfont-shouhou" style="font-size: 40px"></p>
+            <p class="spanStyle">店铺管理</p></el-card
           >
         </el-col>
       </el-row>
@@ -118,7 +129,7 @@ export default {
   justify-content: center;
 }
 .el-cardStyle {
-  min-width: 70%;
+  min-width: 90%;
   display: flex;
   min-height: 100px;
   justify-content: center;
