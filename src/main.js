@@ -46,4 +46,24 @@ axios.interceptors.request.use(
     return Promise.reject(err);
   });
 
+// http response 拦截器
+axios.interceptors.response.use(
+	response => {
+	 
+		return response;
+	},
+	error => {
+	 
+		if (error.response) {
+			switch (error.response.status) {
+				case 401:
+				this.$store.commit('delToken');
+				router.replace({
+				path: '/login',
+				query: {redirect: router.currentRoute.fullPath}//登录成功后跳入浏览的当前页面
+			})
+		}
+	}
+	return Promise.reject(error.response.data)
+});
 

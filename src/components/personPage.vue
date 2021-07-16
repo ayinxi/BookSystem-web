@@ -175,13 +175,12 @@
           </div>
         </el-tab-pane>
         <el-tab-pane
-          v-if="this.$store.state.role"
+          v-if="this.$store.state.role == 0"
           label="申请成为商家"
           name="second"
         >
           <div
             style="display: flex; justify-content: center; align-items: center"
-            v-if="this.$store.state.role == 0"
           >
             <el-form ref="userInfo" :model="userInfo" label-width="80px">
               <el-row>
@@ -230,14 +229,25 @@
               <el-row>
                 <el-col>
                   <el-form-item label="店铺名称" prop="shopname">
-                    <el-input v-model="shopInfo.shopname"></el-input>
+                    <el-input
+                      type="text"
+                      v-model="shopInfo.shopname"
+                      maxlength="10"
+                      show-word-limit
+                      style="width: 250px"
+                    ></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col>
                   <el-form-item label="申请理由" prop="shopReason">
-                    <el-input v-model="shopInfo.shopReason"></el-input>
+                    <el-input
+                      type="textarea"
+                      v-model="shopInfo.shopReason"
+                      maxlength="100"
+                      show-word-limit
+                    ></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -253,7 +263,13 @@
             </el-form>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-else label="我的店铺" name="third"> </el-tab-pane>
+        <el-tab-pane
+          v-else
+          label="我的店铺"
+          name="second"
+          @tab-click="gotoShopManage"
+        >
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -306,8 +322,12 @@ export default {
     gotoChange() {
       this.$router.push("/change");
     },
-    //跳转收获地址页面
+    //跳转收货地址页面
     gotoAddress() {},
+    //跳转店铺管理页面
+    gotoShopManage() {
+      this.$router.push("/shopManage");
+    },
     gotoDaishouhuo() {
       this.$router.push("/");
     },
@@ -324,8 +344,6 @@ export default {
       })
         .then((res) => {
           const { code, data } = res.data;
-          //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
-          //else 弹出错误提示
           if (code == "200") {
             this.userInfo = data;
             this.userCheckInfo = data;
@@ -480,8 +498,5 @@ export default {
   display: flex;
   justify-content: center;
   margin: 20px;
-}
-.el-form-item {
-  margin-bottom: 0;
 }
 </style>
