@@ -191,7 +191,7 @@ export default {
     //获取用户信息
     getUserInfo() {
       axios({
-        url: "http://127.0.0.1:8088/user/getByUsername",
+        url: this.$store.state.yuming+"/user/getByUsername",
         method: "GET",
         params: {
           username: this.$store.state.username,

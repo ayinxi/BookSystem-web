@@ -23,6 +23,7 @@ export default new Vuex.Store({
     username: "",
     setToken: {},
     detToken: {},
+    yuming:"http://47.94.131.208:8088"
   },
   mutations: {
     setToken(state, payload) {

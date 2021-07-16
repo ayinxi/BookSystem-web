@@ -22,7 +22,7 @@
         <el-card class="box-card1">
           <el-row>
             <el-col span="8" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>待审核</span></el-row>
+              <el-row><h2>{{nonCheckShopNum}}</h2></el-row><el-row><span>待审核</span></el-row>
             </el-col>
             <el-col span="8" style="text-align:center">
               <el-row><h2>12345</h2></el-row><el-row><span>已审核</span></el-row>
@@ -37,7 +37,9 @@
         <el-card class="box-card1">
            <el-tabs v-model="activeName">
     <el-tab-pane label="待审核申请" name="first">
-      <el-table :data="checkList" style="width: 100%">
+      <el-table :data="checkList" style="width: 100%"
+      :default-sort = "{prop: 'applyTime', order: 'descending'}">
+        <el-table-column prop="applyTime" label="申请时间" sortable></el-table-column>
         <el-table-column prop="applicant" label="申请人"></el-table-column>
         <el-table-column label="店铺头像">
           <template slot-scope="scope"><img :src="scope.row.shopImg"></template>
@@ -46,14 +48,21 @@
         <el-table-column prop="applyReason" label="申请理由"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-           <el-button size="mini" type="text" @click="handleEdit(scope.$index, scope.row)">通过</el-button>
-           <el-button size="mini" type="text" @click="handleDelete(scope.$index, scope.row)">拒绝</el-button>
+            <el-button size="mini" type="text" @click="handleEdit(scope.$index, scope.row)">通过</el-button>
+            <el-popover placement="left" width="400" trigger="click">
+              <el-row>
+                <el-col span="20"><el-input v-model="checkOpinion" placeholder="请输入审核意见"></el-input></el-col>
+                <el-col span="4"><el-button type="danger">确认</el-button></el-col>
+              </el-row>
+              <el-button size="mini" type="text" slot="reference" @click="handleDelete(scope.$index, scope.row)">拒绝</el-button>
+            </el-popover>
           </template>
         </el-table-column>
       </el-table>
     </el-tab-pane>
     <el-tab-pane label="审核历史" name="third">
-      <el-table :data="checkedList" style="width: 100%">
+      <el-table :data="checkedList" style="width: 100%"
+      :default-sort = "{prop: 'checkTime', order: 'descending'}">
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -63,20 +72,34 @@
             </el-form>
           </template>
         </el-table-column>
+        <el-table-column prop="checkTime" label="审核时间" sortable></el-table-column>
         <el-table-column prop="applicant" label="申请人"></el-table-column>
         <el-table-column prop="checkResult" label="审核结果"></el-table-column>
         <el-table-column prop="checkOpinion" label="审核意见"></el-table-column>
       </el-table>
     </el-tab-pane>
     <el-tab-pane label="现有商家" name="second">
-      <el-table :data="shopList" style="width: 100%">
-        <el-table-column prop="keeper" label="店铺"></el-table-column>
+      <el-table
+      :data="shopList.filter(data => !search || data.keeper.toLowerCase().includes(search.toLowerCase()))"
+      style="width: 100%"
+      :default-sort = "{prop: 'checkTime', order: 'descending'}">
+        <el-table-column prop="checkTime" label="开店时间" sortable></el-table-column>
+        <el-table-column prop="keeper" label="店主"></el-table-column>
         <el-table-column label="店铺头像">
           <template slot-scope="scope"><img :src="scope.row.shopImg"></template>
         </el-table-column>
         <el-table-column label="店铺名称">
           <template slot-scope="scope">
-            <el-link :href="'http://localhost:8083/'+scope.row.shopAddr">{{scope.row.shopName}}</el-link>
+            <el-link :href="'http://localhost:8081/'+scope.row.shopAddr">{{scope.row.shopName}}</el-link>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="right">
+          <template slot="header">
+            <el-input v-model="search" size="mini" placeholder="输入店主名搜索"/>
+          </template>
+          <template>
+            <el-button size="mini" type="text">编辑</el-button>
+            <el-button size="mini" type="text">注销</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -89,99 +112,82 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   components: {},
   data() {
     return {
+      isLoading: false,
       activeName: 'first',
       checkList: [
         {
+          applyTime: "2021-07-14 18:31:30",//申请时间
           applicant: "aaa",//申请人
           shopImg: require("../assets/kuku.png"),//店铺封面
           shopName: "ccc",//店铺名称
           applyReason: "ddd",//申请理由
-        },
-        {
-          applicant: "aaa",
-          shopImg: require("../assets/kuku.png"),
-          shopName: "ccc",
-          applyReason: "ddd",
-        },
-        {
-          applicant: "aaa",//申请人
-          shopImg: require("../assets/kuku.png"),//店铺封面
-          shopName: "ccc",//店铺名称
-          applyReason: "ddd",//申请理由
-        },
-        {
-          applicant: "aaa",
-          shopImg: require("../assets/kuku.png"),
-          shopName: "ccc",
-          applyReason: "ddd",
-        },
-        {
-          applicant: "aaa",//申请人
-          shopImg: require("../assets/kuku.png"),//店铺封面
-          shopName: "ccc",//店铺名称
-          applyReason: "ddd",//申请理由
-        },
-        {
-          applicant: "aaa",
-          shopImg: require("../assets/kuku.png"),
-          shopName: "ccc",
-          applyReason: "ddd",
-        },
-        {
-          applicant: "aaa",//申请人
-          shopImg: require("../assets/kuku.png"),//店铺封面
-          shopName: "ccc",//店铺名称
-          applyReason: "ddd",//申请理由
-        },
-        {
-          applicant: "aaa",
-          shopImg: require("../assets/kuku.png"),
-          shopName: "ccc",
-          applyReason: "ddd",
-        },
-        {
-          applicant: "aaa",//申请人
-          shopImg: require("../assets/kuku.png"),//店铺封面
-          shopName: "ccc",//店铺名称
-          applyReason: "ddd",//申请理由
-        },
-        {
-          applicant: "aaa",
-          shopImg: require("../assets/kuku.png"),
-          shopName: "ccc",
-          applyReason: "ddd",
         },
       ],
       checkedList: [
         {
+          checkTime: "2021-07-14 18:31:30",//审核时间
           applicant: "aaa",//申请人
           shopImg: require("../assets/kuku.png"),//店铺封面
           shopName: "ccc",//店铺名称
           applyReason: "ddd",//申请理由
-          checkResult: "通过",//审核结果
+          checkResult: "审核通过(已注销)",//店铺状态
           checkOpinion: "",//审核意见
         },
       ],
       shopList: [
         {
+          checkTime: "2021-07-14 18:31:30",//过审开店时间
           keeper: "aaa",//店主
           shopImg: require("../assets/kuku.png"),//店铺封面
           shopName: "ccc",//店铺名称
           shopAddr: "login",//店铺地址
         },
       ],
+      search: "",
+      nonCheckShopNum: 0,
+      checkOpinion: "",
     };
   },
   computed: {},
   methods:{
+    //回到管理员主页
     gotoAdmin() {
       this.$router.push("/adminManage");
     },
-   
+    //获取获取未审核的店铺数量
+    getNonCheckShopNum() {
+      axios({
+        url: "http://47.94.131.208:8088/admin/getNonCheckShopNum",
+        method: "GET",
+        params: {},
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.nonCheckShopNum = data;
+          } else {
+            this.$message.error("获取信息失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //获取已审核的申请数量
+    //获取现有店铺数量
+    },
+     async created() {
+      this.isLoading = true;
+      await this.getNonCheckShopNum();
+      this.isLoading = false;
   },
 };
 </script>

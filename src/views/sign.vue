@@ -47,7 +47,9 @@
             <el-form-item label="验证码" prop="activationCode">
               <el-input v-model="userInfo.activationCode" style="width: 140px">
               </el-input>
-              <el-button @click="sendActivationCode">发送验证码</el-button>
+              <el-button @click="countDown" :disabled="disabled">{{
+                content
+              }}</el-button>
             </el-form-item>
             <el-form-item>
               <el-button
@@ -76,6 +78,10 @@ export default {
   components: {},
   data() {
     return {
+      // 获取验证码
+      disabled: false,
+      interval: undefined,
+      totalCount: 0,
       userInfo: {
         name: "",
         username: "",
@@ -118,11 +124,32 @@ export default {
       },
     };
   },
+  computed: {
+    content() {
+      return this.totalCount !== 0
+        ? `${this.totalCount}秒再次获取`
+        : "获取验证码";
+    },
+  },
   methods: {
+    //倒计时按钮
+    countDown() {
+      // 按钮60秒倒计时
+      this.disabled = true;
+      this.totalCount = 60;
+      this.sendActivationCode(); //60秒过倒计时过后才能调用的事件
+      this.interval = setInterval(() => {
+        this.totalCount--;
+        if (this.totalCount === 0) {
+          clearInterval(this.interval);
+          this.disabled = false;
+        }
+      }, 1000);
+    },
     //发送验证码
     sendActivationCode() {
       axios({
-        url: "http://127.0.0.1:8088/sendEmail",
+        url: this.$store.state.myUrl+"/sendEmail",
         method: "POST",
         params: {
           email: this.userInfo.username,
@@ -152,13 +179,13 @@ export default {
     },
     onSign() {
       axios({
-        url: "http://127.0.0.1:8088/registerUser",
+        url: this.store.state.yuming+"/registerUser",
         method: "POST",
         params: {
           email: this.userInfo.username,
           password: this.userInfo.password,
           name: this.userInfo.name,
-          activationCode:this.userInfo.activationCode,
+          activationCode: this.userInfo.activationCode,
         },
       })
         .then((res) => {
@@ -170,9 +197,9 @@ export default {
               message: "注册成功",
               type: "success",
             });
-            this.$router.push("/")
+            this.$router.push("/");
           } else {
-            this.$message.error("注册失败,请稍候再试");
+            this.$message.error("注册失败,请稍后再试");
           }
         })
         .catch(() => {

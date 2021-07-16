@@ -97,11 +97,13 @@ export default {
   mounted(){
     
   },
+  computed:{
+  },
   methods: {
     //接口示例函数
     onSubmit() {
       axios({
-        url: "http://127.0.0.1:8088/login",
+        url: this.$store.state.yuming+"/login",
         method: "POST",
         params: {
           username: this.form.username,
@@ -110,11 +112,10 @@ export default {
       })
         .then((res) => {
           const { code} = res.data;
-          //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
+          //code=='200'表示登录成功，进行本地存储和store存储 并进行跳转。
           //else 弹出错误提示
           if (code == "200") {
             sessionStorage.setItem("token",res.data.token);
-            localStorage.setItem("token",res.data.token);
             this.$store.commit("token", res.data.token);
             this.$store.commit("username", this.form.username);
             this.$store.commit("role", res.data.identity);
@@ -133,7 +134,7 @@ export default {
                 message: "登陆成功",
                 type: "success",
               });
-              if (res.data.identity != 3) {
+              if (res.data.identity != 2) {
                 this.$router.push("/");
               } else {
                 this.$router.push("/adminManage");

@@ -116,7 +116,7 @@
                     <el-button
                       type="text"
                       style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaishouhuo"
+                      @click="gotoAllOrder"
                       >全部订单</el-button
                     >
                   </el-col>
@@ -128,7 +128,7 @@
                     <el-button
                       type="text"
                       style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaishouhuo"
+                      @click="gotoDaifahuo"
                       >待发货</el-button
                     >
                   </el-col>
@@ -152,7 +152,7 @@
                     <el-button
                       type="text"
                       style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaishouhuo"
+                      @click="gotoDaipingjia"
                       >待评价</el-button
                     >
                   </el-col>
@@ -164,7 +164,7 @@
                     <el-button
                       type="text"
                       style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaishouhuo"
+                      @click="gotoTuikuan"
                     >
                       退款</el-button
                     >
@@ -175,16 +175,21 @@
           </div>
         </el-tab-pane>
         <el-tab-pane
-          v-if="this.$store.state.role"
+          v-if="this.$store.state.role == 0"
           label="申请成为商家"
           name="second"
         >
           <div
             style="display: flex; justify-content: center; align-items: center"
-            v-if="this.$store.state.role == 0"
           >
-            <el-form ref="userInfo" :model="userInfo" label-width="80px">
-              <el-row>
+            <el-form
+              ref="shopInfo"
+              :model="shopInfo"
+              label-width="80px"
+              v-if="this.shopInfo.apply_pass == 0"
+            >
+              <el-row
+                >
                 <el-col>
                   <el-form-item>
                     <div>
@@ -230,14 +235,28 @@
               <el-row>
                 <el-col>
                   <el-form-item label="店铺名称" prop="shopname">
-                    <el-input v-model="shopInfo.shopname"></el-input>
+                    <el-input
+                      type="text"
+                      v-model="shopInfo.shopname"
+                      maxlength="10"
+                      show-word-limit
+                      style="width: 250px"
+                    ></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col>
                   <el-form-item label="申请理由" prop="shopReason">
-                    <el-input v-model="shopInfo.shopReason"></el-input>
+                    <el-input
+                      type="textarea"
+                      v-model="shopInfo.shopReason"
+                      maxlength="100"
+                      show-word-limit
+                      clearable
+                      style="width: 500px"
+                      rows="5"
+                    ></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -251,9 +270,12 @@
                 </el-col>
               </el-row>
             </el-form>
+            <el-card v-else style="apply">
+              
+            </el-card>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-else label="我的店铺" name="third"> </el-tab-pane>
+        <el-tab-pane v-else label="我的店铺" name="second"> </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -272,6 +294,7 @@ export default {
   },
   data() {
     return {
+      orderId:"",
       isLoading: false,
       activeName: "first",
       imageUrl: "",
@@ -291,12 +314,17 @@ export default {
         shopavatar: "",
         shopname: "",
         shopReason: "",
+        apply_pass: "",
       },
       //
       dialogVisible: false,
     };
   },
-  computed: {},
+  computed: {
+    hasUsername(){
+      return this.$store.state.username
+    }
+  },
   methods: {
     //返回首页
     gotoIndex() {
@@ -306,26 +334,46 @@ export default {
     gotoChange() {
       this.$router.push("/change");
     },
-    //跳转收获地址页面
+    //跳转收货地址页面
     gotoAddress() {},
+    //跳转全部页面
+    gotoAllOrder() {
+      this.orderId=0;
+      this.$router.push("/userOrder/"+this.orderId);
+    },
+    //跳转待发货
+    gotoDaifahuo() {
+      this.orderId=1;
+      this.$router.push("/userOrder/"+this.orderId);
+    },
+    //跳转待收货页面
     gotoDaishouhuo() {
-      this.$router.push("/");
+      this.orderId=2;
+      this.$router.push("/userOrder/"+this.orderId);
+    },
+    //跳转全部页面
+    gotoDaipingjia() {
+      this.orderId=3;
+      this.$router.push("/userOrder/"+this.orderId);
+    },
+    //跳转退款页面
+    gotoTuikuan() {
+      this.orderId=4;
+      this.$router.push("/userOrder/"+this.orderId);
     },
     //确认申请成为商家
     confirmApply() {},
     //获取用户信息
     getUserInfo() {
       axios({
-        url: "http://127.0.0.1:8088/user/getByUsername",
+        url: this.$store.state.yuming+"/user/getByUsername",
         method: "GET",
         params: {
-          username: this.$store.state.username,
+          username: this.hasUsername,
         },
       })
         .then((res) => {
           const { code, data } = res.data;
-          //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
-          //else 弹出错误提示
           if (code == "200") {
             this.userInfo = data;
             this.userCheckInfo = data;
@@ -480,8 +528,5 @@ export default {
   display: flex;
   justify-content: center;
   margin: 20px;
-}
-.el-form-item {
-  margin-bottom: 0;
 }
 </style>
