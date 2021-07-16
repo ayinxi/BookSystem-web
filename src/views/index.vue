@@ -54,157 +54,147 @@
             <el-menu
               class="el-menu-vertical-demo"
               :default-active="activeIndex2"
-              :unique-opened="true"
               @select="handleSelect2"
+              :default-openeds="['1', '2', '3', '4', '5', '6']"
+              v-menuIcon
+              style="overflow: hidden"
             >
-              <el-submenu index="1">
-                <template slot="title">
-                  <i class="el-icon-reading"></i>
-                  <span style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >网络文学</span
-                  >
-                </template>
-                <el-menu-item-group>
-                  <el-menu-item
-                    index="1-1"
-                    @click.native="NanPinFilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >男频</el-menu-item
-                  >
-                  <el-menu-item
-                    index="1-2"
-                    @click.native="NvPinFilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >女频</el-menu-item
-                  >
-                </el-menu-item-group>
-              </el-submenu>
-              <el-submenu index="2">
-                <template slot="title">
-                  <i class="el-icon-medal-1"></i>
-                  <span style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >教育</span
-                  >
-                </template>
-                <el-menu-item-group>
-                  <el-menu-item
-                    index="2-1"
-                    @click.native="JiaoCaiFilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >教材</el-menu-item
-                  >
-                  <el-menu-item
-                    index="2-2"
-                    @click.native="JiaoFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >教辅资料</el-menu-item
-                  >
-                </el-menu-item-group>
-              </el-submenu>
-              <el-submenu index="3">
-                <template slot="title">
-                  <i class="el-icon-notebook-1"></i>
-                  <span style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >小说</span
-                  >
-                </template>
-                <el-menu-item-group>
-                  <el-menu-item
-                    index="3-1"
-                    @click.native="ChinaFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >中国小说</el-menu-item
-                  >
-                  <el-menu-item
-                    index="3-2"
-                    @click.native="ForeginFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >外国小说</el-menu-item
-                  >
-                </el-menu-item-group>
-              </el-submenu>
-              <el-submenu index="4">
-                <template slot="title">
-                  <i class="el-icon-collection"></i>
-                  <span style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >文艺</span
-                  >
-                </template>
-                <el-menu-item-group>
-                  <el-menu-item
-                    index="4-1"
-                    @click.native="LiteratureFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >文学</el-menu-item
-                  >
-                  <el-menu-item
-                    index="4-2"
-                    @click.native="ArtFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >艺术</el-menu-item
-                  >
-                </el-menu-item-group>
-              </el-submenu>
-              <el-submenu index="5">
-                <template slot="title">
-                  <i class="el-icon-magic-stick"></i>
-                  <span style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >青春/动漫</span
-                  >
-                </template>
-                <el-menu-item-group>
-                  <el-menu-item
-                    index="5-1"
-                    @click.native="YouthFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >青春</el-menu-item
-                  >
-                  <el-menu-item
-                    index="5-2"
-                    @click.native="CartoonFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >动漫</el-menu-item
-                  >
-                </el-menu-item-group>
-              </el-submenu>
-              <el-submenu index="6">
-                <template slot="title">
-                  <i class="el-icon-date"></i>
-                  <span style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >按出版时间分</span
-                  >
-                </template>
-                <el-menu-item-group>
-                  <el-menu-item
-                    index="6-1"
-                    @click.native="TwoZeroTwoOneFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >2021年出版</el-menu-item
-                  >
-                  <el-menu-item
-                    index="6-2"
-                    @click.native="TwoZeroTwoZeroFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >2020年出版</el-menu-item
-                  >
-                  <el-menu-item
-                    index="6-3"
-                    @click.native="TwoZeroOneNineFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >2019年出版</el-menu-item
-                  >
-                  <el-menu-item
-                    index="6-4"
-                    @click.native="TwoZeroOneEightFuilter"
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
-                    >2018年及以前出版</el-menu-item
-                  >
-                </el-menu-item-group>
-              </el-submenu>
+              <el-menu-item index="1">
+                <i class="el-icon-reading"></i>
+                <span
+                  slot="title"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
+                  >网络文学</span
+                >
+              </el-menu-item>
+              <el-menu-item
+                index="1-1"
+                @click.native="NanPinFilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >男频</el-menu-item
+              >
+              <el-menu-item
+                index="1-2"
+                @click.native="NvPinFilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >女频</el-menu-item
+              >
+              <el-menu-item index="2">
+                <i class="el-icon-medal-1"></i>
+                <span
+                  slot="title"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
+                  >教育</span
+                >
+              </el-menu-item>
+              <el-menu-item
+                index="2-1"
+                @click.native="JiaoCaiFilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >教材</el-menu-item
+              >
+              <el-menu-item
+                index="2-2"
+                @click.native="JiaoFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >教辅资料</el-menu-item
+              >
+              <el-menu-item index="3">
+                <i class="el-icon-notebook-1"></i>
+                <span
+                  slot="title"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
+                  >小说</span
+                >
+              </el-menu-item>
+              <el-menu-item
+                index="3-1"
+                @click.native="ChinaFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >中国小说</el-menu-item
+              >
+              <el-menu-item
+                index="3-2"
+                @click.native="ForeginFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >外国小说</el-menu-item
+              >
+              <el-menu-item index="4">
+                <i class="el-icon-collection"></i>
+                <span
+                  slot="title"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
+                  >文艺</span
+                >
+              </el-menu-item>
+              <el-menu-item
+                index="4-1"
+                @click.native="LiteratureFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >文学</el-menu-item
+              >
+              <el-menu-item
+                index="4-2"
+                @click.native="ArtFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >艺术</el-menu-item
+              >
+              <el-menu-item index="5">
+                <i class="el-icon-magic-stick"></i>
+                <span
+                  slot="title"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
+                  >青春/动漫</span
+                >
+              </el-menu-item>
+              <el-menu-item
+                index="5-1"
+                @click.native="YouthFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >青春</el-menu-item
+              >
+              <el-menu-item
+                index="5-2"
+                @click.native="CartoonFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >动漫</el-menu-item
+              >
+              <el-menu-item index="6">
+                <i class="el-icon-date"></i>
+                <span
+                  slot="title"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
+                  >按出版时间分</span
+                >
+              </el-menu-item>
+              <el-menu-item
+                index="6-1"
+                @click.native="TwoZeroTwoOneFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >2021年出版</el-menu-item
+              >
+              <el-menu-item
+                index="6-2"
+                @click.native="TwoZeroTwoZeroFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >2020年出版</el-menu-item
+              >
+              <el-menu-item
+                index="6-3"
+                @click.native="TwoZeroOneNineFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >2019年出版</el-menu-item
+              >
+              <el-menu-item
+                index="6-4"
+                @click.native="TwoZeroOneEightFuilter"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >2018年及以前出版</el-menu-item
+              >
             </el-menu>
           </el-aside>
           <el-main>
-            <el-row style="margin-bottom:5%">
+            <el-row style="margin-bottom: 5%">
               <el-col :span="17">
                 <el-carousel
                   :interval="5000"
@@ -219,13 +209,20 @@
               </el-col>
               <el-col :span="7">
                 <el-card class="cStyle">
-                  <p style="font-weight:1000;margin-top:0%">今日销量冠军</p>
-                  <el-row style="height:270px">
-                  <el-image class="tscStyle" :src="todaySalesChampion.Img"></el-image>
+                  <p style="font-weight: 1000; margin-top: 0%">今日销量冠军</p>
+                  <el-row style="height: 270px">
+                    <el-image
+                      class="tscStyle"
+                      :src="todaySalesChampion.Img"
+                    ></el-image>
                   </el-row>
-                  <el-row style="text-align:center">
-                  <p style="color: black; margin: 1%">{{ todaySalesChampion.Name }}</p>
-                  <p style="color: rgb(128, 192, 192); margin: 0%">{{ todaySalesChampion.Author }}</p>
+                  <el-row style="text-align: center">
+                    <p style="color: black; margin: 1%">
+                      {{ todaySalesChampion.Name }}
+                    </p>
+                    <p style="color: rgb(128, 192, 192); margin: 0%">
+                      {{ todaySalesChampion.Author }}
+                    </p>
                   </el-row>
                 </el-card>
               </el-col>
@@ -250,7 +247,9 @@
                     >
                     </el-image>
                   </el-header>
-                  <el-main style="color:black;padding-top: 0; text-align: center">
+                  <el-main
+                    style="color: black; padding-top: 0; text-align: center"
+                  >
                     <el-link
                       :underline="false"
                       class="book-name"
@@ -723,7 +722,10 @@ export default {
   position: relative;
   left: 20px;
 }
-.tscStyle{
+.tscStyle {
   height: 100%;
+}
+.el-menu >>> .el-submenu .el-submenu__title .el-submenu__icon-arrow {
+  visibility: hidden;
 }
 </style>
