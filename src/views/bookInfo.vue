@@ -127,19 +127,19 @@ export default {
       this.$router.push("/");
     },
     NetworkFilter() {
-      this.$router.push({ path: "/", query: { activeIndex1: "1" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex1: "1" } });
     },
     EducationFilter() {
-      this.$router.push({ path: "/", query: { activeIndex1: "2" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex1: "2" } });
     },
     NovelFilter() {
-      this.$router.push({ path: "/", query: { activeIndex1: "3" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex1: "3" } });
     },
     LandAFilter() {
-      this.$router.push({ path: "/", query: { activeIndex1: "4" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex1: "4" } });
     },
     YandCFilter() {
-      this.$router.push({ path: "/", query: { activeIndex1: "5" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex1: "5" } });
     },
     goToShopIndex() {
       this.$router.push("/shopIndex");
