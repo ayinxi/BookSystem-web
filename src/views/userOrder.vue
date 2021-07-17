@@ -5,7 +5,7 @@
         <img height="70px" style="margin: 20px 0" src="../assets/jwbc.png" />
       </div>
       <el-page-header
-        @back="gotoPersonPage"
+        @back="gotoUserIndex"
         content="我的订单"
         style="display: flex; justify-content: center; align-items: center"
       ></el-page-header>
@@ -16,8 +16,7 @@
           <el-menu
             default-active="2"
             class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
+          
           >
             <el-menu-item index="1">
               <i class="iconfont-dingdan1"></i>
@@ -50,9 +49,14 @@ export default {
   data() {
     return {};
   },
+  prop: {
+    orderId: String,
+  },
+  computed: {
+  },
   method: {
     //返回个人主页
-    gotoPersonPage() {
+    gotoUserIndex() {
       this.$router.push("/person");
     },
   },
