@@ -189,10 +189,10 @@
               </el-col>
               <el-col :span="7">
                 <el-card class="cStyle">
-                  <el-row style="height: 30px; margin: 5%"
-                    ><el-col :span="2"><i class="iconfont-guanjun"></i></el-col>
-                    <el-col :span="11"
-                      ><p style="font-weight: 1000; margin-top: 0%">
+                  <el-row style="height: 40px; margin: 5%"
+                    ><el-col :span="4"><i class="iconfont-guanjun" style="font-size: 40px"></i></el-col>
+                    <el-col :span="11" style="text-align: center;height:40px"
+                      ><p style="font-weight: 1000; margin: 0%;font-size: 20px;height:40px;line-height:40px">
                         今日销量冠军
                       </p></el-col
                     >
@@ -258,31 +258,31 @@
               >
                 <el-menu-item
                   index="1"
-                  @click.native="NetworkFilter"
+                  @click.native="NetworkFilter2"
                   style="color: rgb(250, 128, 114); font-weight: 1000"
                   >网络文学</el-menu-item
                 >
                 <el-menu-item
                   index="2"
-                  @click.native="EducationFilter"
+                  @click.native="EducationFilter2"
                   style="color: rgb(250, 128, 114); font-weight: 1000"
                   >教育</el-menu-item
                 >
                 <el-menu-item
                   index="3"
-                  @click.native="NovelFilter"
+                  @click.native="NovelFilter2"
                   style="color: rgb(250, 128, 114); font-weight: 1000"
                   >小说</el-menu-item
                 >
                 <el-menu-item
                   index="4"
-                  @click.native="LandAFilter"
+                  @click.native="LandAFilter2"
                   style="color: rgb(250, 128, 114); font-weight: 1000"
                   >文艺</el-menu-item
                 >
                 <el-menu-item
                   index="5"
-                  @click.native="YandCFilter"
+                  @click.native="YandCFilter2"
                   style="color: rgb(250, 128, 114); font-weight: 1000"
                   >青春/动漫</el-menu-item
                 >
@@ -349,7 +349,7 @@ export default {
   },
   data() {
     return {
-      activeIndex1: " ",
+      activeIndex1: "1",
       activeIndex2: " ",
       currentPage: 1,
       pageSize: 8,
@@ -576,114 +576,18 @@ export default {
           Price: 11,
           PubTime: 2020,
         },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本3号",
-          Author: "王五",
-          ClassOne: "小说",
-          ClassTwo: "中国小说",
-          Price: 12,
-          PubTime: 2019,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2018,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本5号",
-          Author: "赵六",
-          ClassOne: "教育",
-          ClassTwo: "教材",
-          Price: 13,
-          PubTime: 2021,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本6号",
-          Author: "赵六",
-          ClassOne: "教育",
-          ClassTwo: "教辅资料",
-          Price: 13,
-          PubTime: 2020,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本7号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "文学",
-          Price: 13,
-          PubTime: 2019,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本8号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "艺术",
-          Price: 13,
-          PubTime: 2018,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本9号",
-          Author: "赵六",
-          ClassOne: "青春/动漫",
-          ClassTwo: "青春",
-          Price: 13,
-          PubTime: 2021,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本10号",
-          Author: "赵六",
-          ClassOne: "青春/动漫",
-          ClassTwo: "动漫",
-          Price: 13,
-          PubTime: 2020,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本11号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2019,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本12号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2018,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本13号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2021,
-        },
+        
       ],
     };
   },
   methods: {
     showAll() {
-      this.activeIndex1 = " ";
+      this.activeIndex1 = "1";
       this.activeIndex2 = " ";
       this.currentPage = 1;
-      this.displayList = this.Lists;
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "网络文学"
+      );
     },
     handleCurrentChange(val) {
       this.currentPage = val;
@@ -742,17 +646,36 @@ export default {
     NetworkFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "1" } });
     },
+    NetworkFilter2() {
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "网络文学"
+      );
+    },
     EducationFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "2" } });
+    },
+    EducationFilter2() {
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "教育");
     },
     NovelFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "3" } });
     },
+    NovelFilter2() {
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "小说");
+    },
     LandAFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "4" } });
     },
+    LandAFilter2() {
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "文艺");
+    },
     YandCFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "5" } });
+    },
+    YandCFilter2() {
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "青春/动漫"
+      );
     },
   },
 };
@@ -817,5 +740,8 @@ export default {
 }
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
+}
+.el-menu.el-menu--horizontal{
+  border-bottom: 0px;
 }
 </style>

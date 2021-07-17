@@ -14,7 +14,7 @@
               class="el-menu-vertical-demo"
               :default-active="activeIndex2"
             >
-              <el-menu-item index="1">
+              <el-menu-item index="1" @click.native="NetworkFilter">
                 <i class="el-icon-reading"></i>
                 <span
                   slot="title"
@@ -38,7 +38,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >女频</el-menu-item
               >
-              <el-menu-item index="2">
+              <el-menu-item index="2" @click.native="EducationFilter">
                 <i class="el-icon-medal-1"></i>
                 <span
                   slot="title"
@@ -62,7 +62,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >教辅资料</el-menu-item
               >
-              <el-menu-item index="3">
+              <el-menu-item index="3" @click.native="NovelFilter">
                 <i class="el-icon-notebook-1"></i>
                 <span
                   slot="title"
@@ -86,7 +86,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >外国小说</el-menu-item
               >
-              <el-menu-item index="4">
+              <el-menu-item index="4" @click.native="LandAFilter">
                 <i class="el-icon-collection"></i>
                 <span
                   slot="title"
@@ -110,7 +110,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >艺术</el-menu-item
               >
-              <el-menu-item index="5">
+              <el-menu-item index="5" @click.native="YandCFilter">
                 <i class="el-icon-magic-stick"></i>
                 <span
                   slot="title"
