@@ -13,9 +13,8 @@
             <el-menu
               class="el-menu-vertical-demo"
               :default-active="activeIndex2"
-              @select="handleSelect2"
             >
-              <el-menu-item index="1" @click.native="NetworkFilter">
+              <el-menu-item index="1">
                 <i class="el-icon-reading"></i>
                 <span
                   slot="title"
@@ -39,7 +38,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >女频</el-menu-item
               >
-              <el-menu-item index="2" @click.native="EducationFilter">
+              <el-menu-item index="2">
                 <i class="el-icon-medal-1"></i>
                 <span
                   slot="title"
@@ -63,7 +62,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >教辅资料</el-menu-item
               >
-              <el-menu-item index="3" @click.native="NovelFilter">
+              <el-menu-item index="3">
                 <i class="el-icon-notebook-1"></i>
                 <span
                   slot="title"
@@ -87,7 +86,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >外国小说</el-menu-item
               >
-              <el-menu-item index="4" @click.native="LandAFilter">
+              <el-menu-item index="4">
                 <i class="el-icon-collection"></i>
                 <span
                   slot="title"
@@ -111,7 +110,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >艺术</el-menu-item
               >
-              <el-menu-item index="5" @click.native="YandCFilter">
+              <el-menu-item index="5">
                 <i class="el-icon-magic-stick"></i>
                 <span
                   slot="title"
@@ -174,120 +173,6 @@
             </el-menu>
           </el-aside>
           <el-main>
-            <el-row style="margin-bottom: 5%">
-              <el-col :span="17">
-                <el-carousel
-                  :interval="5000"
-                  arrow="never"
-                  height="400px"
-                  class="carouselStyle"
-                >
-                  <el-carousel-item v-for="item in photoList" :key="item">
-                    <el-image class="imgStyle2" :src="item.Img"></el-image>
-                  </el-carousel-item>
-                </el-carousel>
-              </el-col>
-              <el-col :span="7">
-                <el-card class="cStyle">
-                  <el-row style="height: 30px; margin: 5%"
-                    ><el-col :span="2"><i class="iconfont-guanjun"></i></el-col>
-                    <el-col :span="11"
-                      ><p style="font-weight: 1000; margin-top: 0%">
-                        今日销量冠军
-                      </p></el-col
-                    >
-                  </el-row>
-                  <el-row style="height: 270px">
-                    <el-image
-                      class="tscStyle"
-                      :src="todaySalesChampion.Img"
-                    ></el-image>
-                  </el-row>
-                  <el-row style="text-align: center">
-                    <p style="color: black; margin: 1%">
-                      {{ todaySalesChampion.Name }}
-                    </p>
-                    <p style="color: rgb(128, 192, 192); margin: 0%">
-                      {{ todaySalesChampion.Author }}
-                    </p>
-                  </el-row>
-                </el-card>
-              </el-col>
-            </el-row>
-            <el-row>
-              <p>新书上架</p>
-            </el-row>
-            <el-row class="rowStyle" type="flex">
-              <el-col :span="6" v-for="book in newBookList" :key="book.Name">
-                <el-container>
-                  <el-header
-                    style="width: 100%; height: 200px; align-items: center"
-                  >
-                    <el-image
-                      class="imgStyle1"
-                      :src="book.Img"
-                      @click.native="goToBookInfo()"
-                    >
-                    </el-image>
-                  </el-header>
-                  <el-main
-                    style="color: black; padding-top: 0; text-align: center"
-                  >
-                    <el-link
-                      :underline="false"
-                      class="book-name"
-                      @click="goToBookInfo()"
-                      >{{ book.Name }}</el-link
-                    >
-                    <p style="color: rgb(128, 192, 192); margin: 0%">
-                      {{ book.Author }}
-                    </p>
-                    <p style="color: red; font-weight: 1000; margin: 0%">
-                      ￥{{ book.Price }}
-                    </p>
-                  </el-main>
-                </el-container>
-              </el-col>
-            </el-row>
-            <el-row style="margin: 0% 0% 5%"
-              ><el-menu
-                :default-active="activeIndex1"
-                class="el-menu-demo"
-                mode="horizontal"
-                @select="handleSelect1"
-              >
-                <el-menu-item
-                  index="1"
-                  @click.native="NetworkFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >网络文学</el-menu-item
-                >
-                <el-menu-item
-                  index="2"
-                  @click.native="EducationFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >教育</el-menu-item
-                >
-                <el-menu-item
-                  index="3"
-                  @click.native="NovelFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >小说</el-menu-item
-                >
-                <el-menu-item
-                  index="4"
-                  @click.native="LandAFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >文艺</el-menu-item
-                >
-                <el-menu-item
-                  index="5"
-                  @click.native="YandCFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >青春/动漫</el-menu-item
-                >
-              </el-menu>
-            </el-row>
             <el-row class="rowStyle" type="flex">
               <el-col
                 :span="6"
@@ -349,95 +234,9 @@ export default {
   },
   data() {
     return {
-      activeIndex1: " ",
       activeIndex2: " ",
       currentPage: 1,
-      pageSize: 8,
-      todaySalesChampion: {
-        Img: require("../assets/youbenshi.jpg"),
-        Name: "有本事",
-        Author: "冯唐",
-      },
-      photoList: [
-        { Img: require("../assets/1.jpg") },
-        { Img: require("../assets/photo1.jpg") },
-        { Img: require("../assets/photo2.jpg") },
-        { Img: require("../assets/photo3.jpg") },
-      ],
-      newBookList: [
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "有本事",
-          Author: "冯唐",
-          ClassOne: "网络文学",
-          ClassTwo: "男频",
-          Price: 10,
-          PubTime: 2021,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本2号",
-          Author: "李四",
-          ClassOne: "网络文学",
-          ClassTwo: "女频",
-          Price: 11,
-          PubTime: 2020,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本3号",
-          Author: "王五",
-          ClassOne: "小说",
-          ClassTwo: "中国小说",
-          Price: 12,
-          PubTime: 2019,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2018,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本5号",
-          Author: "赵六",
-          ClassOne: "教育",
-          ClassTwo: "教材",
-          Price: 13,
-          PubTime: 2021,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本6号",
-          Author: "赵六",
-          ClassOne: "教育",
-          ClassTwo: "教辅资料",
-          Price: 13,
-          PubTime: 2020,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本7号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "文学",
-          Price: 13,
-          PubTime: 2019,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本8号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "艺术",
-          Price: 13,
-          PubTime: 2018,
-        },
-      ],
+      pageSize: 16,
       Lists: [
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -680,80 +479,107 @@ export default {
   },
   methods: {
     showAll() {
-      this.activeIndex1 = " ";
-      this.activeIndex2 = " ";
-      this.currentPage = 1;
-      this.displayList = this.Lists;
+      this.$router.push("/");
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-    },
-    handleSelect1() {
-      this.activeIndex2 = " ";
-    },
-    handleSelect2() {
-      this.activeIndex1 = " ";
     },
     goToBookInfo() {
       this.$router.push("/bookInfo");
     },
     NanPinFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "1-1" } });
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "男频");
     },
     NvPinFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "1-2" } });
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "女频");
     },
     JiaoCaiFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "2-1" } });
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "教材");
     },
     JiaoFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "2-2" } });
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassTwo == "教辅资料"
+      );
     },
     ChinaFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "3-1" } });
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassTwo == "中国小说"
+      );
     },
     ForeginFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "3-2" } });
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassTwo == "外国小说"
+      );
     },
     LiteratureFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "4-1" } });
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "文学");
     },
     ArtFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "4-2" } });
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "艺术");
     },
     YouthFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "5-1" } });
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "青春");
     },
     CartoonFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "5-2" } });
+      this.displayList = this.Lists.filter((item) => item.ClassTwo == "动漫");
     },
     TwoZeroTwoOneFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "6-1" } });
+      this.displayList = this.Lists.filter((item) => item.PubTime == 2021);
     },
     TwoZeroTwoZeroFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "6-2" } });
+      this.displayList = this.Lists.filter((item) => item.PubTime == 2020);
     },
     TwoZeroOneNineFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "6-3" } });
+      this.displayList = this.Lists.filter((item) => item.PubTime == 2019);
     },
     TwoZeroOneEightFuilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "6-4" } });
+      this.displayList = this.Lists.filter((item) => item.PubTime <= 2018);
     },
     NetworkFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "1" } });
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "网络文学"
+      );
     },
     EducationFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "2" } });
+      this.activeIndex2 = "";
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "教育");
     },
     NovelFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "3" } });
+      this.activeIndex2 = "";
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "小说");
     },
     LandAFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "4" } });
+      this.activeIndex2 = "";
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "文艺");
     },
     YandCFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "5" } });
+      this.activeIndex2 = "";
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "青春/动漫"
+      );
     },
+  },
+  created() {
+    var query = this.$route.query;
+    if (query) {
+      var temp = query.activeIndex2;
+      this.activeIndex2 = temp;
+      if (temp == "1") this.NetworkFilter();
+      if (temp == "2") this.EducationFilter();
+      if (temp == "3") this.NovelFilter();
+      if (temp == "4") this.LandAFilter();
+      if (temp == "5") this.YandCFilter();
+      if (temp == "1-1") this.NanPinFilter();
+      if (temp == "1-2") this.NvPinFilter();
+      if (temp == "2-1") this.JiaoCaiFilter();
+      if (temp == "2-2") this.JiaoFuilter();
+      if (temp == "3-1") this.ChinaFuilter();
+      if (temp == "3-2") this.ForeginFuilter();
+      if (temp == "4-1") this.LiteratureFuilter();
+      if (temp == "4-2") this.ArtFuilter();
+      if (temp == "5-1") this.YouthFuilter();
+      if (temp == "5-2") this.CartoonFuilter();
+    }
   },
 };
 </script>

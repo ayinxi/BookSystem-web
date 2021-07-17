@@ -109,6 +109,11 @@ const routes = [
     path: '/userorder/:orderId',
     name: 'userorder',
     component: () => import('../views/userOrder.vue')
+  },
+  {
+    path: '/classSort',
+    name: 'classSort',
+    component: () => import('../views/classSort.vue')
   }
 ]
 
