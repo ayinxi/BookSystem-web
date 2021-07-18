@@ -14,9 +14,14 @@
       <el-tabs v-model="activeName">
         <el-tab-pane label="账户设置" name="first">
           <div
-            style="display: flex; justify-content: center; align-items: center;margin-top:10px"
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              margin-top: 10px;
+            "
           >
-            <el-form ref="userInfo" :model="userInfo" label-width="80px">
+            <el-form ref="userInfo" :model="userInfo" label-width="80px" >
               <el-row style="margin-top: 20px">
                 <el-col>
                   <el-form-item label="用户头像" prop="avatar_s">
@@ -33,7 +38,7 @@
                     >
                       <img
                         v-if="this.userInfo.avatar_b"
-                        :src= this.userInfo.avatar_b
+                        :src="this.userInfo.avatar_b"
                         class="avatar"
                       />
                       <img v-else src="../assets/avatar.jpg" class="avatar" />
@@ -110,6 +115,7 @@ export default {
   },
   data() {
     return {
+      imageUrl: "",
       isLoading: false,
       activeName: "first",
       userInfo: {
@@ -130,7 +136,13 @@ export default {
     },
     //确认修改个人信息
     confirmChange() {},
-    uploadAvatar(formData) {},
+    uploadAvatar(formData) {
+      axios({
+        url: this.$store.state.yuming + "/updateUser",
+        method: "POST",
+        params: formData,
+      });
+    },
     //裁剪
     //上传图片触发
     handleCrop(file) {
@@ -143,13 +155,21 @@ export default {
       this.$refs["upload"].$refs["upload-inner"].handleClick();
     },
     getFile(file) {
-      const formData = new FormData();
-      formData.append("avatar_b", file);
-      uploadAvatar(formData).then((res) => {
-        if (res.code === 0) {
-          this.userInfo.avatar_b = res.filename;
-          this.userInfo.imageUrl = res.url;
-          this.imageUrl = res.url;
+      var formData = new FormData();
+      formData.append("password", this.userInfo.password);
+      formData.append("img", file);
+      formData.append("name", this.userInfo.name);
+      axios({
+        url: this.$store.state.yuming + "/updateUser",
+        method: "POST",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.userInfo.avatar_b = res.img;
+          this.imageUrl = res.img;
           //上传成功后，关闭弹框组件
           // this.handleCrop(file);
           this.$refs.myCropper.close();
@@ -161,10 +181,9 @@ export default {
     },
     //头像上传成功之后的方法,进行回调
     handleAvatarSuccess(res) {
-      if (res.code === 0) {
-        this.userInfo.avatar_b = res.filename;
-        this.userInfo.imageUrl = res.url;
-        this.imageUrl = res.url;
+      if (res.code == 200) {
+        this.userInfo.avatar_b = res.img;
+        this.imageUrl = res.img;
         // this.handleCrop(file);
       } else {
         this.$message.error("上传出错");
@@ -191,7 +210,7 @@ export default {
     //获取用户信息
     getUserInfo() {
       axios({
-        url: this.$store.state.yuming+"/user/getByUsername",
+        url: this.$store.state.yuming + "/user/getByUsername",
         method: "GET",
         params: {
           username: this.$store.state.username,
