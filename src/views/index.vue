@@ -190,9 +190,19 @@
               <el-col :span="7">
                 <el-card class="cStyle">
                   <el-row style="height: 40px; margin: 5%"
-                    ><el-col :span="4"><i class="iconfont-guanjun" style="font-size: 40px"></i></el-col>
-                    <el-col :span="11" style="text-align: center;height:40px"
-                      ><p style="font-weight: 1000; margin: 0%;font-size: 20px;height:40px;line-height:40px">
+                    ><el-col :span="4"
+                      ><i class="iconfont-guanjun" style="font-size: 40px"></i
+                    ></el-col>
+                    <el-col :span="11" style="text-align: center; height: 40px"
+                      ><p
+                        style="
+                          font-weight: 1000;
+                          margin: 0%;
+                          font-size: 20px;
+                          height: 40px;
+                          line-height: 40px;
+                        "
+                      >
                         今日销量冠军
                       </p></el-col
                     >
@@ -249,94 +259,95 @@
                 </el-container>
               </el-col>
             </el-row>
-            <el-row style="margin: 0% 0% 5%"
-              ><el-menu
-                :default-active="activeIndex1"
-                class="el-menu-demo"
-                mode="horizontal"
-                @select="handleSelect1"
-              >
-                <el-menu-item
-                  index="1"
-                  @click.native="NetworkFilter2"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >网络文学</el-menu-item
-                >
-                <el-menu-item
-                  index="2"
-                  @click.native="EducationFilter2"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >教育</el-menu-item
-                >
-                <el-menu-item
-                  index="3"
-                  @click.native="NovelFilter2"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >小说</el-menu-item
-                >
-                <el-menu-item
-                  index="4"
-                  @click.native="LandAFilter2"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >文艺</el-menu-item
-                >
-                <el-menu-item
-                  index="5"
-                  @click.native="YandCFilter2"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >青春/动漫</el-menu-item
-                >
-              </el-menu>
-            </el-row>
-            <el-row class="rowStyle" type="flex">
-              <el-col
-                :span="6"
-                v-for="book in displayList.slice(
-                  (currentPage - 1) * pageSize,
-                  currentPage * pageSize
-                )"
-                :key="book.Name"
-              >
-                <el-container>
-                  <el-header
-                    style="width: 100%; height: 200px; align-items: center"
-                  >
-                    <el-image
-                      class="imgStyle1"
-                      :src="book.Img"
-                      @click.native="goToBookInfo()"
-                    >
-                    </el-image>
-                  </el-header>
-                  <el-main
-                    style="color: black; padding-top: 0; text-align: center"
-                  >
-                    <el-link
-                      :underline="false"
-                      class="book-name"
-                      @click="goToBookInfo()"
-                      >{{ book.Name }}</el-link
-                    >
-                    <p style="color: rgb(128, 192, 192); margin: 0%">
-                      {{ book.Author }}
-                    </p>
-                    <p style="color: red; font-weight: 1000; margin: 0%">
-                      ￥{{ book.Price }}
-                    </p>
-                  </el-main>
-                </el-container>
-              </el-col>
-            </el-row>
-            <el-pagination
-              :current-page="currentPage"
-              :page-size="pageSize"
-              @current-change="handleCurrentChange"
-              layout="prev, pager, next"
-              :total="this.displayList.length"
+          </el-main> </el-container
+        ><el-footer style="margin:3% 0%;padding:0px">
+          <el-row style="margin: 0% 0% 5%"
+            ><el-menu
+              :default-active="activeIndex1"
+              class="el-menu-demo"
+              mode="horizontal"
+              @select="handleSelect1"
             >
-            </el-pagination>
-          </el-main>
-        </el-container>
+              <el-menu-item
+                index="1"
+                @click.native="NetworkFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >网络文学</el-menu-item
+              >
+              <el-menu-item
+                index="2"
+                @click.native="EducationFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >教育</el-menu-item
+              >
+              <el-menu-item
+                index="3"
+                @click.native="NovelFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >小说</el-menu-item
+              >
+              <el-menu-item
+                index="4"
+                @click.native="LandAFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >文艺</el-menu-item
+              >
+              <el-menu-item
+                index="5"
+                @click.native="YandCFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >青春/动漫</el-menu-item
+              >
+            </el-menu>
+          </el-row>
+          <el-row class="rowStyle" type="flex">
+            <el-col
+              :span="4"
+              v-for="book in displayList.slice(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize
+              )"
+              :key="book.Name"
+            >
+              <el-container>
+                <el-header
+                  style="width: 100%; height: 200px; align-items: center"
+                >
+                  <el-image
+                    class="imgStyle1"
+                    :src="book.Img"
+                    @click.native="goToBookInfo()"
+                  >
+                  </el-image>
+                </el-header>
+                <el-main
+                  style="color: black; padding-top: 0; text-align: center"
+                >
+                  <el-link
+                    :underline="false"
+                    class="book-name"
+                    @click="goToBookInfo()"
+                    >{{ book.Name }}</el-link
+                  >
+                  <p style="color: rgb(128, 192, 192); margin: 0%">
+                    {{ book.Author }}
+                  </p>
+                  <p style="color: red; font-weight: 1000; margin: 0%">
+                    ￥{{ book.Price }}
+                  </p>
+                </el-main>
+              </el-container>
+            </el-col>
+          </el-row>
+          <el-pagination
+            :current-page="currentPage"
+            :page-size="pageSize"
+            @current-change="handleCurrentChange"
+            layout="prev, pager, next"
+            :total="this.displayList.length"
+          >
+          </el-pagination>
+        </el-footer>
       </el-container>
     </div>
   </div>
@@ -576,7 +587,6 @@ export default {
           Price: 11,
           PubTime: 2020,
         },
-        
       ],
     };
   },
@@ -740,8 +750,5 @@ export default {
 }
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
-}
-.el-menu.el-menu--horizontal{
-  border-bottom: 0px;
 }
 </style>
