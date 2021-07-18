@@ -182,7 +182,7 @@
                   height="400px"
                   class="carouselStyle"
                 >
-                  <el-carousel-item v-for="item in photoList" :key="item">
+                  <el-carousel-item v-for="item in photoList" :key="item.Name">
                     <el-image class="imgStyle2" :src="item.Img"></el-image>
                   </el-carousel-item>
                 </el-carousel>
