@@ -282,6 +282,7 @@
             </el-row>
             <el-row class="rowStyle" type="flex">
               <el-col :span="6" v-for="book in newBookList" :key="book.Name">
+                <el-card style="width:90%;margin:5%">
                 <el-container>
                   <el-header
                     style="width: 100%; height: 200px; align-items: center"
@@ -310,6 +311,7 @@
                     </p>
                   </el-main>
                 </el-container>
+                </el-card> 
               </el-col>
             </el-row>
           </el-main> </el-container
@@ -362,6 +364,7 @@
               )"
               :key="book.Name"
             >
+            <el-card style="width:90%;margin:5%">
               <el-container>
                 <el-header
                   style="width: 100%; height: 200px; align-items: center"
@@ -379,7 +382,7 @@
                   <el-link
                     :underline="false"
                     class="book-name"
-                    @click="goToBookInfo()"
+                    @click="goToBookInfo"
                     >{{ book.Name }}</el-link
                   >
                   <p style="color: rgb(128, 192, 192); margin: 0%">
@@ -390,6 +393,7 @@
                   </p>
                 </el-main>
               </el-container>
+            </el-card>
             </el-col>
           </el-row>
           <el-pagination
@@ -414,7 +418,7 @@ export default {
       currentPage: 1,
       pageSize: 8,
       isLoading: false,
-      input: " ",
+      input: "",
       todaySalesChampion: {
         Img: require("../assets/youbenshi.jpg"),
         Name: "有本事",
@@ -651,7 +655,8 @@ export default {
   },
   methods: {
     goToSearch() {
-      this.$router.push({ path: "/searchBook", query: { input: this.input } });
+      this.$store.commit("gobalSearchText",this.input);
+      this.$router.push("/searchBook");
     },
     gotoSign() {
       this.$router.push("/sign");
@@ -776,8 +781,7 @@ export default {
   font-size: 100%;
 }
 .imgStyle1 {
-  margin-left: 10%;
-  width: 80%;
+  width: 100%;
   height: 200px;
   cursor: pointer;
 }

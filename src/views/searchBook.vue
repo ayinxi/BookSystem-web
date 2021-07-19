@@ -8,11 +8,7 @@
           v-model="input"
           style="width: 500px"
         >
-          <el-button
-            slot="append"
-            icon="el-icon-search"
-            @click.native="goToSearch"
-          >
+          <el-button slot="append" icon="el-icon-search" @click.native="Search">
           </el-button>
         </el-input>
       </div>
@@ -58,7 +54,7 @@
         <el-container style="margin: 0% 5%">
           <el-header style="padding: 0">
             <el-row class="rowStyle1">
-              <el-col class="colStyle" @click.native="showAll"
+              <el-col class="colStyle3" @click.native="goToIndex"
                 >全部商品分类</el-col
               >
               <el-col>
@@ -66,7 +62,6 @@
                   :default-active="activeIndex1"
                   class="el-menu-demo"
                   mode="horizontal"
-                  @select="handleSelect1"
                 >
                   <el-menu-item
                     index="1"
@@ -107,43 +102,46 @@
             </el-row></el-main
           >
           <el-main v-if="this.displayList.length != 0">
-            <el-row class="rowStyle" type="flex">
+            <el-row class="rowStyle3" type="flex">
               <el-col
-                :span="24"
+                :span="6"
                 v-for="book in displayList.slice(
                   (currentPage - 1) * pageSize,
                   currentPage * pageSize
                 )"
                 :key="book.Name"
               >
-                <el-container>
-                  <el-header
-                    style="width: 100%; height: 200px; align-items: center"
-                  >
-                    <el-image
-                      class="imgStyle1"
-                      :src="book.Img"
-                      @click.native="goToBookInfo"
+                <el-card style="width:90%;margin:5%">
+                  <el-container>
+                    <el-header
+                      style="width: 100%; height: 200px; align-items: center"
                     >
-                    </el-image>
-                  </el-header>
-                  <el-main
-                    style="color: black; padding-top: 0; text-align: center"
-                  >
-                    <el-link
-                      :underline="false"
-                      class="book-name"
-                      @click="goToBookInfo()"
-                      >{{ book.Name }}</el-link
+                      <el-image
+                        class="imgStyle3"
+                        :src="book.Img"
+                        @click.native="goToBookInfo"
+                      >
+                      </el-image>
+                    </el-header>
+                    <el-main
+                      style="color: black; padding-top: 0; text-align: center"
                     >
-                    <p style="color: rgb(128, 192, 192); margin: 0%">
-                      {{ book.Author }}
-                    </p>
-                    <p style="color: red; font-weight: 1000; margin: 0%">
-                      ￥{{ book.Price }}
-                    </p>
-                  </el-main>
-                </el-container>
+                      <el-link
+                        :underline="false"
+                        class="book-name"
+                        @click="goToBookInfo"
+                        >{{ book.Name }}</el-link
+                      >
+                      <p style="color: rgb(128, 192, 192); margin: 0%">
+                        {{ book.Author }}
+                      </p>
+                      <p style="color: red; font-weight: 1000; margin: 0%">
+                        ￥{{ book.Price }}
+                      </p>
+                      <el-button type="text">加入购物车 </el-button>
+                    </el-main>
+                  </el-container>
+                </el-card>
               </el-col>
             </el-row>
             <el-pagination
@@ -165,10 +163,11 @@
 export default {
   data() {
     return {
+      activeIndex1: "",
       currentPage: 1,
-      pageSize: 8,
+      pageSize: 12,
       isLoading: false,
-      input: "",
+      input: this.$store.state.gobalSearchText,
       Lists: [
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -178,6 +177,7 @@ export default {
           ClassTwo: "男频",
           Price: 10,
           PubTime: 2021,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -187,6 +187,7 @@ export default {
           ClassTwo: "女频",
           Price: 11,
           PubTime: 2020,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -196,6 +197,7 @@ export default {
           ClassTwo: "中国小说",
           Price: 12,
           PubTime: 2019,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -205,15 +207,17 @@ export default {
           ClassTwo: "外国小说",
           Price: 13,
           PubTime: 2018,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
           Name: "书本5号",
-          Author: "赵六",
+          Author: "赵六事",
           ClassOne: "教育",
           ClassTwo: "教材",
           Price: 13,
           PubTime: 2021,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -223,6 +227,7 @@ export default {
           ClassTwo: "教辅资料",
           Price: 13,
           PubTime: 2020,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -232,6 +237,7 @@ export default {
           ClassTwo: "文学",
           Price: 13,
           PubTime: 2019,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -241,6 +247,7 @@ export default {
           ClassTwo: "艺术",
           Price: 13,
           PubTime: 2018,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -250,6 +257,7 @@ export default {
           ClassTwo: "青春",
           Price: 13,
           PubTime: 2021,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -259,6 +267,7 @@ export default {
           ClassTwo: "动漫",
           Price: 13,
           PubTime: 2020,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -268,6 +277,7 @@ export default {
           ClassTwo: "外国小说",
           Price: 13,
           PubTime: 2019,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -277,6 +287,7 @@ export default {
           ClassTwo: "外国小说",
           Price: 13,
           PubTime: 2018,
+          PubHouse: "东南出版社",
         },
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -286,6 +297,7 @@ export default {
           ClassTwo: "外国小说",
           Price: 13,
           PubTime: 2021,
+          PubHouse: "东南出版社",
         },
       ],
       displayList: [],
@@ -300,8 +312,21 @@ export default {
     },
   },
   methods: {
-    goToSearch() {
-      this.$router.push("/searchBook");
+    goToIndex() {
+      this.$router.push("/");
+    },
+    goToBookInfo() {
+      this.$router.push("/bookInfo");
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+    },
+    Search() {
+      this.$store.commit("gobalSearchText", this.input);
+      this.displayList = this.Lists.filter(
+        (item) =>
+          item.Name.includes(this.input) | item.Author.includes(this.input)
+      );
     },
     gotoSign() {
       this.$router.push("/sign");
@@ -318,10 +343,23 @@ export default {
       sessionStorage.removeItem("token");
       this.isLoading = false;
     },
+    NetworkFilter() {
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "1" } });
+    },
+    EducationFilter() {
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "2" } });
+    },
+    NovelFilter() {
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "3" } });
+    },
+    LandAFilter() {
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "4" } });
+    },
+    YandCFilter() {
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "5" } });
+    },
   },
   created() {
-    var query = this.$router.query;
-    this.input = query.input;
     this.displayList = this.Lists.filter(
       (item) =>
         item.Name.includes(this.input) | item.Author.includes(this.input)
@@ -386,11 +424,33 @@ export default {
   align-items: center;
   background-color: rgb(205, 92, 92);
 }
-.colStyle {
+.colStyle3 {
   text-align: center;
   font-weight: 1000;
   width: 21.93%;
   color: white;
   cursor: pointer;
+}
+.rowStyle3 {
+  display: flex;
+  flex-wrap: wrap;
+}
+.imgStyle3 {
+  width: 100%;
+  height: 200px;
+  cursor: pointer;
+}
+.el-pagination {
+  text-align: center;
+}
+.el-image {
+  display: flex;
+}
+.book-name {
+  font-weight: 1000;
+  font-size: 20px;
+}
+.el-card__body {
+  padding: 20px !important; 
 }
 </style>

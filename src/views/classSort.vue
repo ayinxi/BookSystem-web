@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-loading="isLoading">
+    <div>
       <div class="bbb"></div>
       <div class="header">
         <div class="hasRole ? search2 :search2">
@@ -242,7 +242,7 @@
                     <el-image
                       class="imgStyle1"
                       :src="book.Img"
-                      @click.native="goToBookInfo()"
+                      @click.native="goToBookInfo"
                     >
                     </el-image>
                   </el-header>
@@ -252,7 +252,7 @@
                     <el-link
                       :underline="false"
                       class="book-name"
-                      @click="goToBookInfo()"
+                      @click="goToBookInfo"
                       >{{ book.Name }}</el-link
                     >
                     <p style="color: rgb(128, 192, 192); margin: 0%">
@@ -538,6 +538,7 @@ export default {
   },
   methods: {
     goToSearch() {
+      this.$store.commit("gobalSearchText",this.input);
       this.$router.push("/searchBook");
     },
     gotoSign() {

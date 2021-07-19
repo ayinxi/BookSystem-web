@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header">
       <div class="logo3">
         <img width="250px" src="../../assets/jwbc.png" />
@@ -304,6 +304,7 @@
 export default {
   data() {
     return {
+      isLoading:false,
       dialogChangeVisible: false,
       dialogAddVisible: false,
       itemKey: 0,

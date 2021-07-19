@@ -124,7 +124,6 @@ const routes = [
   {
     path: '/classSort',
     name: 'classSort',
-    meta: { auth: true },//登录鉴权
     component: () => import('../views/classSort.vue')
   },
   {
