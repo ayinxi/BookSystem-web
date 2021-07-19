@@ -218,7 +218,7 @@
                         :src="this.applyShopInfo.img"
                         class="avatar"
                       />
-                      <img v-else src="../assets/avatar.jpg" class="avatar" />
+                      <img v-else :src="this.imgUrl" class="avatar" />
                       <div class="avatar-uploader-icon">
                         <i
                           class="el-icon-warning-outline"
@@ -300,8 +300,171 @@
           label="申请历史"
           name="third"
         >
+          <el-table
+            :data="applyHistory"
+            style="width: 100%"
+            :default-sort="{ prop: 'create_time', order: 'descending' }"
+          >
+            <el-table-column type="expand">
+              <template slot-scope="props">
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <el-row>
+                    <el-form-item label="申请理由">
+                      <span>{{ props.row.apply_reason }}</span>
+                    </el-form-item>
+                  </el-row>
+                  <el-row>
+                    <el-form-item
+                      label="审核结果"
+                      v-if="props.row.apply_status == 2"
+                    >
+                      <el-tag v-if="props.row.pass_status == 1" type="success"
+                        >已通过</el-tag
+                      >
+                      <el-tag v-if="props.row.pass_status == 2" type="danger"
+                        >已拒绝</el-tag
+                      >
+                    </el-form-item>
+                  </el-row>
+                  <el-row>
+                    <el-form-item
+                      label="审核意见"
+                      v-if="props.row.apply_status == 2"
+                    >
+                      <span>{{ props.row.check_opinion }}</span>
+                    </el-form-item>
+                  </el-row>
+                  <el-row>
+                    <el-form-item
+                      label="存在状态"
+                      v-if="!props.row.exist_status == -1"
+                    >
+                      <el-tag v-if="props.row.exist_status == 1" type="success"
+                        >未注销</el-tag
+                      >
+                      <el-tag v-if="props.row.exist_status == 2" type="warning"
+                        >已注销</el-tag
+                      >
+                    </el-form-item>
+                  </el-row>
+                </el-form>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="create_time"
+              label="申请时间"
+              sortable
+            ></el-table-column>
+            <el-table-column label="店铺头像">
+              <template slot-scope="scope">
+                <el-popover placement="right" title="" trigger="hover">
+                  <img class="img-max" :src="scope.row.avatar_b" />
+                  <img
+                    class="img-min"
+                    slot="reference"
+                    :src="scope.row.avatar_s"
+                    :alt="scope.row.avatar_s"
+                    style="max-height: 50px; max-width: 130px"
+                  />
+                </el-popover>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="shop_name"
+              label="店铺名称"
+            ></el-table-column>
+            <el-table-column
+              prop="shopper_name"
+              label="店主名称"
+            ></el-table-column>
+            <el-table-column prop="apply_status" label="审核状态">
+              <template v-slot="x">
+                <el-tag v-if="x.row.apply_status == 1" type="warning"
+                  >未审核</el-tag
+                >
+                <el-tag v-if="x.row.apply_status == 2" type="success"
+                  >已审核</el-tag
+                >
+                <el-tag v-if="x.row.apply_status == 3" type="info"
+                  >已取消</el-tag
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template v-slot="x">
+                <el-button
+                  size="medium"
+                  v-if="x.row.apply_status == 1"
+                  type="text"
+                  >撤销</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
         </el-tab-pane>
-        <el-tab-pane v-else label="我的店铺" name="second"> </el-tab-pane>
+        <el-tab-pane v-else label="我的店铺" name="fourth">
+          <div
+            style="display: flex; justify-content: center; align-items: center"
+          >
+            <el-form
+              ref="shopInfo"
+              :model="shopInfo"
+              label-width="80px"
+              label-position="left"
+            >
+              <el-row style="margin-top: 30px">
+                <el-col>
+                  <el-form-item label="店铺封面" prop="img" >
+                    <img
+                      v-if="this.shopInfo.avatar_b"
+                      :src="this.shopInfo.avatar_b"
+                      class="avatar"
+                    />
+                    <img v-else src="../assets/avatar.jpg" class="avatar" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item label="店铺名称" prop="shop_name">
+                    <span>{{ shopInfo.shop_name }}</span>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item label="店主名" prop="shopper_name">
+                    <span>{{ shopInfo.shopper_name }}</span>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item label="评分" prop="apply_reason">
+                    <el-rate
+                      v-model="value"
+                      disabled
+                      show-score
+                      text-color="#ff9900"
+                      score-template="{value}"
+                      style="margin-top: 10px"
+                    >
+                    </el-rate>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item>
+                    <el-button type="text" @click="gotoShopManager"
+                      >点击管理我的商铺</el-button
+                    >
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -317,6 +480,7 @@ export default {
   },
   data() {
     return {
+      imgUrl: require("../assets/avatar.jpg"),
       orderId: "",
       isLoading: false,
       activeName: "first",
@@ -335,8 +499,25 @@ export default {
       },
       shopInfo: {
         apply_status: -1,
+        shoopper_name: "",
+        shop_name: "",
+        avatar_b: "",
+        rate: 3.7,
       },
-      //
+      applyHistory: [
+        {
+          avatar_b: "",
+          shop_name: "",
+          shoopper_name: "",
+          apply_reason: "",
+          apply_status: "",
+          pass_status: "",
+          exist_status: "",
+          check_opinion: "",
+        },
+      ],
+      //评分
+      value: 0,
       dialogVisible: false,
       rules: {
         shopper_name: [
@@ -350,6 +531,7 @@ export default {
           { max: 100, message: "申请理由不得超过100个字", trigger: "blur" },
         ],
       },
+      formdata: new FormData(),
     };
   },
   computed: {
@@ -365,6 +547,9 @@ export default {
     //跳转资料修改页面
     gotoChange() {
       this.$router.push("/change");
+    },
+    gotoShopManager() {
+      this.$router.push("/shopManage");
     },
     //跳转收货地址页面
     gotoAddress() {},
@@ -395,18 +580,43 @@ export default {
     },
     //确认申请成为商家
     confirmApply() {
+      this.formdata.append("shopper_name", this.applyShopInfo.shopper_name);
+      this.formdata.append("shop_name", this.applyShopInfo.shop_name);
+      this.formdata.append("apply_reason", this.applyShopInfo.apply_reason);
       axios({
         url: this.$store.state.yuming + "/registerShop",
+        method: "POST",
+        data: this.formdata,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+            message: "申请成功",
+            type: "success",
+          });
+          this.applyShopInfo = "";
+        } else {
+          this.$message.error("申请失败，请重试");
+        }
+      });
+    },
+    //获取申请店铺历史信息
+    getApplyHistory() {
+      axios({
+        url: this.$store.state.yuming + "/user/getAllShop",
         method: "GET",
-        params: {},
+        params: {
+          username: this.hasUsername,
+        },
       })
         .then((res) => {
           const { code, data } = res.data;
           if (code == "200") {
-            this.userInfo = data;
+            this.applyHistory = data;
           } else {
-            this.$message.error("获取用户信息失败");
-            this.$router.push("/");
+            this.$message.error("获取店铺申请历史信息失败");
           }
         })
         .catch(() => {
@@ -444,7 +654,7 @@ export default {
     //获取店铺信息
     getShopInfo() {
       axios({
-        url: this.$store.state.yuming + "/getPassShopByUsername",
+        url: this.$store.state.yuming + "/shop/getPassed",
         method: "GET",
         params: {
           username: this.hasUsername,
@@ -454,10 +664,13 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.shopInfo = data;
+            this.value = this.shopInfo.rate;
           } else if (code == "17") {
             this.$message("已有店铺申请正在审核");
           } else {
-            this.$message.error("获取店铺状态失败,请刷新");
+            if (code != "3") {
+              this.$message.error("获取店铺状态失败,请刷新");
+            }
           }
         })
         .catch(() => {
@@ -478,23 +691,10 @@ export default {
       this.$refs["upload"].$refs["upload-inner"].handleClick();
     },
     getFile(file) {
-      var formData = new FormData();
-      formData.append("img", file);
-      axios({
-        url: this.$store.state.yuming + "/updateAvatar",
-        method: "POST",
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }).then((res) => {
-        if (res.data.code == 200) {
-          this.getUserInfo();
-          this.$refs.myCropper.close();
-        } else {
-          this.$message.error("上传出错");
-        }
-      });
+      this.formdata.append("img", file);
+      // 获取上传图片的本地URL，用于上传前的本地预览
+      this.imgUrl = window.URL.createObjectURL(file);
+      this.$refs.myCropper.close();
     },
     //头像上传成功之后的方法,进行回调
     handleAvatarSuccess(res) {
@@ -527,9 +727,10 @@ export default {
   async created() {
     this.isLoading = true;
     await this.getUserInfo();
-    if (this.userInfo.identity == 1) {
+    if (this.$store.state.role == 1) {
       await this.getShopInfo();
     }
+    await this.getApplyHistory();
     this.isLoading = false;
   },
 };
@@ -600,5 +801,13 @@ export default {
   display: flex;
   justify-content: center;
   margin: 20px;
+}
+.img-min {
+  width: 50px;
+  height: 50px;
+}
+.img-max {
+  width: 200px;
+  height: 200px;
 }
 </style>
