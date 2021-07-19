@@ -51,8 +51,8 @@
         </el-header>
         <el-container>
           <el-aside width="18%" align="center">
-            <p>{{ this.shop.shopname }}</p>
             <img class="imgStyle2" :src="this.shop.shopimg" />
+            <p>{{ this.shop.shopname }}</p>
             <el-rate
               v-model="this.shop.shoprate"
               disabled

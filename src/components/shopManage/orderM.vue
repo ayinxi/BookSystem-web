@@ -23,23 +23,6 @@
         </el-card>
       </el-row>
     </div>
-    <div style="margin: 3% 18% 0%">
-      <el-row style="margin: 0% 12% 5%">
-        <el-card>
-          <el-col :span="8" style="text-align: center">
-            <p>今日新增订单数</p>
-            <p style="font-size: 40px">{{ newOrder }}</p>
-          </el-col>
-          <el-col :span="16" style="text-align: center">
-            <p>各订单类型所占比例</p>
-            <div>
-              <div id="chartPie" class="pie-wrap"></div>
-            </div>
-          </el-col>
-        </el-card>
-      </el-row>
-    </div>
-
     <div style="margin: 1.5% 10%">
       <el-card>
         <el-table
@@ -140,7 +123,6 @@
 </template>
 
 <script>
-import echarts from "echarts";
 export default {
   data() {
     return {
@@ -215,11 +197,6 @@ export default {
       ],
       multipleSelection: [],
     };
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.drawPieChart();
-    });
   },
   methods: {
     goToManage() {
@@ -351,121 +328,11 @@ export default {
           });
         });
     },
-    drawPieChart() {
-      this.chartPie = echarts.init(
-        document.getElementById("chartPie"),
-        "macarons"
-      );
-      this.chartPie.setOption({
-        //显示在上面的文字
-        tooltip: {
-          trigger: "item",
-          // formatter: "{a}<br/>{b}: <br/>{c}({d}%)",  其中 {a}指向name名称（访问来源）
-          formatter: "{b}: <br/>{c}({d}%)",
-        },
-        legend: {
-          data: [
-            "未发货",
-            "已发货",
-            "正在申请退款",
-            "已退款",
-            "已拒绝退款",
-            "已收货",
-          ],
-          right: 500,
-          orient: "vertical",
-          // 下面注释的代码是控制分类放在哪个地方,需要体验的话，直接把上面的代码注释，把下面的代码解开注释即可
-          //   data: ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"],
-          //   left: "center",
-          //   top: "bottom",
-          //   orient: "horizontal"
-        },
-        series: [
-          {
-            name: "访问来源",
-            type: "pie",
-            //圆圈的粗细
-            radius: ["50%", "80%"],
-            //圆圈的位置
-            center: ["50%", "50%"],
-            data: [
-              {
-                value: 335,
-                name: "未发货",
-              },
-              {
-                value: 310,
-                name: "已发货",
-              },
-              {
-                value: 234,
-                name: "正在申请退款",
-              },
-              {
-                value: 135,
-                name: "已退款",
-              },
-              {
-                value: 548,
-                name: "已拒绝退款",
-              },
-              {
-                value: 532,
-                name: "已收货",
-              },
-            ],
-            //动画持续时间：2秒
-            animationDuration: 2000,
-            //控制是否显示指向文字的,默认为true
-            label: {
-              show: false,
-              position: "center",
-              //以下代码可以代表指向小文字的
-              //   show: true,
-              //   formatter: "{b} : {c} ({d}%)",
-              //   textStyle: {
-              //     color: "#333",
-              //     fontSize: 14,
-              //   },
-            },
-            itemStyle: {
-              //这里是更添加阴影
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-              },
-              //这里是更改颜色
-              normal: {
-                color: function (params) {
-                  var colorList = [
-                    "#5470c6",
-                    "#91cc75",
-                    "#fac858",
-                    "#ee6666",
-                    "#73c0de",
-                    "#3ba272",
-                    "#fc8452",
-                    "#9a60b4",
-                    "#ea7ccc",
-                  ];
-                  return colorList[params.dataIndex];
-                },
-              },
-            },
-          },
-        ],
-      });
-    },
   },
 };
 </script>
 
 <style acoped>
-.pie-wrap {
-  width: 100%;
-  height: 126px;
-}
 .header {
   display: flex;
   justify-content: space-around;
