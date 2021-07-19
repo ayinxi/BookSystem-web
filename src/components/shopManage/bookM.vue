@@ -25,9 +25,21 @@
     </div>
     <div style="margin: 3% 10%">
       <el-card>
+        <el-form label-width="120px">
+          <el-form-item label="书名搜索：">
+            <el-input
+              v-model="searchText"
+              placeholder="输入书名模糊搜索"
+            ></el-input>
+          </el-form-item>
+        </el-form>
         <el-table
           ref="multipleTable"
-          :data="tableData"
+          :data="
+            tableData.filter((x) => {
+              return x.bookname.includes(searchText);
+            })
+          "
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
@@ -99,21 +111,30 @@
                 <span
                   ><el-upload
                     class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    ref="upload"
+                    action="http://47.94.131.208:8888"
                     :show-file-list="false"
+                    :on-change="changePhotoFile"
                     :on-success="handleAvatarSuccess"
                     :before-upload="beforeAvatarUpload"
+                    :auto-upload="false"
+                    :name="this.lists1.bookImg"
                   >
                     <img
                       v-if="lists1.bookImg"
                       :src="lists1.bookImg"
                       class="avatar"
                     />
-                    <i
-                      v-else
-                      class="el-icon-plus avatar-uploader-icon"
-                    ></i> </el-upload
-                ></span>
+                    <img v-else src="../../assets/avatar.jpg" class="avatar" />
+                    <div class="avatar-uploader-icon">
+                      <i
+                        class="el-icon-warning-outline"
+                        style="margin-right: 5px"
+                      ></i>
+                      <i style="color: #909399">点击图片进行修改</i>
+                    </div>
+                  </el-upload></span
+                >
               </el-form-item>
             </el-col>
             <el-col :span="1"><span>&emsp;</span></el-col>
@@ -301,10 +322,13 @@
   </div>
 </template>
 <script>
+import MyCropper from "../cropper.vue";
+import axios from "axios";
 export default {
   data() {
     return {
-      isLoading:false,
+      searchText: "",
+      isLoading: false,
       dialogChangeVisible: false,
       dialogAddVisible: false,
       itemKey: 0,
@@ -514,21 +538,65 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+    changePhotoFile(){},
+    handleAvatarSuccess(){},
+    beforeAvatarUpload(){},
+    //上传图片触发
+   /* handleCrop(file) {
+      this.$nextTick(() => {
+        this.$refs.myCropper.open(file.raw || file);
+      });
     },
+    // 点击弹框重新时触发
+    upAgain() {
+      this.$refs["upload"].$refs["upload-inner"].handleClick();
+    },
+    getFile(file) {
+      var formData = new FormData();
+      formData.append("img", file);
+      axios({
+        url: this.$store.state.yuming + "/updateAvatar",
+        method: "POST",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.getUserInfo();
+          this.$refs.myCropper.close();
+        } else {
+          this.$message.error("上传出错");
+        }
+      });
+    },
+    //头像上传成功之后的方法,进行回调
+    handleAvatarSuccess(res) {
+      if (res.code === 0) {
+        this.userInfo.avatar_b = res.img;
+        // this.handleCrop(file);
+      } else {
+        this.$message.error("上传出错");
+      }
+    },
+    //上传图片时会被调用
+    changePhotoFile(file) {
+      this.handleCrop(file);
+    },
+    //头像上传之前的方法
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isJPG =
+        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      const isLt6M = file.size / 1024 / 1024 < 6;
 
       if (!isJPG) {
-        this.$message.error("上传图书图片只能是 JPG 格式!");
+        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
       }
-      if (!isLt2M) {
-        this.$message.error("上传图书图片大小不能超过 2MB!");
+      if (!isLt6M) {
+        this.$message.error("上传头像图片大小不能超过 6MB!");
       }
-      return isJPG && isLt2M;
-    },
+      return isJPG && isLt6M;
+    },*/
   },
 };
 </script>
