@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header">
       <div class="logo3">
         <img width="250px" src="../../assets/jwbc.png" />
@@ -23,27 +23,23 @@
         </el-card>
       </el-row>
     </div>
-    <div style="margin: 3% 18% 0%">
-      <el-row style="margin: 0% 12% 5%">
-        <el-card>
-          <el-col :span="8" style="text-align: center">
-            <p>图书总数</p>
-            <p style="font-size: 40px">{{ this.tableData.length }}</p>
-          </el-col>
-          <el-col :span="16" style="text-align: center">
-            <p>各图书类别所占比例</p>
-            <div>
-              <div id="chartPie" class="pie-wrap"></div>
-            </div>
-          </el-col>
-        </el-card>
-      </el-row>
-    </div>
     <div style="margin: 3% 10%">
       <el-card>
+        <el-form label-width="120px">
+          <el-form-item label="书名搜索：">
+            <el-input
+              v-model="searchText"
+              placeholder="输入书名模糊搜索"
+            ></el-input>
+          </el-form-item>
+        </el-form>
         <el-table
           ref="multipleTable"
-          :data="tableData"
+          :data="
+            tableData.filter((x) => {
+              return x.bookname.includes(searchText);
+            })
+          "
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
@@ -115,21 +111,30 @@
                 <span
                   ><el-upload
                     class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    ref="upload"
+                    action="http://47.94.131.208:8888"
                     :show-file-list="false"
+                    :on-change="changePhotoFile"
                     :on-success="handleAvatarSuccess"
                     :before-upload="beforeAvatarUpload"
+                    :auto-upload="false"
+                    :name="this.lists1.bookImg"
                   >
                     <img
                       v-if="lists1.bookImg"
                       :src="lists1.bookImg"
                       class="avatar"
                     />
-                    <i
-                      v-else
-                      class="el-icon-plus avatar-uploader-icon"
-                    ></i> </el-upload
-                ></span>
+                    <img v-else src="../../assets/avatar.jpg" class="avatar" />
+                    <div class="avatar-uploader-icon">
+                      <i
+                        class="el-icon-warning-outline"
+                        style="margin-right: 5px"
+                      ></i>
+                      <i style="color: #909399">点击图片进行修改</i>
+                    </div>
+                  </el-upload></span
+                >
               </el-form-item>
             </el-col>
             <el-col :span="1"><span>&emsp;</span></el-col>
@@ -317,10 +322,13 @@
   </div>
 </template>
 <script>
-import echarts from "echarts";
+import MyCropper from "../cropper.vue";
+import axios from "axios";
 export default {
   data() {
     return {
+      searchText: "",
+      isLoading: false,
       dialogChangeVisible: false,
       dialogAddVisible: false,
       itemKey: 0,
@@ -403,11 +411,6 @@ export default {
       },
       multipleSelection: [],
     };
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.drawPieChart();
-    });
   },
   methods: {
     change1() {
@@ -535,116 +538,65 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG) {
-        this.$message.error("上传图书图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传图书图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
-    drawPieChart() {
-      this.chartPie = echarts.init(
-        document.getElementById("chartPie"),
-        "macarons"
-      );
-      this.chartPie.setOption({
-        //显示在上面的文字
-        tooltip: {
-          trigger: "item",
-          // formatter: "{a}<br/>{b}: <br/>{c}({d}%)",  其中 {a}指向name名称（访问来源）
-          formatter: "{b}: <br/>{c}({d}%)",
-        },
-        legend: {
-          data: ["网络文学", "教育", "小说", "文艺", "青春/动漫"],
-          right: 500,
-          orient: "vertical",
-          // 下面注释的代码是控制分类放在哪个地方,需要体验的话，直接把上面的代码注释，把下面的代码解开注释即可
-          //   data: ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"],
-          //   left: "center",
-          //   top: "bottom",
-          //   orient: "horizontal"
-        },
-        series: [
-          {
-            name: "访问来源",
-            type: "pie",
-            //圆圈的粗细
-            radius: ["50%", "80%"],
-            //圆圈的位置
-            center: ["50%", "50%"],
-            data: [
-              {
-                value: 234,
-                name: "网络文学",
-              },
-              {
-                value: 135,
-                name: "教育",
-              },
-              {
-                value: 548,
-                name: "小说",
-              },
-              {
-                value: 562,
-                name: "文艺",
-              },
-              {
-                value: 165,
-                name: "青春/动漫",
-              },
-            ],
-            //动画持续时间：2秒
-            animationDuration: 2000,
-            //控制是否显示指向文字的,默认为true
-            label: {
-              show: false,
-              position: "center",
-              //以下代码可以代表指向小文字的
-              //   show: true,
-              //   formatter: "{b} : {c} ({d}%)",
-              //   textStyle: {
-              //     color: "#333",
-              //     fontSize: 14,
-              //   },
-            },
-            itemStyle: {
-              //这里是更添加阴影
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-              },
-              //这里是更改颜色
-              normal: {
-                color: function (params) {
-                  var colorList = [
-                    "#5470c6",
-                    "#91cc75",
-                    "#fac858",
-                    "#ee6666",
-                    "#73c0de",
-                    "#3ba272",
-                    "#fc8452",
-                    "#9a60b4",
-                    "#ea7ccc",
-                  ];
-                  return colorList[params.dataIndex];
-                },
-              },
-            },
-          },
-        ],
+    changePhotoFile(){},
+    handleAvatarSuccess(){},
+    beforeAvatarUpload(){},
+    //上传图片触发
+   /* handleCrop(file) {
+      this.$nextTick(() => {
+        this.$refs.myCropper.open(file.raw || file);
       });
     },
+    // 点击弹框重新时触发
+    upAgain() {
+      this.$refs["upload"].$refs["upload-inner"].handleClick();
+    },
+    getFile(file) {
+      var formData = new FormData();
+      formData.append("img", file);
+      axios({
+        url: this.$store.state.yuming + "/updateAvatar",
+        method: "POST",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.getUserInfo();
+          this.$refs.myCropper.close();
+        } else {
+          this.$message.error("上传出错");
+        }
+      });
+    },
+    //头像上传成功之后的方法,进行回调
+    handleAvatarSuccess(res) {
+      if (res.code === 0) {
+        this.userInfo.avatar_b = res.img;
+        // this.handleCrop(file);
+      } else {
+        this.$message.error("上传出错");
+      }
+    },
+    //上传图片时会被调用
+    changePhotoFile(file) {
+      this.handleCrop(file);
+    },
+    //头像上传之前的方法
+    beforeAvatarUpload(file) {
+      const isJPG =
+        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      const isLt6M = file.size / 1024 / 1024 < 6;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
+      }
+      if (!isLt6M) {
+        this.$message.error("上传头像图片大小不能超过 6MB!");
+      }
+      return isJPG && isLt6M;
+    },*/
   },
 };
 </script>
@@ -677,10 +629,6 @@ export default {
   margin-right: 0px;
   margin-left: 30px;
   border-radius: 20%;
-}
-.pie-wrap {
-  width: 100%;
-  height: 126px;
 }
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;

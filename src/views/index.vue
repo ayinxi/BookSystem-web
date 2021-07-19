@@ -1,6 +1,59 @@
 <template>
-  <div>
-    <Home />
+  <div v-loading="isLoading">
+    <div v-loading="isLoading">
+      <div class="bbb"></div>
+      <div class="header">
+        <div class="hasRole ? search2 :search2">
+          <el-input
+            placeholder="给孩子的第一本编程书籍"
+            v-model="input"
+            style="width: 500px"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click.native="goToSearch"
+            >
+            </el-button>
+          </el-input>
+        </div>
+        <div v-if="hasRole">
+          <el-row class="shopping">
+            <el-col :span="10">
+              <el-badge :value="12" class="shopping">
+                <el-button size="meduim" icon="el-icon-shopping-cart-2"
+                  >我的购物车</el-button
+                >
+              </el-badge>
+            </el-col>
+            <el-col :span="4" class="pageperson">
+              <el-button
+                size="meduim"
+                class="pageperson"
+                icon="el-icon-s-custom"
+                @click="gotoPersonPage"
+                >个人主页</el-button
+              >
+            </el-col>
+            <el-col @click.native="loginOut" style="margin-left: 30px">
+              <i class="iconfont-tuichu" style="font-size: 20px" />
+            </el-col>
+          </el-row>
+        </div>
+        <div v-else>
+          <el-row class="hasNoRole">
+            <el-col>
+              <el-button size="meduim" @click="gotoSign">注册</el-button>
+            </el-col>
+            <el-col style="margin: 20px 0">
+              <el-button size="meduim" class="pageperson" @click="gotoLogin"
+                >登陆</el-button
+              >
+            </el-col>
+          </el-row>
+        </div>
+      </div>
+    </div>
     <div>
       <el-container style="margin: 0% 5%">
         <el-container>
@@ -182,17 +235,27 @@
                   height="400px"
                   class="carouselStyle"
                 >
-                  <el-carousel-item v-for="item in photoList" :key="item">
+                  <el-carousel-item v-for="item in photoList" :key="item.Name">
                     <el-image class="imgStyle2" :src="item.Img"></el-image>
                   </el-carousel-item>
                 </el-carousel>
               </el-col>
               <el-col :span="7">
                 <el-card class="cStyle">
-                  <el-row style="height: 30px; margin: 5%"
-                    ><el-col :span="2"><i class="iconfont-guanjun"></i></el-col>
-                    <el-col :span="11"
-                      ><p style="font-weight: 1000; margin-top: 0%">
+                  <el-row style="height: 40px; margin: 5%"
+                    ><el-col :span="4"
+                      ><i class="iconfont-guanjun" style="font-size: 40px"></i
+                    ></el-col>
+                    <el-col :span="11" style="text-align: center; height: 40px"
+                      ><p
+                        style="
+                          font-weight: 1000;
+                          margin: 0%;
+                          font-size: 20px;
+                          height: 40px;
+                          line-height: 40px;
+                        "
+                      >
                         今日销量冠军
                       </p></el-col
                     >
@@ -219,6 +282,7 @@
             </el-row>
             <el-row class="rowStyle" type="flex">
               <el-col :span="6" v-for="book in newBookList" :key="book.Name">
+                <el-card style="width:90%;margin:5%">
                 <el-container>
                   <el-header
                     style="width: 100%; height: 200px; align-items: center"
@@ -247,112 +311,114 @@
                     </p>
                   </el-main>
                 </el-container>
+                </el-card> 
               </el-col>
             </el-row>
-            <el-row style="margin: 0% 0% 5%"
-              ><el-menu
-                :default-active="activeIndex1"
-                class="el-menu-demo"
-                mode="horizontal"
-                @select="handleSelect1"
-              >
-                <el-menu-item
-                  index="1"
-                  @click.native="NetworkFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >网络文学</el-menu-item
-                >
-                <el-menu-item
-                  index="2"
-                  @click.native="EducationFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >教育</el-menu-item
-                >
-                <el-menu-item
-                  index="3"
-                  @click.native="NovelFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >小说</el-menu-item
-                >
-                <el-menu-item
-                  index="4"
-                  @click.native="LandAFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >文艺</el-menu-item
-                >
-                <el-menu-item
-                  index="5"
-                  @click.native="YandCFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >青春/动漫</el-menu-item
-                >
-              </el-menu>
-            </el-row>
-            <el-row class="rowStyle" type="flex">
-              <el-col
-                :span="6"
-                v-for="book in displayList.slice(
-                  (currentPage - 1) * pageSize,
-                  currentPage * pageSize
-                )"
-                :key="book.Name"
-              >
-                <el-container>
-                  <el-header
-                    style="width: 100%; height: 200px; align-items: center"
-                  >
-                    <el-image
-                      class="imgStyle1"
-                      :src="book.Img"
-                      @click.native="goToBookInfo()"
-                    >
-                    </el-image>
-                  </el-header>
-                  <el-main
-                    style="color: black; padding-top: 0; text-align: center"
-                  >
-                    <el-link
-                      :underline="false"
-                      class="book-name"
-                      @click="goToBookInfo()"
-                      >{{ book.Name }}</el-link
-                    >
-                    <p style="color: rgb(128, 192, 192); margin: 0%">
-                      {{ book.Author }}
-                    </p>
-                    <p style="color: red; font-weight: 1000; margin: 0%">
-                      ￥{{ book.Price }}
-                    </p>
-                  </el-main>
-                </el-container>
-              </el-col>
-            </el-row>
-            <el-pagination
-              :current-page="currentPage"
-              :page-size="pageSize"
-              @current-change="handleCurrentChange"
-              layout="prev, pager, next"
-              :total="this.displayList.length"
+          </el-main> </el-container
+        ><el-footer style="margin: 3% 0%; padding: 0px">
+          <el-row style="margin: 0% 0% 5%"
+            ><el-menu
+              :default-active="activeIndex1"
+              class="el-menu-demo"
+              mode="horizontal"
+              @select="handleSelect1"
             >
-            </el-pagination>
-          </el-main>
-        </el-container>
+              <el-menu-item
+                index="1"
+                @click.native="NetworkFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >网络文学</el-menu-item
+              >
+              <el-menu-item
+                index="2"
+                @click.native="EducationFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >教育</el-menu-item
+              >
+              <el-menu-item
+                index="3"
+                @click.native="NovelFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >小说</el-menu-item
+              >
+              <el-menu-item
+                index="4"
+                @click.native="LandAFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >文艺</el-menu-item
+              >
+              <el-menu-item
+                index="5"
+                @click.native="YandCFilter2"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                >青春/动漫</el-menu-item
+              >
+            </el-menu>
+          </el-row>
+          <el-row class="rowStyle" type="flex">
+            <el-col
+              :span="4"
+              v-for="book in displayList.slice(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize
+              )"
+              :key="book.Name"
+            >
+            <el-card style="width:90%;margin:5%">
+              <el-container>
+                <el-header
+                  style="width: 100%; height: 200px; align-items: center"
+                >
+                  <el-image
+                    class="imgStyle1"
+                    :src="book.Img"
+                    @click.native="goToBookInfo"
+                  >
+                  </el-image>
+                </el-header>
+                <el-main
+                  style="color: black; padding-top: 0; text-align: center"
+                >
+                  <el-link
+                    :underline="false"
+                    class="book-name"
+                    @click="goToBookInfo"
+                    >{{ book.Name }}</el-link
+                  >
+                  <p style="color: rgb(128, 192, 192); margin: 0%">
+                    {{ book.Author }}
+                  </p>
+                  <p style="color: red; font-weight: 1000; margin: 0%">
+                    ￥{{ book.Price }}
+                  </p>
+                </el-main>
+              </el-container>
+            </el-card>
+            </el-col>
+          </el-row>
+          <el-pagination
+            :current-page="currentPage"
+            :page-size="pageSize"
+            @current-change="handleCurrentChange"
+            layout="prev, pager, next"
+            :total="this.displayList.length"
+          >
+          </el-pagination>
+        </el-footer>
       </el-container>
     </div>
   </div>
 </template>
 <script>
-import Home from "./Home.vue";
 export default {
-  components: {
-    Home,
-  },
   data() {
     return {
-      activeIndex1: " ",
+      activeIndex1: "1",
       activeIndex2: " ",
       currentPage: 1,
       pageSize: 8,
+      isLoading: false,
+      input: "",
       todaySalesChampion: {
         Img: require("../assets/youbenshi.jpg"),
         Name: "有本事",
@@ -576,114 +642,44 @@ export default {
           Price: 11,
           PubTime: 2020,
         },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本3号",
-          Author: "王五",
-          ClassOne: "小说",
-          ClassTwo: "中国小说",
-          Price: 12,
-          PubTime: 2019,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2018,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本5号",
-          Author: "赵六",
-          ClassOne: "教育",
-          ClassTwo: "教材",
-          Price: 13,
-          PubTime: 2021,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本6号",
-          Author: "赵六",
-          ClassOne: "教育",
-          ClassTwo: "教辅资料",
-          Price: 13,
-          PubTime: 2020,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本7号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "文学",
-          Price: 13,
-          PubTime: 2019,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本8号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "艺术",
-          Price: 13,
-          PubTime: 2018,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本9号",
-          Author: "赵六",
-          ClassOne: "青春/动漫",
-          ClassTwo: "青春",
-          Price: 13,
-          PubTime: 2021,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本10号",
-          Author: "赵六",
-          ClassOne: "青春/动漫",
-          ClassTwo: "动漫",
-          Price: 13,
-          PubTime: 2020,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本11号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2019,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本12号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2018,
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本13号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2021,
-        },
       ],
     };
   },
+  computed: {
+    hasRole() {
+      return this.$store.state.roleHasLoad;
+    },
+    hasLogin() {
+      return this.$store.state.token;
+    },
+  },
   methods: {
+    goToSearch() {
+      this.$store.commit("gobalSearchText",this.input);
+      this.$router.push("/searchBook");
+    },
+    gotoSign() {
+      this.$router.push("/sign");
+    },
+    gotoLogin() {
+      this.$router.push("/login");
+    },
+    gotoPersonPage() {
+      this.$router.push("/person");
+    },
+    loginOut() {
+      this.isLoading = true;
+      this.$store.commit("clearCache");
+      sessionStorage.removeItem("token");
+      this.isLoading = false;
+    },
     showAll() {
-      this.activeIndex1 = " ";
+      this.activeIndex1 = "1";
       this.activeIndex2 = " ";
       this.currentPage = 1;
-      this.displayList = this.Lists;
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "网络文学"
+      );
     },
     handleCurrentChange(val) {
       this.currentPage = val;
@@ -742,17 +738,36 @@ export default {
     NetworkFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "1" } });
     },
+    NetworkFilter2() {
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "网络文学"
+      );
+    },
     EducationFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "2" } });
+    },
+    EducationFilter2() {
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "教育");
     },
     NovelFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "3" } });
     },
+    NovelFilter2() {
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "小说");
+    },
     LandAFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "4" } });
     },
+    LandAFilter2() {
+      this.displayList = this.Lists.filter((item) => item.ClassOne == "文艺");
+    },
     YandCFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "5" } });
+    },
+    YandCFilter2() {
+      this.displayList = this.Lists.filter(
+        (item) => item.ClassOne == "青春/动漫"
+      );
     },
   },
 };
@@ -766,8 +781,7 @@ export default {
   font-size: 100%;
 }
 .imgStyle1 {
-  margin-left: 10%;
-  width: 80%;
+  width: 100%;
   height: 200px;
   cursor: pointer;
 }
@@ -817,5 +831,54 @@ export default {
 }
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
+}
+.bbb {
+  background: url("../assets/3.jpg") no-repeat;
+  background-position: center;
+  height: 20%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
+}
+.header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-left: 10%;
+  margin-right: 10%;
+  height: 20%;
+}
+.search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  margin-left: 500px;
+}
+.search2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  margin-left: 350px;
+}
+.shopping {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+.hasNoRole {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  margin-left: 50px;
+}
+.pageperson {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
 }
 </style>

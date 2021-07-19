@@ -124,9 +124,18 @@ const routes = [
   {
     path: '/classSort',
     name: 'classSort',
-    meta: { auth: true },//登录鉴权
     component: () => import('../views/classSort.vue')
-  }
+  },
+  {
+    path: '/shopInfo',
+    name: 'shopInfo',
+    component: () => import('../components/shopManage/shopInfo.vue')
+  },
+  {
+    path: '/searchBook',
+    name: 'searchBook',
+    component: () => import('../views/searchBook.vue')
+  },
 ]
 
 const router = new VueRouter({
