@@ -1,6 +1,6 @@
 <template>
   <div v-loading="isLoading">
-    <div v-loading="isLoading">
+    <div>
       <div class="bbb"></div>
       <div class="header">
         <div class="hasRole ? search2 :search2">
