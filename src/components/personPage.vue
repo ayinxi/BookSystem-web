@@ -552,7 +552,9 @@ export default {
       this.$router.push("/shopManage");
     },
     //跳转收货地址页面
-    gotoAddress() {},
+    gotoAddress() {
+      this.$router.push("/myAddress");
+    },
     //跳转全部页面
     gotoAllOrder() {
       this.orderId = 0;
@@ -788,19 +790,6 @@ export default {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-}
-.bbb {
-  background: url("../assets/3.jpg") no-repeat;
-  background-position: center;
-  height: 20%;
-  width: 100%;
-  background-size: cover;
-  position: absolute;
-}
-.logo {
-  display: flex;
-  justify-content: center;
-  margin: 20px;
 }
 .img-min {
   width: 50px;
