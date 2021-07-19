@@ -2,7 +2,7 @@
   <div class="home">
     <div class="content">
       <div class="header">
-        <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
+        <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
         <div class="title">管理平台</div>
       </div>
       <div style="margin: 10px 0"><el-page-header @back="gotoAdmin" content="订单管理"></el-page-header></div>
@@ -72,13 +72,13 @@ export default {
           state: "未发货",//订单状态
           bookList:[
             {
-              bookImg: require("../assets/kuku.png"),//书籍图片
+              bookImg: require("../../assets/kuku.png"),//书籍图片
               bookName: "C++入门",//书籍名称
               bookPrice: 100,//书籍单价
               bookNum: 10,//书籍数量
             },
             {
-              bookImg: require("../assets/kuku.png"),//书籍图片
+              bookImg: require("../../assets/kuku.png"),//书籍图片
               bookName: "Python入门",//书籍名称
               bookPrice: 99,//书籍单价
               bookNum: 2,//书籍数量

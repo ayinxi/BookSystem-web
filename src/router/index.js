@@ -67,27 +67,27 @@ const routes = [
   {
     path: '/adminManage',
     name: 'adminManage',
-    component: () => import('../components/adminManage.vue')
+    component: () => import('../components/admin/adminManage.vue')
   },
   {
     path: '/manageClass',
     name: 'manageClass',
-    component: () => import('../components/manageClass.vue')
+    component: () => import('../components/admin/manageClass.vue')
   },
   {
     path: '/manageMerchant',
     name: 'manageMerchant',
-    component: () => import('../components/manageMerchant.vue')
+    component: () => import('../components/admin/manageMerchant.vue')
   },
   {
     path: '/manageUser',
     name: 'manageUser',
-    component: () => import('../components/manageUser.vue')
+    component: () => import('../components/admin/manageUser.vue')
   },
   {
     path: '/manageOrder',
     name: 'manageOrder',
-    component: () => import('../components/manageOrder.vue')
+    component: () => import('../components/admin/manageOrder.vue')
   },
   {
     path: '/shopping',

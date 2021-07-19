@@ -2,7 +2,7 @@
   <div class="home">
     <div class="content">
       <div class="header">
-        <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
+        <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
         <div class="title">管理平台</div>
       </div>
       <div style="margin: 10px 0"><el-page-header @back="gotoAdmin" content="商家管理"></el-page-header></div>
@@ -25,10 +25,10 @@
               <el-row><h2>{{nonCheckShopNum}}</h2></el-row><el-row><span>待审核</span></el-row>
             </el-col>
             <el-col span="8" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>已审核</span></el-row>
+              <el-row><h2>{{checkShopNum}}</h2></el-row><el-row><span>已审核</span></el-row>
             </el-col>
             <el-col span="8" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>商家数</span></el-row>
+              <el-row><h2>{{passShopNum}}</h2></el-row><el-row><span>商家数</span></el-row>
             </el-col>
           </el-row>
         </el-card>
@@ -123,7 +123,7 @@ export default {
         {
           applyTime: "2021-07-14 18:31:30",//申请时间
           applicant: "aaa",//申请人
-          shopImg: require("../assets/kuku.png"),//店铺封面
+          shopImg: require("../../assets/kuku.png"),//店铺封面
           shopName: "ccc",//店铺名称
           applyReason: "ddd",//申请理由
         },
@@ -132,7 +132,7 @@ export default {
         {
           checkTime: "2021-07-14 18:31:30",//审核时间
           applicant: "aaa",//申请人
-          shopImg: require("../assets/kuku.png"),//店铺封面
+          shopImg: require("../../assets/kuku.png"),//店铺封面
           shopName: "ccc",//店铺名称
           applyReason: "ddd",//申请理由
           checkResult: "审核通过(已注销)",//店铺状态
@@ -143,13 +143,15 @@ export default {
         {
           checkTime: "2021-07-14 18:31:30",//过审开店时间
           keeper: "aaa",//店主
-          shopImg: require("../assets/kuku.png"),//店铺封面
+          shopImg: require("../../assets/kuku.png"),//店铺封面
           shopName: "ccc",//店铺名称
           shopAddr: "login",//店铺地址
         },
       ],
       search: "",
       nonCheckShopNum: 0,
+      checkShopNum: 0,
+      passShopNum: 0,
       checkOpinion: "",
     };
   },
@@ -162,7 +164,7 @@ export default {
     //获取获取未审核的店铺数量
     getNonCheckShopNum() {
       axios({
-        url: "http://47.94.131.208:8088/admin/getNonCheckShopNum",
+        url: this.$store.state.yuming+"/admin/getNonCheckShopNum",
         method: "GET",
         params: {},
       })
@@ -182,11 +184,55 @@ export default {
         });
     },
     //获取已审核的申请数量
+    getCheckShopNum() {
+      axios({
+        url: this.$store.state.yuming+"/admin/getCheckShopNum",
+        method: "GET",
+        params: {},
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.checkShopNum = data;
+          } else {
+            this.$message.error("获取信息失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
     //获取现有店铺数量
+    getPassShopNum() {
+      axios({
+        url: this.$store.state.yuming+"/admin/getPassShopNum",
+        method: "GET",
+        params: {},
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.passShopNum = data;
+          } else {
+            this.$message.error("获取信息失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
     },
      async created() {
       this.isLoading = true;
       await this.getNonCheckShopNum();
+      await this.getCheckShopNum();
+      await this.getPassShopNum();
       this.isLoading = false;
   },
 };
