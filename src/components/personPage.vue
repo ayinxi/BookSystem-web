@@ -218,7 +218,7 @@
                         :src="this.applyShopInfo.img"
                         class="avatar"
                       />
-                      <img v-else src="../assets/avatar.jpg" class="avatar" />
+                      <img v-else :src="this.imgUrl" class="avatar" />
                       <div class="avatar-uploader-icon">
                         <i
                           class="el-icon-warning-outline"
@@ -301,7 +301,59 @@
           name="third"
         >
         </el-tab-pane>
-        <el-tab-pane v-else label="我的店铺" name="second"> </el-tab-pane>
+        <el-tab-pane v-else label="我的店铺" name="fourth">
+          <div
+            style="display: flex; justify-content: center; align-items: center"
+          >
+            <el-form
+              ref="shopInfo"
+              :model="shopInfo"
+              label-width="80px"
+              label-position="left"
+            >
+              <el-row style="margin-top: 20px">
+                <el-col>
+                  <el-form-item label="店铺封面" prop="img">
+                    <img
+                      v-if="this.shopInfo.avatar_b"
+                      :src="this.shopInfo.avatar_b"
+                      class="avatar"
+                    />
+                    <img v-else src="../assets/avatar.jpg" class="avatar" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item label="店铺名称" prop="shop_name">
+                    <span>{{ shopInfo.shop_name }}</span>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item label="店主名" prop="shopper_name">
+                    <span>{{ shopInfo.shopper_name }}</span>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item label="评分" prop="apply_reason">
+                    <el-rate
+                      v-model="value"
+                      disabled
+                      show-score
+                      text-color="#ff9900"
+                      score-template="{value}"
+                    >
+                    </el-rate>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -317,6 +369,7 @@ export default {
   },
   data() {
     return {
+      imgUrl: require("../assets/avatar.jpg"),
       orderId: "",
       isLoading: false,
       activeName: "first",
@@ -335,8 +388,21 @@ export default {
       },
       shopInfo: {
         apply_status: -1,
+        shoopper_name: "",
+        shop_name: "",
+        avatar_b: "",
+        rate: 3.7,
       },
-      //
+      applyHistory: [
+        {
+          avatar_b: "",
+          shop_name: "",
+          shoopper_name: "",
+          apply_reason: "",
+        },
+      ],
+      //评分
+      value: 0,
       dialogVisible: false,
       rules: {
         shopper_name: [
@@ -350,6 +416,7 @@ export default {
           { max: 100, message: "申请理由不得超过100个字", trigger: "blur" },
         ],
       },
+      formdata: new FormData(),
     };
   },
   computed: {
@@ -395,27 +462,29 @@ export default {
     },
     //确认申请成为商家
     confirmApply() {
+      this.formdata.append("shopper_name", this.applyShopInfo.shopper_name);
+      this.formdata.append("shop_name", this.applyShopInfo.shop_name);
+      this.formdata.append("apply_reason", this.applyShopInfo.apply_reason);
       axios({
         url: this.$store.state.yuming + "/registerShop",
-        method: "GET",
-        params: {},
-      })
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == "200") {
-            this.userInfo = data;
-          } else {
-            this.$message.error("获取用户信息失败");
-            this.$router.push("/");
-          }
-        })
-        .catch(() => {
-          Message({
-            type: "error",
-            message: "出现错误，请稍后再试",
+        method: "POST",
+        data: this.formdata,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+            message: "申请成功",
+            type: "success",
           });
-        });
+        } else {
+          this.$message.error("申请失败，请重试");
+        }
+      });
     },
+    //获取申请店铺历史信息
+    getApplyHistory() {},
     //获取用户信息
     getUserInfo() {
       axios({
@@ -444,7 +513,7 @@ export default {
     //获取店铺信息
     getShopInfo() {
       axios({
-        url: this.$store.state.yuming + "/getPassShopByUsername",
+        url: this.$store.state.yuming + "/shop/getPassed",
         method: "GET",
         params: {
           username: this.hasUsername,
@@ -454,10 +523,13 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.shopInfo = data;
+            this.value = this.shopInfo.rate;
           } else if (code == "17") {
             this.$message("已有店铺申请正在审核");
           } else {
-            this.$message.error("获取店铺状态失败,请刷新");
+            if (code != "3") {
+              this.$message.error("获取店铺状态失败,请刷新");
+            }
           }
         })
         .catch(() => {
@@ -478,23 +550,10 @@ export default {
       this.$refs["upload"].$refs["upload-inner"].handleClick();
     },
     getFile(file) {
-      var formData = new FormData();
-      formData.append("img", file);
-      axios({
-        url: this.$store.state.yuming + "/updateAvatar",
-        method: "POST",
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }).then((res) => {
-        if (res.data.code == 200) {
-          this.getUserInfo();
-          this.$refs.myCropper.close();
-        } else {
-          this.$message.error("上传出错");
-        }
-      });
+      this.formdata.append("img", file);
+      // 获取上传图片的本地URL，用于上传前的本地预览
+      this.imgUrl=window.URL.createObjectURL(file)
+      this.$refs.myCropper.close();
     },
     //头像上传成功之后的方法,进行回调
     handleAvatarSuccess(res) {
@@ -527,7 +586,7 @@ export default {
   async created() {
     this.isLoading = true;
     await this.getUserInfo();
-    if (this.userInfo.identity == 1) {
+    if (this.$store.state.role == 1) {
       await this.getShopInfo();
     }
     this.isLoading = false;
