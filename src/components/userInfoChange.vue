@@ -21,7 +21,7 @@
               margin-top: 10px;
             "
           >
-            <el-form ref="userInfo" :model="userInfo" label-width="80px" >
+            <el-form ref="userInfo" :model="userInfo" label-width="80px">
               <el-row style="margin-top: 20px">
                 <el-col>
                   <el-form-item label="用户头像" prop="avatar_s">
@@ -72,6 +72,15 @@
                   </el-form-item>
                 </el-col>
               </el-row>
+              <el-row style="margin-bottom: 0px">
+                <el-col>
+                  <el-form-item prop="password">
+                    <el-button type="text" @click="changePassword = true"
+                      >修改密码</el-button
+                    >
+                  </el-form-item>
+                </el-col>
+              </el-row>
               <el-row>
                 <el-col>
                   <el-form-item>
@@ -95,6 +104,62 @@
                 </el-col>
               </el-row>
             </el-form>
+            <el-dialog title="修改密码" :visible.sync="changePassword">
+              <el-form
+                ref="userInfo"
+                :model="userInfo"
+                label-width="100px"
+                :rules="rules"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  flex-wrap: wrap;
+                "
+              >
+                <el-row>
+                  <el-form-item label="原密码" prop="checkOrignPass">
+                    <el-input
+                      v-model="userInfo.checkOrignPass"
+                      type="password"
+                      placeholder="请输入原密码"
+                      style="width: 400px"
+                      clearable
+                    ></el-input>
+                  </el-form-item>
+                </el-row>
+                <el-row>
+                  <el-form-item label="新密码" prop="newpass">
+                    <el-input
+                      v-model="userInfo.newpass"
+                      placeholder="请输入新密码"
+                      prop="newpass"
+                      type="password"
+                      style="width: 400px"
+                      clearable
+                    >
+                    </el-input>
+                  </el-form-item>
+                </el-row>
+                <el-row>
+                  <el-form-item label="确认新密码" prop="checkpass">
+                    <el-input
+                      v-model="userInfo.checkpass"
+                      placeholder="请确认新密码"
+                      prop="checkpass"
+                      type="password"
+                      clearable
+                      style="width: 400px"
+                    >
+                    </el-input>
+                  </el-form-item>
+                </el-row>
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="changePassword = false">取 消</el-button>
+                <el-button type="primary" @click="confirmPass">确 定</el-button>
+              </div>
+            </el-dialog>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -110,12 +175,9 @@ export default {
   components: {
     MyCropper,
   },
-  prop: {
-    username: String,
-  },
   data() {
     return {
-      imageUrl: "",
+      changePassword: false,
       isLoading: false,
       activeName: "first",
       userInfo: {
@@ -124,8 +186,46 @@ export default {
         username: "",
         name: "",
         password: "",
+        checkOrignPass: "",
+        newpass: "",
+        checkpass: "",
       },
-      dialogVisible: false,
+      rules: {
+        newpass: [
+          { required: true, message: "新密码不得为空", trigger: "blur" },
+          { min: 3, message: "密码不得低于3位", trigger: "blur" },
+        ],
+        checkOrignPass: [
+          { required: true, message: "密码不能为空", trigger: "blur" },
+          {
+            validator: (rule, value, callback) => {
+              if (value === "") {
+                callback(new Error("请输入原密码"));
+              } else if (value !== this.userInfo.password) {
+                callback(new Error("原密码不正确"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "blur",
+          },
+        ],
+        checkpass: [
+          { required: true, message: "确认密码", trigger: "blur" },
+          {
+            validator: (rule, value, callback) => {
+              if (value === "") {
+                callback(new Error("请再次输入密码"));
+              } else if (value !== this.userInfo.newpass) {
+                callback(new Error("两次输入密码不一致"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "blur",
+          },
+        ],
+      },
     };
   },
   computed: {},
@@ -134,13 +234,52 @@ export default {
     gotoPerson() {
       this.$router.push("/person");
     },
-    //确认修改个人信息
-    confirmChange() {},
-    uploadAvatar(formData) {
+    //修改密码
+    confirmPass() {
+      this.changePassword = false;
+      this.userInfo.password = this.userInfo.newpass;
+      var formData = new FormData();
+      formData.append("password", this.userInfo.password);
+      formData.append("name", this.userInfo.name);
       axios({
         url: this.$store.state.yuming + "/updateUser",
         method: "POST",
-        params: formData,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+              message: "修改密码成功",
+              type: "success",
+            });
+        } else {
+          this.$message.error("修改密码失败");
+        }
+      });
+    },
+    //确认修改个人信息
+    confirmChange() {
+      var formData = new FormData();
+      formData.append("password", this.userInfo.password);
+      formData.append("name", this.userInfo.name);
+      axios({
+        url: this.$store.state.yuming + "/updateUser",
+        method: "POST",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+              message: "修改个人信息成功",
+              type: "success",
+            });
+        } else {
+          this.$message.error("修改个人信息失败");
+        }
       });
     },
     //裁剪
@@ -156,11 +295,9 @@ export default {
     },
     getFile(file) {
       var formData = new FormData();
-      formData.append("password", this.userInfo.password);
       formData.append("img", file);
-      formData.append("name", this.userInfo.name);
       axios({
-        url: this.$store.state.yuming + "/updateUser",
+        url: this.$store.state.yuming + "/updateAvatar",
         method: "POST",
         data: formData,
         headers: {
@@ -168,10 +305,7 @@ export default {
         },
       }).then((res) => {
         if (res.data.code == 200) {
-          this.userInfo.avatar_b = res.img;
-          this.imageUrl = res.img;
-          //上传成功后，关闭弹框组件
-          // this.handleCrop(file);
+          this.getUserInfo();
           this.$refs.myCropper.close();
         } else {
           this.$message.error("上传出错");
@@ -183,7 +317,6 @@ export default {
     handleAvatarSuccess(res) {
       if (res.code == 200) {
         this.userInfo.avatar_b = res.img;
-        this.imageUrl = res.img;
         // this.handleCrop(file);
       } else {
         this.$message.error("上传出错");

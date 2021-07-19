@@ -15,7 +15,7 @@
         <el-row class="shopping">
           <el-col :span="10">
             <el-badge :value="12" class="shopping">
-              <el-button size="meduim" icon="el-icon-shopping-cart-2"
+              <el-button size="meduim" icon="el-icon-shopping-cart-2" @click="gotoShopCar"
                 >我的购物车</el-button
               >
             </el-badge>
@@ -75,6 +75,9 @@ export default {
     },
     gotoPersonPage() {
       this.$router.push("/person");
+    },
+    gotoShopCar() {
+      this.$router.push("/shopping")
     },
     loginOut() {
       this.isLoading = true;
