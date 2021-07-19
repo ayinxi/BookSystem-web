@@ -561,10 +561,6 @@ export default {
   margin-left: 30px;
   border-radius: 20%;
 }
-.pie-wrap {
-  width: 100%;
-  height: 126px;
-}
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;

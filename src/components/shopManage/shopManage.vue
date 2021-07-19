@@ -33,7 +33,6 @@
           </el-container>
         </el-card>
       </el-row>
-      4个小图加文字：书本总数，新增订单数，销售额，退款额
       <el-row style="margin: 0% 10% 5%">
         <el-col :span="12" class="el-colStyle">
           <el-card class="el-cardStyle">
@@ -47,11 +46,11 @@
         </el-col>
         <el-col :span="12" class="el-colStyle">
           <el-card class="el-cardStyle">
-            <el-col :span="8" style="text-align: center">
+            <el-col :span="4" style="text-align: center">
               <p style="margin: 1%">今日新增订单数</p>
               <p style="font-size: 40px">{{ newOrder }}</p>
             </el-col>
-            <el-col :span="16" style="text-align: center">
+            <el-col :span="20" style="text-align: center">
               <p style="margin: 1%">各订单类型所占比例</p>
               <div>
                 <div id="chartPie" class="pie-wrap"></div>
@@ -60,26 +59,6 @@
           </el-card>
         </el-col>
       </el-row>
-      <el-row style="margin: 0% 10% 5%">
-        <el-col :span="12" class="el-colStyle">
-          <el-card class="el-cardStyle">
-            <el-col :span="12" style="text-align: center">
-              <p style="margin: 1%">今日销售额</p>
-              <p style="font-size: 40px">{{ newOrder }}</p>
-            </el-col>
-            <el-col :span="12" style="text-align: center">
-              <p style="margin: 1%">各订单类型所占比例</p>
-              <div>
-                <div id="chartPie" class="pie-wrap"></div>
-              </div>
-            </el-col>
-          </el-card>
-        </el-col>
-        <el-col :span="12" class="el-colStyle">
-          <el-card class="el-cardStyle"> </el-card>
-        </el-col>
-      </el-row>
-
       <el-row style="margin: 0% 10% 5%">
         <el-col :span="12" class="el-colStyle">
           <el-card class="el-cardStyle" shadow="hover" @click.native="goToBookM"
@@ -111,7 +90,7 @@
           <el-card
             class="el-cardStyle"
             shadow="hover"
-            @click.native="goToRefundM"
+            @click.native="goToShopInfo"
             ><p class="iconfont-shouhou" style="font-size: 40px"></p>
             <p class="spanStyle">店铺管理</p></el-card
           >
@@ -126,14 +105,13 @@ import echarts from "echarts";
 export default {
   data() {
     return {
-      newOrder: 12345,
+      newOrder: 123,
       shopname: "这是一家好店",
-      length: 12345,
     };
   },
   mounted() {
+    this.drawBarChart();
     this.$nextTick(() => {
-      this.drawBarChart();
       this.drawPieChart();
     });
   },
@@ -150,13 +128,15 @@ export default {
     goToRefundM() {
       this.$router.push("/refundM");
     },
+    goToShopInfo(){
+      this.$router.push("/shopInfo");
+    },
     drawBarChart() {
       this.chartBar = echarts.init(
         document.getElementById("chartBar"),
         "macarons"
       );
       this.chartBar.setOption({
-        //color: ['#0079FE'],
         color: function (params) {
           var colorList = [
             "#5470c6",
@@ -190,6 +170,7 @@ export default {
             },
             axisLabel: {
               //---坐标轴 标签
+              interval:0,
               show: true, //---是否显示
               inside: false, //---是否朝内
               rotate: 0, //---旋转角度
@@ -242,6 +223,7 @@ export default {
             name: "数量",
             type: "bar",
             data: [10, 52, 200, 334, 390],
+            animationDuration: 2000,
             itemStyle: {
               normal: {
                 color: function (params) {
@@ -271,6 +253,10 @@ export default {
           formatter: "{b}: <br/>{c}({d}%)",
         },
         legend: {
+          right: 0,
+          top: "center",
+          itemGap: 5, //设置图例的间距
+          orient: "vertical",
           data: [
             "未发货",
             "已发货",
@@ -279,15 +265,13 @@ export default {
             "已拒绝退款",
             "已收货",
           ],
-          right: 500,
-          orient: "vertical",
         },
         series: [
           {
             name: "访问来源",
             type: "pie",
             radius: ["50%", "80%"],
-            center: ["50%", "50%"],
+            center: ["40%", "50%"],
             data: [
               {
                 value: 335,

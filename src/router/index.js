@@ -114,6 +114,16 @@ const routes = [
     path: '/classSort',
     name: 'classSort',
     component: () => import('../views/classSort.vue')
+  },
+  {
+    path: '/shopInfo',
+    name: 'shopInfo',
+    component: () => import('../components/shopManage/shopInfo.vue')
+  },
+  {
+    patg: '/search',
+    name: 'search',
+    component: () => import('../views/search.vue')
   }
 ]
 
