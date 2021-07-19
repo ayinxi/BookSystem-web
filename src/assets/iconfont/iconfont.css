@@ -2,12 +2,12 @@
   font-family: "iconfont"; /* Project id 2660429 */
   /* Color fonts */
   src: 
-       url('iconfont.woff2?t=1626425008491') format('woff2'),
-       url('iconfont.woff?t=1626425008491') format('woff'),
-       url('iconfont.ttf?t=1626425008491') format('truetype');
+       url('iconfont.woff2?t=1626692755845') format('woff2'),
+       url('iconfont.woff?t=1626692755845') format('woff'),
+       url('iconfont.ttf?t=1626692755845') format('truetype');
 }
 
-.iconfont,[class^="iconfont"],[class*=" iconfont"]{
+.iconfont,[class^="iconfont"],[class*=" iconfont"] {
   font-family: "iconfont" !important;
   font-size: 16px;
   font-style: normal;
@@ -49,6 +49,10 @@
 
 .iconfont-chuangyexiangmu:before {
   content: "\e652";
+}
+
+.iconfont-shangpu-copy:before {
+  content: "\f14e";
 }
 
 .iconfont-shangpu:before {

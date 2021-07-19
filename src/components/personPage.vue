@@ -300,6 +300,107 @@
           label="申请历史"
           name="third"
         >
+          <el-table
+            :data="applyHistory"
+            style="width: 100%"
+            :default-sort="{ prop: 'create_time', order: 'descending' }"
+          >
+            <el-table-column type="expand">
+              <template slot-scope="props">
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <el-row>
+                    <el-form-item label="申请理由">
+                      <span>{{ props.row.apply_reason }}</span>
+                    </el-form-item>
+                  </el-row>
+                  <el-row>
+                    <el-form-item
+                      label="审核结果"
+                      v-if="props.row.apply_status == 2"
+                    >
+                      <el-tag v-if="props.row.pass_status == 1" type="success"
+                        >已通过</el-tag
+                      >
+                      <el-tag v-if="props.row.pass_status == 2" type="danger"
+                        >已拒绝</el-tag
+                      >
+                    </el-form-item>
+                  </el-row>
+                  <el-row>
+                    <el-form-item
+                      label="审核意见"
+                      v-if="props.row.apply_status == 2"
+                    >
+                      <span>{{ props.row.check_opinion }}</span>
+                    </el-form-item>
+                  </el-row>
+                  <el-row>
+                    <el-form-item
+                      label="存在状态"
+                      v-if="!props.row.exist_status == -1"
+                    >
+                      <el-tag v-if="props.row.exist_status == 1" type="success"
+                        >未注销</el-tag
+                      >
+                      <el-tag v-if="props.row.exist_status == 2" type="warning"
+                        >已注销</el-tag
+                      >
+                    </el-form-item>
+                  </el-row>
+                </el-form>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="create_time"
+              label="申请时间"
+              sortable
+            ></el-table-column>
+            <el-table-column label="店铺头像">
+              <template slot-scope="scope">
+                <el-popover placement="right" title="" trigger="hover">
+                  <img class="img-max" :src="scope.row.avatar_b" />
+                  <img
+                    class="img-min"
+                    slot="reference"
+                    :src="scope.row.avatar_s"
+                    :alt="scope.row.avatar_s"
+                    style="max-height: 50px; max-width: 130px"
+                  />
+                </el-popover>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="shop_name"
+              label="店铺名称"
+            ></el-table-column>
+            <el-table-column
+              prop="shopper_name"
+              label="店主名称"
+            ></el-table-column>
+            <el-table-column prop="apply_status" label="审核状态">
+              <template v-slot="x">
+                <el-tag v-if="x.row.apply_status == 1" type="warning"
+                  >未审核</el-tag
+                >
+                <el-tag v-if="x.row.apply_status == 2" type="success"
+                  >已审核</el-tag
+                >
+                <el-tag v-if="x.row.apply_status == 3" type="info"
+                  >已取消</el-tag
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template v-slot="x">
+                <el-button
+                  size="medium"
+                  v-if="x.row.apply_status == 1"
+                  type="text"
+                  >撤销</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
         </el-tab-pane>
         <el-tab-pane v-else label="我的店铺" name="fourth">
           <div
@@ -311,9 +412,9 @@
               label-width="80px"
               label-position="left"
             >
-              <el-row style="margin-top: 20px">
+              <el-row style="margin-top: 30px">
                 <el-col>
-                  <el-form-item label="店铺封面" prop="img">
+                  <el-form-item label="店铺封面" prop="img" >
                     <img
                       v-if="this.shopInfo.avatar_b"
                       :src="this.shopInfo.avatar_b"
@@ -346,8 +447,18 @@
                       show-score
                       text-color="#ff9900"
                       score-template="{value}"
+                      style="margin-top: 10px"
                     >
                     </el-rate>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item>
+                    <el-button type="text" @click="gotoShopManager"
+                      >点击管理我的商铺</el-button
+                    >
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -399,6 +510,10 @@ export default {
           shop_name: "",
           shoopper_name: "",
           apply_reason: "",
+          apply_status: "",
+          pass_status: "",
+          exist_status: "",
+          check_opinion: "",
         },
       ],
       //评分
@@ -432,6 +547,9 @@ export default {
     //跳转资料修改页面
     gotoChange() {
       this.$router.push("/change");
+    },
+    gotoShopManager() {
+      this.$router.push("/shopManage");
     },
     //跳转收货地址页面
     gotoAddress() {},
@@ -478,13 +596,36 @@ export default {
             message: "申请成功",
             type: "success",
           });
+          this.applyShopInfo = "";
         } else {
           this.$message.error("申请失败，请重试");
         }
       });
     },
     //获取申请店铺历史信息
-    getApplyHistory() {},
+    getApplyHistory() {
+      axios({
+        url: this.$store.state.yuming + "/user/getAllShop",
+        method: "GET",
+        params: {
+          username: this.hasUsername,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.applyHistory = data;
+          } else {
+            this.$message.error("获取店铺申请历史信息失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
     //获取用户信息
     getUserInfo() {
       axios({
@@ -552,7 +693,7 @@ export default {
     getFile(file) {
       this.formdata.append("img", file);
       // 获取上传图片的本地URL，用于上传前的本地预览
-      this.imgUrl=window.URL.createObjectURL(file)
+      this.imgUrl = window.URL.createObjectURL(file);
       this.$refs.myCropper.close();
     },
     //头像上传成功之后的方法,进行回调
@@ -589,6 +730,7 @@ export default {
     if (this.$store.state.role == 1) {
       await this.getShopInfo();
     }
+    await this.getApplyHistory();
     this.isLoading = false;
   },
 };
@@ -659,5 +801,13 @@ export default {
   display: flex;
   justify-content: center;
   margin: 20px;
+}
+.img-min {
+  width: 50px;
+  height: 50px;
+}
+.img-max {
+  width: 200px;
+  height: 200px;
 }
 </style>
