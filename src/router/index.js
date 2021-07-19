@@ -121,10 +121,10 @@ const routes = [
     component: () => import('../components/shopManage/shopInfo.vue')
   },
   {
-    patg: '/search',
-    name: 'search',
-    component: () => import('../views/search.vue')
-  }
+    path: '/searchBook',
+    name: 'searchBook',
+    component: () => import('../views/searchBook.vue')
+  },
 ]
 
 const router = new VueRouter({

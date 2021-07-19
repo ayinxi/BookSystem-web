@@ -369,7 +369,7 @@
                   <el-image
                     class="imgStyle1"
                     :src="book.Img"
-                    @click.native="goToBookInfo()"
+                    @click.native="goToBookInfo"
                   >
                   </el-image>
                 </el-header>
@@ -651,7 +651,7 @@ export default {
   },
   methods: {
     goToSearch() {
-      this.$router.push("/search");
+      this.$router.push({ path: "/searchBook", query: { input: this.input } });
     },
     gotoSign() {
       this.$router.push("/sign");

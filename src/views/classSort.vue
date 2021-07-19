@@ -538,7 +538,7 @@ export default {
   },
   methods: {
     goToSearch() {
-      this.$router.push("/search");
+      this.$router.push("/searchBook");
     },
     gotoSign() {
       this.$router.push("/sign");
