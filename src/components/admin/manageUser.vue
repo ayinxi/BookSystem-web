@@ -2,7 +2,7 @@
   <div class="home">
     <div class="content">
       <div class="header">
-        <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
+        <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
         <div class="title">管理平台</div>
       </div>
       <div style="margin: 10px 0"><el-page-header @back="gotoAdmin" content="用户管理"></el-page-header></div>
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import { Message } from "element-ui";
 export default {
   components: {},
   data() {
@@ -68,7 +70,7 @@ export default {
           state: "商家",//账号状态
 
           userNickname: "甲",//昵称
-          userImg: require("../assets/kuku.png"),//头像
+          userImg: require("../../assets/kuku.png"),//头像
           shopName: "xxxx",//店铺名
           shopAddr: "login",//店铺地址
         },
@@ -79,7 +81,7 @@ export default {
           state: "普通用户",//账号状态
 
           userNickname: "甲",//昵称
-          userImg: require("../assets/kuku.png"),//头像
+          userImg: require("../../assets/kuku.png"),//头像
           shopName: "xxxx",//店铺名
           shopAddr: "login",//店铺地址
         },
@@ -90,7 +92,7 @@ export default {
           state: "普通用户",//账号状态
 
           userNickname: "甲",//昵称
-          userImg: require("../assets/kuku.png"),//头像
+          userImg: require("../../assets/kuku.png"),//头像
           shopName: "xxxx",//店铺名
           shopAddr: "login",//店铺地址
         },
@@ -103,6 +105,11 @@ export default {
     gotoAdmin() {
       this.$router.push("/adminManage");
     },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getUserInfo();
+    this.isLoading = false;
   },
 };
 </script>

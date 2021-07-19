@@ -69,33 +69,33 @@ const routes = [
   },
   {
     path: '/adminManage',
-    name: 'adminManage',
+    name: 'adminManage', 
     meta: { auth: true },//登录鉴权
-    component: () => import('../components/adminManage.vue')
+    component: () => import('../components/admin/adminManage.vue')
   },
   {
     path: '/manageClass',
     name: 'manageClass',
     meta: { auth: true },//登录鉴权
-    component: () => import('../components/manageClass.vue')
+    component: () => import('../components/admin/manageClass.vue')
   },
   {
     path: '/manageMerchant',
-    name: 'manageMerchant',
+    name: 'manageMerchant', 
     meta: { auth: true },//登录鉴权
-    component: () => import('../components/manageMerchant.vue')
+    component: () => import('../components/admin/manageMerchant.vue')
   },
   {
     path: '/manageUser',
     name: 'manageUser',
     meta: { auth: true },//登录鉴权
-    component: () => import('../components/manageUser.vue')
+    component: () => import('../components/admin/manageUser.vue')
   },
   {
     path: '/manageOrder',
     name: 'manageOrder',
     meta: { auth: true },//登录鉴权
-    component: () => import('../components/manageOrder.vue')
+    component: () => import('../components/admin/manageOrder.vue')
   },
   {
     path: '/shopping',

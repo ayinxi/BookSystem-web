@@ -33,7 +33,10 @@
     <div style="margin:0 10%">
     <header class="table-header">
       <el-row>
-        <el-col span="2" class="table-header-item">全选</el-col>
+        <el-col span="1" class="table-header-item">
+          <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange"></el-checkbox>
+        </el-col>
+        <el-col span="1" class="table-header-item">全选</el-col>
         <el-col span="8" class="table-header-item">商品信息</el-col>
         <el-col span="4" class="table-header-item">价格(元)</el-col>
         <el-col span="4" class="table-header-item">数量</el-col>
@@ -42,17 +45,19 @@
       </el-row>
     </header>
     <container>
-      <el-row>
-        <el-col>新华书店网上商城自营好物</el-col>
-      </el-row>
-      <el-row>
-        <el-col span="2" class="table-header-item">全选</el-col>
-        <el-col span="8" class="table-header-item">商品信息</el-col>
-        <el-col span="4" class="table-header-item">价格(元)</el-col>
-        <el-col span="4" class="table-header-item">数量</el-col>
-        <el-col span="4" class="table-header-item">小计(元)</el-col>
-        <el-col span="2" class="table-header-item">操作</el-col>
-      </el-row>
+      <div v-for="shop in bookList" :key="shop.id">
+        <el-row>
+          <el-col>
+            <el-checkbox style="margin:10px" :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange"></el-checkbox>
+             <span class="table-shop">{{shop.book_merchant}}</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            
+          </el-col>
+        </el-row>
+      </div>
     </container>
 
 
@@ -425,7 +430,7 @@ export default {
       bookList: [
         {
           id: 1,
-          book_merchant: "A",
+          book_merchant: "横溢图书专营店",
           book_shopAddr: "login",
           children:[
             {
@@ -450,7 +455,7 @@ export default {
         },
         {
           id: 2,
-          book_merchant: "B",
+          book_merchant: "新华书店网上商城自营图书",
           book_shopAddr: "login",
           children:[
             {
@@ -612,5 +617,10 @@ export default {
 {
   margin: 11px 0;
   font-size: 11px;
+}
+
+.table-shop
+{
+  font-size: 13px;
 }
 </style>
