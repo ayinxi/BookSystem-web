@@ -16,9 +16,7 @@ export default new Vuex.Store({
     gobalSearchType: "",
     hasUnfinishedRoute: false,
     unfinishedRoute: {},
-    permission: [],
     roleHasLoad: false,
-    function: {},
     role: {},
     username: "",
     setToken: {},
@@ -45,22 +43,16 @@ export default new Vuex.Store({
       sessionStorage.removeItem('token')
       state.hasUnfinishedRoute = false
       state.unfinishedRoute = {}
-      state.ainiyou = ''
       state.token = ""
-      state.function = {}
       state.role = {}
-      state.cardnum = ""
-      state.permission = []
       state.gobalSearchText = ""
       state.gobalSearchType = ""
-      state.name = ""
+      state.username = ""
       state.roleHasLoad = false
     },
     clearCacheWithoutRoute(state) {
-      state.ainiyou = ''
       state.token = ""
       state.function = {}
-      state.permission = []
       state.gobalSearchText = ""
       state.gobalSearchType = ""
       state.roleHasLoad = false
@@ -74,14 +66,8 @@ export default new Vuex.Store({
     roleHasLoad(state, payload) {
       state.roleHasLoad = payload
     },
-    permission(state, payload) {
-      state.permission = payload
-    },
     role(state, payload) {
       state.role = payload;
-    },
-    function(state, payload) {
-      state.function = payload;
     },
     gobalSearchType(state, payload) {
       state.gobalSearchType = payload

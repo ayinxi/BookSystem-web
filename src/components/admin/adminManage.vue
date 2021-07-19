@@ -2,7 +2,7 @@
   <div class="home">
     <div class="content">
       <div class="header">
-        <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
+        <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
         <div class="title">管理平台</div>
       </div>
       <div>

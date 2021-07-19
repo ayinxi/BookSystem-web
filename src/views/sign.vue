@@ -94,14 +94,14 @@ export default {
         username: [
           {
             required: true,
-            message: "邮箱格式不正确！",
+            message: "邮箱格式不正确",
             trigger: "blur",
             type: "email",
           },
         ],
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
-          { min: 3, message: "密码不得低于3位！", trigger: "blur" },
+          { min: 3, message: "密码不得低于3位", trigger: "blur" },
         ],
         checkpass: [
           { required: true, message: "确认密码", trigger: "blur" },
@@ -149,7 +149,7 @@ export default {
     //发送验证码
     sendActivationCode() {
       axios({
-        url: this.$store.state.myUrl+"/sendEmail",
+        url: this.$store.state.yuming+"/sendEmail",
         method: "POST",
         params: {
           email: this.userInfo.username,
@@ -179,7 +179,7 @@ export default {
     },
     onSign() {
       axios({
-        url: this.store.state.yuming+"/registerUser",
+        url: this.$store.state.yuming+"/registerUser",
         method: "POST",
         params: {
           email: this.userInfo.username,

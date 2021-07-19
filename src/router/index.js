@@ -4,8 +4,6 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 
-
-
 const routes = [
   {
     path: '/login',
@@ -20,13 +18,13 @@ const routes = [
   {
     path: '/person',
     name: 'person',
-    //meta: { auth: true },//登录鉴权
+    meta: { auth: true },//登录鉴权
     component: () => import('../components/personPage.vue')
   },
   {
     path: '/change',
     name: 'change',
-    //meta: { auth: true },//登录鉴权
+    meta: { auth: true },//登录鉴权
     component: () => import('../components/userInfoChange.vue')
   },
   {
@@ -42,77 +40,91 @@ const routes = [
   {
     path: '/shopManage',
     name: 'shopManage',
+    meta: { auth: true },//登录鉴权
     component: () => import('../components/shopManage/shopManage.vue')
   },
   {
     path: '/bookM',
     name: 'bookM',
+    meta: { auth: true },//登录鉴权
     component: () => import('../components/shopManage/bookM.vue')
   },
   {
     path: '/orderM',
     name: 'orderM',
+    meta: { auth: true },//登录鉴权
     component: () => import('../components/shopManage/orderM.vue')
   },
   {
     path: '/orderInfo',
     name: 'orderInfo',
+    meta: { auth: true },//登录鉴权
     component: () => import('../components/shopManage/orderInfo.vue')
   },
   {
     path: '/shopIndex',
     name: 'shopIndex',
+    meta: { auth: true },//登录鉴权
     component: () => import('../views/shopIndex.vue')
   },
   {
     path: '/adminManage',
-    name: 'adminManage',
-    component: () => import('../components/adminManage.vue')
+    name: 'adminManage', 
+    meta: { auth: true },//登录鉴权
+    component: () => import('../components/admin/adminManage.vue')
   },
   {
     path: '/manageClass',
     name: 'manageClass',
-    component: () => import('../components/manageClass.vue')
+    meta: { auth: true },//登录鉴权
+    component: () => import('../components/admin/manageClass.vue')
   },
   {
     path: '/manageMerchant',
-    name: 'manageMerchant',
-    component: () => import('../components/manageMerchant.vue')
+    name: 'manageMerchant', 
+    meta: { auth: true },//登录鉴权
+    component: () => import('../components/admin/manageMerchant.vue')
   },
   {
     path: '/manageUser',
     name: 'manageUser',
-    component: () => import('../components/manageUser.vue')
+    meta: { auth: true },//登录鉴权
+    component: () => import('../components/admin/manageUser.vue')
   },
   {
     path: '/manageOrder',
     name: 'manageOrder',
-    component: () => import('../components/manageOrder.vue')
+    meta: { auth: true },//登录鉴权
+    component: () => import('../components/admin/manageOrder.vue')
   },
   {
     path: '/shopping',
     name: 'shopping',
-    //meta: { auth: true },//登录鉴权
+    meta: { auth: true },//登录鉴权
     component: () => import('../components/shopping.vue')
   },
   {
     path: '/refundM',
     name: 'refundM',
+    meta: { auth: true },//登录鉴权
     component: () => import('../components/shopManage/refundM.vue')
   },
   {
     path: '/refundInfo',
     name: 'refundInfo',
+    meta: { auth: true },//登录鉴权
     component: () => import('../components/shopManage/refundInfo.vue')
   },
   {
     path: '/userorder/:orderId',
     name: 'userorder',
+    meta: { auth: true },//登录鉴权
     component: () => import('../views/userOrder.vue')
   },
   {
     path: '/classSort',
     name: 'classSort',
+    meta: { auth: true },//登录鉴权
     component: () => import('../views/classSort.vue')
   },
   {
@@ -138,7 +150,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.auth) {
     //store.state.token 表示已经登录 可以直接next
     //没有登录 跳转到/login 并携带参数redirect 方便登录后直接跳转到to.path
-    if (this.$store.state.token) {
+    if (sessionStorage.getItem("token")) {
       next();
     } else {
       next({

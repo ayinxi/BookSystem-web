@@ -27,7 +27,7 @@
                     "
                   >
                     <img
-                      v-if="this.userInfo.avatar_s"
+                      v-if="this.userInfo.avatar_b"
                       style="
                         height: 150px;
                         width: 150px;
@@ -175,7 +175,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane
-          v-if="this.$store.state.role == 0"
+          v-if="this.userInfo.identity == 0"
           label="申请成为商家"
           name="second"
         >
@@ -183,15 +183,14 @@
             style="display: flex; justify-content: center; align-items: center"
           >
             <el-form
-              ref="shopInfo"
-              :model="shopInfo"
+              ref="applyShopInfo"
+              :model="applyShopInfo"
               label-width="80px"
-              v-if="this.shopInfo.apply_pass == 0"
+              :rules="rules"
             >
-              <el-row
-                >
+              <el-row>
                 <el-col>
-                  <el-form-item>
+                  <el-form-item label-position="left">
                     <div>
                       <h3 style="color: #909399">
                         注意：在此，您可以申请成为商家。请仔细考虑店铺封面，认真填写店铺名称和申请理由。否则，您将有可能遭到拒绝。
@@ -202,7 +201,7 @@
               </el-row>
               <el-row style="margin-top: 20px">
                 <el-col>
-                  <el-form-item label="店铺封面" prop="shopavatar">
+                  <el-form-item label="店铺封面" prop="img">
                     <el-upload
                       class="avatar-uploader"
                       ref="upload"
@@ -212,9 +211,13 @@
                       :on-success="handleAvatarSuccess"
                       :before-upload="beforeAvatarUpload"
                       :auto-upload="false"
-                      :name="this.shopInfo.shopavatar"
+                      :name="this.applyShopInfo.img"
                     >
-                      <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                      <img
+                        v-if="this.applyShopInfo.img"
+                        :src="this.applyShopInfo.img"
+                        class="avatar"
+                      />
                       <img v-else src="../assets/avatar.jpg" class="avatar" />
                       <div class="avatar-uploader-icon">
                         <i
@@ -234,10 +237,10 @@
               </el-row>
               <el-row>
                 <el-col>
-                  <el-form-item label="店铺名称" prop="shopname">
+                  <el-form-item label="店铺名称" prop="shop_name">
                     <el-input
                       type="text"
-                      v-model="shopInfo.shopname"
+                      v-model="applyShopInfo.shop_name"
                       maxlength="10"
                       show-word-limit
                       style="width: 250px"
@@ -247,10 +250,30 @@
               </el-row>
               <el-row>
                 <el-col>
-                  <el-form-item label="申请理由" prop="shopReason">
+                  <el-form-item label="店主名" prop="shopper_name">
+                    <el-input
+                      type="text"
+                      v-model="applyShopInfo.shopper_name"
+                      maxlength="10"
+                      show-word-limit
+                      style="width: 250px"
+                    ></el-input>
+                    <div class="avatar-uploader-icon">
+                      <i
+                        class="el-icon-warning-outline"
+                        style="margin-right: 5px"
+                      ></i>
+                      <i style="color: #909399">请填写申请人的真实姓名</i>
+                    </div>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item label="申请理由" prop="apply_reason">
                     <el-input
                       type="textarea"
-                      v-model="shopInfo.shopReason"
+                      v-model="applyShopInfo.apply_reason"
                       maxlength="100"
                       show-word-limit
                       clearable
@@ -270,10 +293,13 @@
                 </el-col>
               </el-row>
             </el-form>
-            <el-card v-else style="apply">
-              
-            </el-card>
           </div>
+        </el-tab-pane>
+        <el-tab-pane
+          v-if="this.userInfo.identity == 0"
+          label="申请历史"
+          name="third"
+        >
         </el-tab-pane>
         <el-tab-pane v-else label="我的店铺" name="second"> </el-tab-pane>
       </el-tabs>
@@ -291,36 +317,45 @@ export default {
   },
   data() {
     return {
-      orderId:"",
+      orderId: "",
       isLoading: false,
       activeName: "first",
-      imageUrl: "",
       userInfo: {
         avatar_s: "",
         username: "",
         name: "",
         password: "",
+        identity: 0,
       },
-      userCheckInfo: {
-        avatar_s: "",
-        username: "",
-        name: "",
-        password: "",
+      applyShopInfo: {
+        img: "",
+        shopper_name: "",
+        shop_name: "",
+        apply_reason: "",
       },
       shopInfo: {
-        shopavatar: "",
-        shopname: "",
-        shopReason: "",
-        apply_pass: "",
+        apply_status: -1,
       },
       //
       dialogVisible: false,
+      rules: {
+        shopper_name: [
+          { required: true, message: "店主名不得为空", trigger: "blur" },
+        ],
+        shop_name: [
+          { required: true, message: "店铺名不得为空", trigger: "blur" },
+        ],
+        apply_reason: [
+          { required: true, message: "申请理由不得为空", trigger: "blur" },
+          { max: 100, message: "申请理由不得超过100个字", trigger: "blur" },
+        ],
+      },
     };
   },
   computed: {
-    hasUsername(){
-      return this.$store.state.username
-    }
+    hasUsername() {
+      return this.$store.state.username;
+    },
   },
   methods: {
     //返回首页
@@ -335,45 +370,40 @@ export default {
     gotoAddress() {},
     //跳转全部页面
     gotoAllOrder() {
-      this.orderId=0;
-      this.$router.push("/userOrder/"+this.orderId);
+      this.orderId = 0;
+      this.$router.push("/userOrder/" + this.orderId);
     },
     //跳转待发货
     gotoDaifahuo() {
-      this.orderId=1;
-      this.$router.push("/userOrder/"+this.orderId);
+      this.orderId = 1;
+      this.$router.push("/userOrder/" + this.orderId);
     },
     //跳转待收货页面
     gotoDaishouhuo() {
-      this.orderId=2;
-      this.$router.push("/userOrder/"+this.orderId);
+      this.orderId = 2;
+      this.$router.push("/userOrder/" + this.orderId);
     },
     //跳转全部页面
     gotoDaipingjia() {
-      this.orderId=3;
-      this.$router.push("/userOrder/"+this.orderId);
+      this.orderId = 3;
+      this.$router.push("/userOrder/" + this.orderId);
     },
     //跳转退款页面
     gotoTuikuan() {
-      this.orderId=4;
-      this.$router.push("/userOrder/"+this.orderId);
+      this.orderId = 4;
+      this.$router.push("/userOrder/" + this.orderId);
     },
     //确认申请成为商家
-    confirmApply() {},
-    //获取用户信息
-    getUserInfo() {
+    confirmApply() {
       axios({
-        url: this.$store.state.yuming+"/user/getByUsername",
+        url: this.$store.state.yuming + "/registerShop",
         method: "GET",
-        params: {
-          username: this.hasUsername,
-        },
+        params: {},
       })
         .then((res) => {
           const { code, data } = res.data;
           if (code == "200") {
             this.userInfo = data;
-            this.userCheckInfo = data;
           } else {
             this.$message.error("获取用户信息失败");
             this.$router.push("/");
@@ -386,9 +416,57 @@ export default {
           });
         });
     },
-    //图片上传
-    uploadAvatar(formData) {},
-    //裁剪
+    //获取用户信息
+    getUserInfo() {
+      axios({
+        url: this.$store.state.yuming + "/user/getByUsername",
+        method: "GET",
+        params: {
+          username: this.hasUsername,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.userInfo = data;
+          } else {
+            this.$message.error("获取用户信息失败");
+            this.$router.push("/");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //获取店铺信息
+    getShopInfo() {
+      axios({
+        url: this.$store.state.yuming + "/getPassShopByUsername",
+        method: "GET",
+        params: {
+          username: this.hasUsername,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.shopInfo = data;
+          } else if (code == "17") {
+            this.$message("已有店铺申请正在审核");
+          } else {
+            this.$message.error("获取店铺状态失败,请刷新");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
     //上传图片触发
     handleCrop(file) {
       this.$nextTick(() => {
@@ -400,28 +478,28 @@ export default {
       this.$refs["upload"].$refs["upload-inner"].handleClick();
     },
     getFile(file) {
-      const formData = new FormData();
-      formData.append("avatar_b", file);
-      uploadAvatar(formData).then((res) => {
-        if (res.code === 0) {
-          this.userInfo.avatar_b = res.filename;
-          this.userInfo.imageUrl = res.url;
-          this.imageUrl = res.url;
-          //上传成功后，关闭弹框组件
-          // this.handleCrop(file);
+      var formData = new FormData();
+      formData.append("img", file);
+      axios({
+        url: this.$store.state.yuming + "/updateAvatar",
+        method: "POST",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.getUserInfo();
           this.$refs.myCropper.close();
         } else {
           this.$message.error("上传出错");
         }
       });
-      // this.$refs.upload.submit();
     },
     //头像上传成功之后的方法,进行回调
     handleAvatarSuccess(res) {
       if (res.code === 0) {
-        this.userInfo.avatar_b = res.filename;
-        this.userInfo.imageUrl = res.url;
-        this.imageUrl = res.url;
+        this.userInfo.avatar_b = res.img;
         // this.handleCrop(file);
       } else {
         this.$message.error("上传出错");
@@ -449,6 +527,9 @@ export default {
   async created() {
     this.isLoading = true;
     await this.getUserInfo();
+    if (this.userInfo.identity == 1) {
+      await this.getShopInfo();
+    }
     this.isLoading = false;
   },
 };
