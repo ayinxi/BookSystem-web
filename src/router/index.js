@@ -106,7 +106,7 @@ const routes = [
     component: () => import('../components/shopManage/refundInfo.vue')
   },
   {
-    path: '/userorder/:num',
+    path: '/userorder/:orderId',
     name: 'userorder',
     component: () => import('../views/userOrder.vue')
   },

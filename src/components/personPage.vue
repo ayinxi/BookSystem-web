@@ -289,9 +289,6 @@ export default {
   components: {
     MyCropper,
   },
-  prop: {
-    username: String,
-  },
   data() {
     return {
       orderId:"",
@@ -517,12 +514,6 @@ export default {
   width: 100%;
   background-size: cover;
   position: absolute;
-}
-.header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  height: 20%;
 }
 .logo {
   display: flex;
