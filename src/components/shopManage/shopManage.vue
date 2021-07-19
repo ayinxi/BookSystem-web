@@ -91,7 +91,7 @@
             class="el-cardStyle"
             shadow="hover"
             @click.native="goToShopInfo"
-            ><p class="iconfont-shouhou" style="font-size: 40px"></p>
+            ><p class="iconfont-shangpu" style="font-size: 40px"></p>
             <p class="spanStyle">店铺管理</p></el-card
           >
         </el-col>
