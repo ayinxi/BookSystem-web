@@ -16,7 +16,7 @@
             <el-main>
               <span style="font-weight: 1000">欢迎您，亲爱的店家 </span>
               <p style="font-weight: 1000">
-                您可以在本页面进行图书管理，包括: 调整图书信息 新增图书 下架图书
+                您可以在本页面进行图书管理，包括: 修改图书信息 新增图书 下架图书
               </p>
             </el-main>
           </el-container>
@@ -219,6 +219,7 @@
         width="80%"
         :before-close="handleClose"
         center
+        :key="timer"
       >
         <el-form ref="lists" :model="lists" label-width="110px">
           <el-row>
@@ -325,6 +326,9 @@
 import MyCropper from "../cropper.vue";
 import axios from "axios";
 export default {
+  components: {
+    MyCropper,
+  },
   data() {
     return {
       searchText: "",
@@ -538,11 +542,8 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    changePhotoFile(){},
-    handleAvatarSuccess(){},
-    beforeAvatarUpload(){},
     //上传图片触发
-   /* handleCrop(file) {
+    handleCrop(file) {
       this.$nextTick(() => {
         this.$refs.myCropper.open(file.raw || file);
       });
@@ -596,7 +597,7 @@ export default {
         this.$message.error("上传头像图片大小不能超过 6MB!");
       }
       return isJPG && isLt6M;
-    },*/
+    },
   },
 };
 </script>
@@ -649,8 +650,8 @@ export default {
   text-align: center;
 }
 .avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+  width: 178px !important;
+  height: 178px !important;
+  display: block !important;
 }
 </style>
