@@ -21,13 +21,13 @@
       <div>
         <el-card class="box-card1">
           <el-row>
-            <el-col span="8" style="text-align:center">
+            <el-col :span="8" style="text-align:center">
               <el-row><h2>{{nonCheckShopNum}}</h2></el-row><el-row><span>待审核</span></el-row>
             </el-col>
-            <el-col span="8" style="text-align:center">
+            <el-col :span="8" style="text-align:center">
               <el-row><h2>{{checkShopNum}}</h2></el-row><el-row><span>已审核</span></el-row>
             </el-col>
-            <el-col span="8" style="text-align:center">
+            <el-col :span="8" style="text-align:center">
               <el-row><h2>{{passShopNum}}</h2></el-row><el-row><span>商家数</span></el-row>
             </el-col>
           </el-row>
@@ -39,33 +39,46 @@
     <el-tab-pane label="待审核申请" name="first">
       <el-table :data="checkList" style="width: 100%"
       :default-sort = "{prop: 'create_time', order: 'descending'}">
-        <el-table-column prop="create_time" label="申请时间" sortable></el-table-column>
-        <el-table-column prop="user_id" label="申请人id"></el-table-column>
-        <el-table-column prop="username" label="申请人name"></el-table-column>
-        <el-table-column label="店铺头像">
+      <el-table-column type="expand">
           <template slot-scope="scope">
-            <el-popover
-            placement="right"
-            title=""
-            trigger="hover">
-              <img class="img-max" :src="scope.row.avatar_b"/>
-              <img class="img-min" slot="reference" :src="scope.row.avatar_s" :alt="scope.row.avatar_s" style="max-height: 50px;max-width: 130px">
-            </el-popover>
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="店铺封面">
+                <el-popover
+                placement="right"
+                title=""
+                trigger="hover">
+                  <img class="img-max" :src="scope.row.avatar_b"/>
+                  <img class="img-min" slot="reference" :src="scope.row.avatar_s" :alt="scope.row.avatar_s" style="max-height: 50px;max-width: 130px">
+                </el-popover>
+              </el-form-item>
+              <el-form-item label="店铺名称"><span>{{scope.row.shop_name}}</span></el-form-item>
+              <el-form-item label="申请邮箱"><span>{{scope.row.username}}</span></el-form-item>
+            </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="shop_name" label="店铺名称"></el-table-column>
-        <el-table-column prop="shopper_name" label="店主名称"></el-table-column>
+        <el-table-column prop="create_time" label="申请时间" sortable></el-table-column>
+        <el-table-column prop="shopper_name" label="申请人"></el-table-column>
         <el-table-column prop="apply_reason" label="申请理由"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
+            <el-button size="mini" type="text" @click="checkShop(scope.row.username, 1, passString)">通过</el-button>
+            <el-button size="mini" type="text" @click="OpinionVisible = true">拒绝</el-button>
+            <el-dialog title="审核意见" :visible.sync="OpinionVisible" center>
+              <el-input v-model="scope.row.check_opinion" maxlength="30" show-word-limit placeholder="请输入审核意见"></el-input>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="OpinionVisible = false">取 消</el-button>
+                <el-button type="primary" @click="checkShop(scope.row.username, 2, scope.row.check_opinion);OpinionVisible = false">确 定</el-button>
+              </div>
+            </el-dialog>
+            <!--
             <el-popover placement="left" width="400px" trigger="click">
               <el-row>
-                <el-col span="16"><el-input v-model="scope.row.check_opinion" placeholder="请输入审核意见"></el-input></el-col>
-                <el-col span="4"><el-button type="danger" size="mini" @click="checkShop(scope.row.user_id, 1, scope.row.check_opinion)">通过</el-button></el-col>
-                <el-col span="4"><el-button type="danger" size="mini" @click="checkShop(scope.row.user_id, 2, scope.row.check_opinion)">拒绝</el-button></el-col>
+                <el-col :span="16"><el-input v-model="scope.row.check_opinion" placeholder="请输入审核意见"></el-input></el-col>
+                <el-col :span="4"><el-button type="danger" size="mini" @click="checkShop(scope.row.username, 2, scope.row.check_opinion)">确认</el-button></el-col>
               </el-row>
-              <el-button size="mini" type="text" slot="reference">处理</el-button>
+              <el-button size="mini" type="text" slot="reference" @click="OpinionVisible = true">拒绝</el-button>
             </el-popover>
+            -->
           </template>
         </el-table-column>
       </el-table>
@@ -86,13 +99,13 @@
                 </el-popover>
               </el-form-item>
               <el-form-item label="店铺名称"><span>{{scope.row.shop_name}}</span></el-form-item>
-              <el-form-item label="真实姓名"><span>{{scope.row.shopper_name}}</span></el-form-item>
+              <el-form-item label="申请邮箱"><span>{{scope.row.username}}</span></el-form-item>
               <el-form-item label="申请理由"><span>{{scope.row.apply_reason}}</span></el-form-item>
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="create_time" label="审核时间" sortable></el-table-column>
-        <el-table-column prop="user_id" label="申请人"></el-table-column>
+        <el-table-column prop="update_time" label="审核时间" sortable></el-table-column>
+        <el-table-column prop="shopper_name" label="申请人"></el-table-column>
         <el-table-column prop="pass_status" label="审核结果">
           <template slot-scope="scope">
             <span v-if="scope.row.pass_status==-1">无效</span>
@@ -108,10 +121,16 @@
       :data="shopList.filter(data => !search || data.shop_name.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
       :default-sort = "{prop: 'update_time', order: 'descending'}">
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="开店时间"><span>{{scope.row.create_time}}</span></el-form-item>
+              <el-form-item label="店主邮箱"><span>{{scope.row.username}}</span></el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
         <el-table-column prop="update_time" label="更新时间" sortable></el-table-column>
-        <el-table-column prop="create_time" label="开店时间" sortable></el-table-column>
-        <el-table-column prop="user_id" label="店主账户"></el-table-column>
-        <el-table-column prop="shopper_name" label="真实姓名"></el-table-column>
+        <el-table-column prop="shopper_name" label="店主"></el-table-column>
         <el-table-column label="店铺头像">
           <template slot-scope="scope">
             <el-popover
@@ -131,32 +150,36 @@
           </template>
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="EditVisible = true">编辑</el-button>
-            <el-dialog title="店铺信息" :visible.sync="EditVisible">
+            <el-dialog title="店铺信息" :visible.sync="EditVisible" center>
               <el-form :model="scope.row">
-                <el-form-item label="店铺封面" prop="avatar_s">
-                  <el-upload
-                  class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
-                  :before-upload="beforeAvatarUpload">
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                  </el-upload>
-                </el-form-item>
+                <el-row>
+                  <el-col>
+                    <el-form-item label="店铺封面" :label-width="formLabelWidth">
+                      <el-upload
+                      class="avatar-uploader"
+                      action="https://jsonplaceholder.typicode.com/posts/"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :before-upload="beforeAvatarUpload">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                      </el-upload>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
                 <el-form-item label="店铺名称" :label-width="formLabelWidth">
-                  <el-input v-model="scope.row.shop_name" autocomplete="off"></el-input>
+                  <el-input v-model="scope.row.shop_name" autocomplete="off" maxlength="10" show-word-limit class="editInput"></el-input>
                 </el-form-item>
-                <el-form-item label="店主真实姓名" :label-width="formLabelWidth">
-                  <el-input v-model="scope.row.shopper_name" autocomplete="off"></el-input>
+                <el-form-item label="店主姓名" :label-width="formLabelWidth">
+                  <el-input v-model="scope.row.shopper_name" autocomplete="off" maxlength="10" show-word-limit class="editInput"></el-input>
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button @click="EditVisible = false">取 消</el-button>
-                <el-button type="primary" @click="EditVisible = false">确 定</el-button>
+                <el-button type="primary" @click="updateShop(scope.row.username, scope.row.shopper_name, scope.row.shop_name, avatar_b);EditVisible = false">确 定</el-button>
               </div>
             </el-dialog>
-            <el-button size="mini" type="text">注销</el-button>
+            <el-button size="mini" type="text" @click="logoutShop(scope.row.username)">注销</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -170,7 +193,7 @@
 
 <script>
 import axios from "axios";
-import { TimeSelect } from 'element-ui';
+import { Message } from "element-ui";
 export default {
   components: {},
   data() {
@@ -180,21 +203,21 @@ export default {
       checkList: [
         {
           create_time: "2021-07-14 18:31:30",//申请时间
-          user_id: "aaa",//申请人id
-          username: "aaa",//申请人name
+          user_id: "示例",//申请人id
+          username: "示例",//申请人
           avatar_s: require("../../assets/kuku.png"),//店铺封面
           avatar_b: require("../../assets/kuku.png"),//店铺封面大图
-          shop_name: "ccc",//店铺名称
-          shopper_name: "aaa",//真实姓名
-          apply_reason: "ddd",//申请理由
+          shop_name: "示例",//店铺名称
+          shopper_name: "示例",//真实姓名
+          apply_reason: "示例",//申请理由
           check_opinion: "",//审核意见
         },
       ],
       checkedList: [
         {
-          create_time: "2021-07-14 18:31:30",//审核时间
+          update_time: "2021-07-14 18:31:30",//审核时间
           user_id: "aaa",//申请人id
-          username: "aaa",//申请人name
+          username: "aaa",//申请人
           avatar_s: require("../../assets/kuku.png"),//店铺封面
           avatar_b: require("../../assets/kuku.png"),//店铺封面大图
           shop_name: "ccc",//店铺名称
@@ -209,7 +232,7 @@ export default {
           update_time: "2021-07-14 18:31:30",//过审开店时间
           create_time: "2021-07-14 18:31:30",//信息更新时间
           user_id: "aaa",//店主id
-          username: "aaa",//店主name
+          username: "aaa",//店主
           shopper_name: "bbb",//真实姓名
           avatar_s: require("../../assets/kuku.png"),//店铺封面
           avatar_b: require("../../assets/kuku.png"),//店铺封面大图
@@ -221,9 +244,11 @@ export default {
       checkShopNum: 0,
       passShopNum: 0,
       EditVisible: false,
+      OpinionVisible: false,
       formLabelWidth: '120px',
       username: "",
       imageUrl: "",
+      passString: "通过",
     };
   },
   computed: {},
@@ -314,30 +339,6 @@ export default {
           });
         });
     },
-    //user_id查找用户
-    getByID(item) {
-      axios({
-        url: this.$store.state.yuming+"/user/getByID",
-        method: "GET",
-        params: {
-          user_id: item.user_id,
-        },
-      })
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == "200") {
-            item.username = data.username;
-          } else {
-            this.$message.error("获取username失败");
-          }
-        })
-        .catch(() => {
-          Message({
-            type: "error",
-            message: "出现错误，请稍后再试",
-          });
-        });
-    },
     //获取未审核店铺
     getNonCheckShop() {
       axios({
@@ -405,12 +406,12 @@ export default {
         });
     },
     //审核店铺
-    checkShop(id, status, opinion) {
+    checkShop(name, status, opinion) {
       axios({
         url: this.$store.state.yuming+"/admin/checkShop",
         method: "POST",
         params: {
-          user_id: id,
+          username: name,
           pass_status: status,
           check_opinion: opinion,
         },
@@ -434,7 +435,62 @@ export default {
         });
     },
     //编辑店铺信息
+    updateShop(name, sr_name, s_name, image) {
+      axios({
+        url: this.$store.state.yuming+"/admin/updateShop",
+        method: "POST",
+        params: {
+          username: name,
+          shopper_name: sr_name,
+          shop_name: s_name,
+          img: image,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.$message({
+              type: "success",
+              message: "编辑成功",
+        });
+          } else {
+            this.$message.error("编辑失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
     //注销店铺
+    logoutShop(name) {
+      axios({
+        url: this.$store.state.yuming+"/shop/logoutShop",
+        method: "DELETE",
+        params: {
+          username: name,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.$message({
+              type: "success",
+              message: "注销成功",
+        });
+          } else {
+            this.$message.error("注销失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
     },
     async created() {
       this.isLoading = true;
@@ -535,6 +591,7 @@ export default {
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    margin-right: 500px;
   }
   .avatar-uploader .el-upload:hover {
     border-color: #409EFF;
@@ -551,5 +608,10 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
+  }
+
+  .editInput{
+    width: 460px;
+    margin-right: 140px;
   }
 </style>
