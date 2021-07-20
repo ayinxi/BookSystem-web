@@ -174,10 +174,92 @@
             </div>
           </div>
         </el-tab-pane>
+        <el-tab-pane label="我的收货地址" name="second">
+          <el-row>
+            <div style="margin-bottom: 20px">
+              <el-row>
+                <el-radio-group v-model="radio">
+                  <el-radio-button
+                    :label="item.id"
+                    :key="item.id"
+                    v-for="item in myAddressList"
+                    style="margin: 20px"
+                  >
+                    <div class="addressCard">
+                      <el-form ref="item" :v-model="item" label-width="80px">
+                        <el-form-item label="姓名:" prop="name">
+                          <span>{{ item.name }}</span>
+                        </el-form-item>
+                        <el-form-item label="电话号码:" prop="phone">
+                          <span>{{ item.name }}</span>
+                        </el-form-item>
+                        <el-form-item label="详细地址:" prop="name">
+                          <span>{{ item.name }}</span>
+                        </el-form-item>
+                      </el-form>
+                    </div>
+                  </el-radio-button>
+                </el-radio-group>
+              </el-row>
+              <el-row
+                ><el-button
+                  size="min"
+                  icon="el-icon-setting"
+                  type="text"
+                  @click="addInfoVisible = true"
+                  >添加收货人信息</el-button
+                ></el-row
+              >
+              <!--编辑收货人信息-->
+              <el-dialog title="编辑收货人信息" :visible.sync="editInfoVisible">
+                <el-form :model="editMyAddress" label-width="120px">
+                  <el-form-item label="姓名" prop="name">
+                    <el-input v-model="editMyAddress.name"></el-input>
+                  </el-form-item>
+                  <el-form-item label="电话号码" prop="phone">
+                    <el-input v-model="editMyAddress.phone"></el-input>
+                  </el-form-item>
+                  <el-form-item label="详细地址" prop="address">
+                    <el-input
+                      v-model="editMyAddress.address"
+                      autocomplete="off"
+                    ></el-input>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="editInfoVisible = false">取消</el-button>
+                  <el-button type="danger" @click="editInfoVisible = false"
+                    >确认收货人信息</el-button
+                  >
+                </div>
+              </el-dialog>
+              <!--添加收货人信息-->
+              <el-dialog title="添加收货人信息" :visible.sync="addInfoVisible">
+                <el-form :model="newAddress" label-width="120px">
+                  <el-form-item label="姓名">
+                    <el-input v-model="newAddress.name"></el-input>
+                  </el-form-item>
+                  <el-form-item label="电话号码">
+                    <el-input v-model="newAddress.phone"></el-input>
+                  </el-form-item>
+                  <el-form-item label="详细地址">
+                    <el-input v-model="newAddress.address"></el-input>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="addInfoVisible = false">取消</el-button>
+                  <el-button type="danger" @click="addInfoVisible = false"
+                    >确认新增收货人信息</el-button
+                  >
+                </div>
+              </el-dialog>
+            </div>
+          </el-row>
+        </el-tab-pane>
         <el-tab-pane
           v-if="this.userInfo.identity == 0"
           label="申请成为商家"
-          name="second"
+          name="third"
         >
           <div
             style="display: flex; justify-content: center; align-items: center"
@@ -208,8 +290,6 @@
                       action="http://47.94.131.208:8888"
                       :show-file-list="false"
                       :on-change="changePhotoFile"
-                      :on-success="handleAvatarSuccess"
-                      :before-upload="beforeAvatarUpload"
                       :auto-upload="false"
                       :name="this.applyShopInfo.img"
                     >
@@ -258,7 +338,7 @@
                       show-word-limit
                       style="width: 250px"
                     ></el-input>
-                    <div class="avatar-uploader-icon">
+                    <div>
                       <i
                         class="el-icon-warning-outline"
                         style="margin-right: 5px"
@@ -298,7 +378,7 @@
         <el-tab-pane
           v-if="this.userInfo.identity == 0"
           label="申请历史"
-          name="third"
+          name="fourth"
         >
           <el-table
             :data="applyHistory"
@@ -337,7 +417,7 @@
                   <el-row>
                     <el-form-item
                       label="存在状态"
-                      v-if="!props.row.exist_status == -1"
+                      v-if="props.row.exist_status != -1"
                     >
                       <el-tag v-if="props.row.exist_status == 1" type="success"
                         >未注销</el-tag
@@ -402,7 +482,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane v-else label="我的店铺" name="fourth">
+        <el-tab-pane v-else label="我的店铺" name="fifth">
           <div
             style="display: flex; justify-content: center; align-items: center"
           >
@@ -414,7 +494,7 @@
             >
               <el-row style="margin-top: 30px">
                 <el-col>
-                  <el-form-item label="店铺封面" prop="img" >
+                  <el-form-item label="店铺封面" prop="img">
                     <img
                       v-if="this.shopInfo.avatar_b"
                       :src="this.shopInfo.avatar_b"
@@ -489,26 +569,29 @@ export default {
         username: "",
         name: "",
         password: "",
-        identity: 0,
+        identity: "",
       },
+      //申请店铺
       applyShopInfo: {
         img: "",
         shopper_name: "",
         shop_name: "",
         apply_reason: "",
       },
+      //店铺信息
       shopInfo: {
-        apply_status: -1,
-        shoopper_name: "",
+        apply_status: "",
+        shopper_name: "",
         shop_name: "",
         avatar_b: "",
-        rate: 3.7,
+        rate: "",
       },
+      //店铺申请历史信息
       applyHistory: [
         {
           avatar_b: "",
           shop_name: "",
-          shoopper_name: "",
+          shopper_name: "",
           apply_reason: "",
           apply_status: "",
           pass_status: "",
@@ -516,10 +599,40 @@ export default {
           check_opinion: "",
         },
       ],
+      //收货地址
+      //我的收货地址
+      editInfoVisible: false,
+      addInfoVisible: false,
+      radio: 0,
+      newAddress: {
+        name: "",
+        phone: "",
+        address: "",
+      },
+      editMyAddress: {
+        name: "",
+        phone: "",
+        address: "",
+      },
+      myAddressList: [
+        {
+          id: "1",
+          name: "1",
+          phone: "2",
+          address: "3",
+        },
+        {
+          id: "2",
+          name: "11",
+          phone: "22",
+          address: "33",
+        },
+      ],
       //评分
       value: 0,
       dialogVisible: false,
       rules: {
+        img: [{ required: true, message: "店铺头像不得为空", trigger: "blur" }],
         shopper_name: [
           { required: true, message: "店主名不得为空", trigger: "blur" },
         ],
@@ -540,6 +653,13 @@ export default {
     },
   },
   methods: {
+    changeList(id) {
+      if (this.a == id) {
+        this.a = !this.a;
+      } else {
+        this.a = id;
+      }
+    },
     //返回首页
     gotoIndex() {
       this.$router.push("/");
@@ -553,7 +673,7 @@ export default {
     },
     //跳转收货地址页面
     gotoAddress() {
-      this.$router.push("/myAddress");
+      this.activeName = "second";
     },
     //跳转全部页面
     gotoAllOrder() {
@@ -695,35 +815,27 @@ export default {
     getFile(file) {
       this.formdata.append("img", file);
       // 获取上传图片的本地URL，用于上传前的本地预览
-      this.imgUrl = window.URL.createObjectURL(file);
+      this.applyShopInfo.img = window.URL.createObjectURL(file);
       this.$refs.myCropper.close();
     },
-    //头像上传成功之后的方法,进行回调
-    handleAvatarSuccess(res) {
-      if (res.code === 0) {
-        this.userInfo.avatar_b = res.img;
-        // this.handleCrop(file);
-      } else {
-        this.$message.error("上传出错");
-      }
+    // 提取文件后缀名
+    getSuffix(str) {
+      const fileExtension = str.substring(str.lastIndexOf(".") + 1);
+      return fileExtension;
     },
     //上传图片时会被调用
     changePhotoFile(file) {
-      this.handleCrop(file);
-    },
-    //头像上传之前的方法
-    beforeAvatarUpload(file) {
-      const isJPG =
-        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      let type = this.getSuffix(file.name);
       const isLt6M = file.size / 1024 / 1024 < 6;
-
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
+      if (type == "JPG" || type == "JPEG" || type == "PNG"|| type == "jpg" || type == "png"|| type == "jpge") {
+        if (!isLt6M) {
+          this.$message.error("上传头像图片大小不能超过 6MB!");
+        } else {
+          this.handleCrop(file);
+        }
+      } else {
+        this.$message.error("上传头像图片只能是 JPG、JPEG或PNG 格式!");
       }
-      if (!isLt6M) {
-        this.$message.error("上传头像图片大小不能超过 6MB!");
-      }
-      return isJPG && isLt6M;
     },
   },
   async created() {
@@ -738,7 +850,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style  scoped>
 .header {
   display: flex;
   justify-content: flex-start;
@@ -798,5 +910,24 @@ export default {
 .img-max {
   width: 200px;
   height: 200px;
+}
+.addressCard {
+  width: 200px;
+  height: 200px;
+  margin: 2px;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+.text {
+  font-size: 14px;
+}
+.item {
+  margin-bottom: 18px;
 }
 </style>

@@ -30,9 +30,7 @@
                       ref="upload"
                       action="http://47.94.131.208:8888"
                       :show-file-list="false"
-                      :on-change="changePhotoFile"
-                      :on-success="handleAvatarSuccess"
-                      :before-upload="beforeAvatarUpload"
+                      :on-change="changePhotoFile" 
                       :auto-upload="false"
                       :name="this.userInfo.avatar_b"
                     >
@@ -72,15 +70,6 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-row style="margin-bottom: 0px">
-                <el-col>
-                  <el-form-item prop="password">
-                    <el-button type="text" @click="changePassword = true"
-                      >修改密码</el-button
-                    >
-                  </el-form-item>
-                </el-col>
-              </el-row>
               <el-row>
                 <el-col>
                   <el-form-item>
@@ -90,6 +79,15 @@
                     ></i>
                     <i style="color: #909399"
                       >邮箱一旦绑定不得更改，如有需要请联系管理员</i
+                    >
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row style="margin-bottom: 0px">
+                <el-col>
+                  <el-form-item prop="password">
+                    <el-button type="text" @click="changePassword = true"
+                      >修改密码</el-button
                     >
                   </el-form-item>
                 </el-col>
@@ -313,32 +311,24 @@ export default {
       });
       // this.$refs.upload.submit();
     },
-    //头像上传成功之后的方法,进行回调
-    handleAvatarSuccess(res) {
-      if (res.code == 200) {
-        this.userInfo.avatar_b = res.img;
-        // this.handleCrop(file);
-      } else {
-        this.$message.error("上传出错");
-      }
+     // 提取文件后缀名
+    getSuffix(str) {
+      const fileExtension = str.substring(str.lastIndexOf(".") + 1);
+      return fileExtension;
     },
     //上传图片时会被调用
     changePhotoFile(file) {
-      this.handleCrop(file);
-    },
-    //头像上传之前的方法
-    beforeAvatarUpload(file) {
-      const isJPG =
-        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+       let type = this.getSuffix(file.name);
       const isLt6M = file.size / 1024 / 1024 < 6;
-
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
+      if (type == "JPG" || type == "JPEG" || type == "PNG"|| type == "jpg" || type == "png"|| type == "jpge") {
+        if (!isLt6M) {
+          this.$message.error("上传头像图片大小不能超过 6MB!");
+        } else {
+          this.handleCrop(file);
+        }
+      } else {
+        this.$message.error("上传头像图片只能是 JPG、JPEG或PNG 格式!");
       }
-      if (!isLt6M) {
-        this.$message.error("上传头像图片大小不能超过 6MB!");
-      }
-      return isJPG && isLt6M;
     },
     //获取用户信息
     getUserInfo() {
