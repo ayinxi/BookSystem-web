@@ -24,13 +24,13 @@
       <div>
         <el-card class="box-card1" style="background-color: #3d678a">
           <el-row style="color: white">
-            <el-col span="8" style="text-align:center">
+            <el-col :span="8" style="text-align:center">
               <el-row><h2>12345</h2></el-row><el-row><span>在线用户</span></el-row>
             </el-col>
-            <el-col span="8" style="text-align:center">
+            <el-col :span="8" style="text-align:center">
               <el-row><h2>12345</h2></el-row><el-row><span>今日订单</span></el-row>
             </el-col>
-            <el-col span="8" style="text-align:center">
+            <el-col :span="8" style="text-align:center">
               <el-row><h2>12345</h2></el-row><el-row><span>待处理申请</span></el-row>
             </el-col>
           </el-row>
