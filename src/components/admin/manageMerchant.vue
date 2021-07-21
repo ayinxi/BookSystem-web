@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div v-loading="isLoading" class="home">
     <div class="content">
       <div class="header">
         <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
@@ -62,21 +62,27 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="checkShop(scope.row.username, 1, passString)">通过</el-button>
-            <el-button size="mini" type="text" @click="OpinionVisible = true">拒绝</el-button>
+            <el-button size="mini" type="text" @click="refuseShop.username=scope.row.username;
+            OpinionVisible = true">拒绝</el-button>
             <el-dialog title="审核意见" :visible.sync="OpinionVisible" center>
-              <el-input v-model="scope.row.check_opinion" maxlength="30" show-word-limit placeholder="请输入审核意见"></el-input>
+              <div style=“color:grey”>提示：您正在审核邮箱为{{refuseShop.username}}的用户的申请。</div>
+              <el-form label-width="0" :rules="rules">
+                <el-form-item prop="check_opinion">
+                  <el-input v-model="refuseShop.check_opinion" maxlength="30" show-word-limit placeholder="请输入审核意见"></el-input>
+                </el-form-item>
+              </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button @click="OpinionVisible = false">取 消</el-button>
-                <el-button type="primary" @click="checkShop(scope.row.username, 2, scope.row.check_opinion);OpinionVisible = false">确 定</el-button>
+                <el-button type="primary" @click="checkShop(refuseShop.username, 2, refuseShop.check_opinion);OpinionVisible = false">确 定</el-button>
               </div>
             </el-dialog>
             <!--
             <el-popover placement="left" width="400px" trigger="click">
               <el-row>
-                <el-col :span="16"><el-input v-model="scope.row.check_opinion" placeholder="请输入审核意见"></el-input></el-col>
-                <el-col :span="4"><el-button type="danger" size="mini" @click="checkShop(scope.row.username, 2, scope.row.check_opinion)">确认</el-button></el-col>
+                <el-col :span="18"><el-input v-model="scope.row.check_opinion" maxlength="30" show-word-limit placeholder="请输入审核意见"></el-input></el-col>
+                <el-col :span="6"><el-button type="danger" @click="checkShop(scope.row.username, 2, scope.row.check_opinion)">确认</el-button></el-col>
               </el-row>
-              <el-button size="mini" type="text" slot="reference" @click="OpinionVisible = true">拒绝</el-button>
+              <el-button size="mini" type="text" slot="reference">拒绝</el-button>
             </el-popover>
             -->
           </template>
@@ -104,7 +110,7 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="update_time" label="审核时间" sortable></el-table-column>
+        <el-table-column prop="create_time" label="审核时间" sortable></el-table-column>
         <el-table-column prop="shopper_name" label="申请人"></el-table-column>
         <el-table-column prop="pass_status" label="审核结果">
           <template slot-scope="scope">
@@ -130,7 +136,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="update_time" label="更新时间" sortable></el-table-column>
-        <el-table-column prop="shopper_name" label="店主"></el-table-column>
+        <el-table-column prop="shopper_name" label="店主姓名"></el-table-column>
         <el-table-column label="店铺头像">
           <template slot-scope="scope">
             <el-popover
@@ -146,37 +152,76 @@
         </el-table-column>
         <el-table-column label="操作" align="right">
           <template slot="header">
-            <el-input v-model="search" size="mini" placeholder="输入店名搜索"/>
+            <el-input v-model="search" size="mini" maxlength="10" placeholder="输入店名搜索"/>
           </template>
           <template slot-scope="scope">
-            <el-button size="mini" type="text" @click="EditVisible = true">编辑</el-button>
-            <el-dialog title="店铺信息" :visible.sync="EditVisible" center>
-              <el-form :model="scope.row">
+            <el-button size="mini" type="text"
+            @click="editShop.username=scope.row.username;
+            editShop.shop_name=scope.row.shop_name;
+            editShop.shopper_name=scope.row.shopper_name;
+            editShop.img=scope.row.avatar_b;
+            EditVisible = true">编辑</el-button>
+            <el-dialog title="店铺信息" :visible.sync="EditVisible" center width="440px">
+              <div class="my_prompt">提示：您正在编辑邮箱为{{editShop.username}}的用户的店铺信息。</div>
+              <el-form ref="editShop"
+              :model="editShop"
+              label-width="80px"
+              :rules="rules">
+                <el-form-item label="店铺封面" prop="img">
+                  <el-upload 
+                  class="avatar-uploader"
+                  ref="upload"
+                  action="http://47.94.131.208:8888"
+                  :show-file-list="false"
+                  :on-change="changePhotoFile"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload"
+                  :auto-upload="false"
+                  :name="editShop.img">
+                    <img :src="editShop.img" class="avatar" />
+                  </el-upload>
+                  <my-cropper
+                  ref="myCropper"
+                  @getFile="getFile"
+                  @upAgain="upAgain"
+                  ></my-cropper>
+                </el-form-item>
+                <!--
                 <el-row>
                   <el-col>
                     <el-form-item label="店铺封面" :label-width="formLabelWidth">
                       <el-upload
                       class="avatar-uploader"
-                      action="https://jsonplaceholder.typicode.com/posts/"
+                      ref="upload"
+                      action="http://47.94.131.208:8888"
                       :show-file-list="false"
+                      :on-change="changePhotoFile"
                       :on-success="handleAvatarSuccess"
-                      :before-upload="beforeAvatarUpload">
-                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                      :before-upload="beforeAvatarUpload"
+                      :auto-upload="false"
+                      :name="this.editShop.avatar_b">
+                        <img v-if="this.editShop.avatar_b" :src="this.editShop.avatar_b" class="avatar" />
+                        <img v-else :src="this.imgUrl" class="avatar" />
                       </el-upload>
+                      <my-cropper
+                      ref="myCropper"
+                      @getFile="getFile"
+                      @upAgain="upAgain"
+                      ></my-cropper>
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-form-item label="店铺名称" :label-width="formLabelWidth">
-                  <el-input v-model="scope.row.shop_name" autocomplete="off" maxlength="10" show-word-limit class="editInput"></el-input>
+                -->
+                <el-form-item label="店铺名称" prop="shop_name">
+                  <el-input v-model="editShop.shop_name" autocomplete="off" maxlength="10" show-word-limit class="editInput"></el-input>
                 </el-form-item>
-                <el-form-item label="店主姓名" :label-width="formLabelWidth">
-                  <el-input v-model="scope.row.shopper_name" autocomplete="off" maxlength="10" show-word-limit class="editInput"></el-input>
+                <el-form-item label="店主姓名" prop="shopper_name">
+                  <el-input v-model="editShop.shopper_name" autocomplete="off" maxlength="10" show-word-limit class="editInput"></el-input>
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
-                <el-button @click="EditVisible = false">取 消</el-button>
-                <el-button type="primary" @click="updateShop(scope.row.username, scope.row.shopper_name, scope.row.shop_name, avatar_b);EditVisible = false">确 定</el-button>
+                <el-button @click="EditVisible = false;formdata=''">取 消</el-button>
+                <el-button type="primary" @click="updateShop">确 定</el-button>
               </div>
             </el-dialog>
             <el-button size="mini" type="text" @click="logoutShop(scope.row.username)">注销</el-button>
@@ -192,10 +237,13 @@
 </template>
 
 <script>
+import MyCropper from "../cropper.vue";
 import axios from "axios";
 import { Message } from "element-ui";
 export default {
-  components: {},
+  components: {
+    MyCropper,
+  },
   data() {
     return {
       isLoading: false,
@@ -203,7 +251,6 @@ export default {
       checkList: [
         {
           create_time: "2021-07-14 18:31:30",//申请时间
-          user_id: "示例",//申请人id
           username: "示例",//申请人
           avatar_s: require("../../assets/kuku.png"),//店铺封面
           avatar_b: require("../../assets/kuku.png"),//店铺封面大图
@@ -213,10 +260,13 @@ export default {
           check_opinion: "",//审核意见
         },
       ],
+      refuseShop: {
+        username: "示例",//申请人
+        check_opinion: "",//审核意见
+      },
       checkedList: [
         {
-          update_time: "2021-07-14 18:31:30",//审核时间
-          user_id: "aaa",//申请人id
+          create_time: "2021-07-14 18:31:30",//审核时间
           username: "aaa",//申请人
           avatar_s: require("../../assets/kuku.png"),//店铺封面
           avatar_b: require("../../assets/kuku.png"),//店铺封面大图
@@ -231,7 +281,6 @@ export default {
         {
           update_time: "2021-07-14 18:31:30",//过审开店时间
           create_time: "2021-07-14 18:31:30",//信息更新时间
-          user_id: "aaa",//店主id
           username: "aaa",//店主
           shopper_name: "bbb",//真实姓名
           avatar_s: require("../../assets/kuku.png"),//店铺封面
@@ -239,15 +288,32 @@ export default {
           shop_name: "ccc",//店铺名称
         },
       ],
+      editShop:{
+        username: "aaa",//店主
+        shopper_name: "bbb",//真实姓名
+        img: require("../../assets/kuku.png"),//店铺封面大图
+        shop_name: "ccc",//店铺名称
+      },
+      imgUrl: "",
+      formdata: new FormData(),
+      rules: {
+        check_opinion: [
+          { required: true, message: "审核意见不得为空", trigger: "blur" },
+        ],
+        shopper_name: [
+          { required: true, message: "店主姓名不得为空", trigger: "blur" },
+        ],
+        shop_name: [
+          { required: true, message: "店铺名称不得为空", trigger: "blur" },
+        ],
+      },
       search: "",
       nonCheckShopNum: 0,
       checkShopNum: 0,
       passShopNum: 0,
       EditVisible: false,
       OpinionVisible: false,
-      formLabelWidth: '120px',
       username: "",
-      imageUrl: "",
       passString: "通过",
     };
   },
@@ -257,21 +323,48 @@ export default {
     gotoAdmin() {
       this.$router.push("/adminManage");
     },
-    //在编辑中更改店铺封面
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+    //上传图片触发
+    handleCrop(file) {
+      this.$nextTick(() => {
+        this.$refs.myCropper.open(file.raw || file);
+      });
     },
+    //点击弹框重新时触发
+    upAgain() {
+      this.$refs["upload"].$refs["upload-inner"].handleClick();
+    },
+    getFile(file) {
+      this.formdata.append("img", file);
+      //获取上传图片的本地URL，用于上传前的本地预览
+      this.editShop.img=window.URL.createObjectURL(file);
+      this.$refs.myCropper.close();
+    },
+    //头像上传成功之后的方法,进行回调
+    handleAvatarSuccess(res) {
+      if (res.code === 0) {
+        this.editShop.img = res.img;
+        // this.handleCrop(file);
+      } else {
+        this.$message.error("上传出错");
+      }
+    },
+    //上传图片时会被调用
+    changePhotoFile(file) {
+      this.handleCrop(file);
+    },
+    //头像上传之前的方法
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isJPG =
+        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      const isLt6M = file.size / 1024 / 1024 < 6;
 
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
+        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
       }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
+      if (!isLt6M) {
+        this.$message.error("上传头像图片大小不能超过 6MB!");
       }
-      return isJPG && isLt2M;
+      return isJPG && isLt6M;
     },
     //获取未审核的店铺数量
     getNonCheckShopNum() {
@@ -435,20 +528,20 @@ export default {
         });
     },
     //编辑店铺信息
-    updateShop(name, sr_name, s_name, image) {
+    updateShop() {
+      this.formdata.append("username", this.editShop.username);
+      this.formdata.append("shopper_name", this.editShop.shopper_name);
+      this.formdata.append("shop_name", this.editShop.shop_name);
       axios({
         url: this.$store.state.yuming+"/admin/updateShop",
         method: "POST",
-        params: {
-          username: name,
-          shopper_name: sr_name,
-          shop_name: s_name,
-          img: image,
+        data: this.formdata,
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
       })
         .then((res) => {
-          const { code } = res.data;
-          if (code == "200") {
+          if (res.data.code == 200) {
             this.$message({
               type: "success",
               message: "编辑成功",
@@ -463,6 +556,8 @@ export default {
             message: "出现错误，请稍后再试",
           });
         });
+      this.EditVisible = false;
+      this.formdata="";
     },
     //注销店铺
     logoutShop(name) {
@@ -611,7 +706,12 @@ export default {
   }
 
   .editInput{
-    width: 460px;
+    width: 300px;
     margin-right: 140px;
+  }
+
+  .my_prompt{
+    color: grey;
+    margin-bottom: 20px;
   }
 </style>
