@@ -16,7 +16,10 @@
         <el-row class="shopping">
           <el-col :span="10">
             <el-badge :value="12" class="shopping">
-              <el-button size="meduim" icon="el-icon-shopping-cart-2" @click.native="gotoShopCar"
+              <el-button
+                size="meduim"
+                icon="el-icon-shopping-cart-2"
+                @click.native="gotoShopCar"
                 >我的购物车</el-button
               >
             </el-badge>
@@ -48,7 +51,6 @@
         </el-row>
       </div>
     </div>
-
     <div>
       <div>
         <el-container style="margin: 0% 5%">
@@ -111,10 +113,10 @@
                 )"
                 :key="book.Name"
               >
-                <el-card style="width:90%;margin:5%">
+                <el-card style="width: 90%; margin: 5%">
                   <el-container>
                     <el-header
-                      style="width: 100%; height: 200px; align-items: center"
+                      style="width: 100%; height: 200px; align-items: center;margin-top:20px"
                     >
                       <el-image
                         class="imgStyle3"
@@ -124,7 +126,7 @@
                       </el-image>
                     </el-header>
                     <el-main
-                      style="color: black; padding-top: 0; text-align: center"
+                      style="color: black; padding-top: 0; text-align: center;padding-bottom:5px"
                     >
                       <el-link
                         :underline="false"
@@ -335,7 +337,7 @@ export default {
       this.$router.push("/login");
     },
     gotoShopCar() {
-      this.$router.push("/shopping")
+      this.$router.push("/shopping");
     },
     gotoPersonPage() {
       this.$router.push("/person");
@@ -454,6 +456,6 @@ export default {
   font-size: 20px;
 }
 .el-card__body {
-  padding: 20px !important; 
+  padding: 20px !important;
 }
 </style>

@@ -119,7 +119,7 @@ export default {
   margin: 20px;
 }
 .imgStyle {
-  width: 200px;
-  height: 200px;
+  width: 100px;
+  height: 130px;
 }
 </style>

@@ -118,7 +118,6 @@
 <script>
 import Home from "./Home.vue";
 import axios from "axios";
-import { Message } from "element-ui";
 export default {
   components: {
     Home,
