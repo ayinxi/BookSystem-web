@@ -8,7 +8,7 @@
       <div class="logo">
         <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
       </div>
-      <div class="title">
+      <div class="title" style="margin-right:250px">
         <el-page-header v-if="page == 0" content="购物车"></el-page-header>
         <el-page-header
           v-if="page == 1"
@@ -21,8 +21,8 @@
           content="完成订单"
         ></el-page-header>
       </div>
-      <div class="stepline">
-        <el-steps :active="page" finish-status="success" direction="vertical">
+      <div style="width:550px">
+        <el-steps :active="page" finish-status="success">
           <el-step title="我的购物车"></el-step>
           <el-step title="填写订单"></el-step>
           <el-step title="完成订单"></el-step>
@@ -33,26 +33,29 @@
     <!--content-->
     <div style="margin:0 10%">
       <div v-if="page == 0">
-    <header class="table-header">
+    <header>
+      <el-card class="header-card">
       <el-row>
         <el-col :span="1" class="table-header-item">
           <el-checkbox v-model="checkAll" class="myRedCheckBox" @click="check_all"></el-checkbox>
         </el-col>
         <el-col :span="1" class="table-header-item">全选</el-col>
-        <el-col :span="8" class="table-header-item">商品信息</el-col>
+        <el-col :span="10" class="table-header-item">商品信息</el-col>
         <el-col :span="4" class="table-header-item">价格(元)</el-col>
         <el-col :span="4" class="table-header-item">数量</el-col>
-        <el-col :span="4" class="table-header-item">小计(元)</el-col>
-        <el-col :span="2" class="table-header-item">操作</el-col>
+        <el-col :span="3" class="table-header-item">小计(元)</el-col>
+        <el-col :span="1" class="table-header-item">操作</el-col>
       </el-row>
+      </el-card>
     </header>
     <container class="table-container">
       <div v-for="(item,index) in bookList" :key="index">
+        <el-card style="margin: 20px 0">
         <el-row style="margin:10px">
           <el-col :span="1">
             <el-checkbox v-model="item.this_all" class="myRedCheckBox"></el-checkbox>
           </el-col>
-          <el-col :span="23" class="shop-name">{{item.book_merchant}}</el-col>
+          <el-col :span="23" class="shop-name"><i class="el-icon-goods"></i> {{item.book_merchant}}</el-col>
         </el-row>
         <div class="books">
           <el-row v-for="(books,idx) in item.children" :key="idx" style="margin:10px">
@@ -92,9 +95,11 @@
             </el-col>
           </el-row>
         </div>
+        </el-card>
       </div>
     </container>
-    <footer class="table-footer">
+    <footer>
+      <el-card>
       <el-row>
         <el-col :span="1" style="margin-left:10px" class="table-footer-item">
           <el-checkbox v-model="checkAll" class="myRedCheckBox" @click="check_all"></el-checkbox>
@@ -103,12 +108,13 @@
         <el-col :span="10" class="table-footer-item" style="margin:12px">
            <el-button size="medium" type="text" class="table-button">批量删除</el-button>
         </el-col>
-        <el-col :span="4" class="table-footer-item">已选<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
-        <el-col :span="4" class="table-footer-item" style="margin-top:12px">合计：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
-        <el-col :span="3" class="table-footer-item" style="margin-top:9px">
-          <el-button size="max" type="danger" @click="page = 1">结算</el-button>
+        <el-col :span="6" class="table-footer-item">已选<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
+        <el-col :span="3" class="table-footer-item" style="margin-top:14px">合计：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
+        <el-col :span="2" class="table-footer-item" style="margin-top:9px">
+          <el-button size="max" type="danger" round="true" @click="page = 1">结算</el-button>
         </el-col>
       </el-row>
+      </el-card>
     </footer>
       </div>
 
@@ -498,11 +504,7 @@ export default {
   color: #303133;
   text-align: center;
   font-size: 30px;
-}
-.stepline {
-  display: flex;
-  justify-content: flex-end;
-  flex-grow: 1;
+  width: 200px;
 }
 
 .orderFinish {
@@ -551,14 +553,13 @@ export default {
 
 .table-header-item
 {
-  margin: 11px 0;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .table-footer-item
 {
   margin: 20px 0;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .table-shop
@@ -566,7 +567,8 @@ export default {
   font-size: 13px;
 }
 .shop-name{
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 600;
 }
 .book-name{
   font-size: 13px;
@@ -579,7 +581,7 @@ export default {
 .books{
   background: rgb(255, 255, 255);
   color:#303133;
-  border:1px solid rgb(201, 201, 201);
+  /*border:1px solid rgb(201, 201, 201);*/
 }
 
 /* 设置带边框的checkbox，选中后边框的颜色 */
@@ -609,10 +611,10 @@ export default {
 }
 
 .table-unitprice{
-  font-size: 13px;
+  font-size: 15px;
 }
 .table-price{
-  font-size: 13px;
+  font-size: 15px;
   color: rgb(221, 68, 65);
 }
 .table-totalprice{
@@ -623,5 +625,9 @@ export default {
 .table-button{
   font-size: 13px;
   color: black;
+}
+
+.header-card{
+  height: 57px;
 }
 </style>
