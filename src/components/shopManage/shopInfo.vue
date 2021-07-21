@@ -4,10 +4,10 @@
       <div class="logo3">
         <img width="250px" src="../../assets/jwbc.png" />
       </div>
-      <div class="title">管理平台</div>
+      <div class="title">店铺管理</div>
     </div>
     <div style="margin: 2% 10%">
-      <el-page-header @back="goToManage" content="店铺管理"></el-page-header>
+      <el-page-header @back="goToManage" content="信息管理"></el-page-header>
     </div>
     <div style="margin: 0% 10%">
       <el-card>

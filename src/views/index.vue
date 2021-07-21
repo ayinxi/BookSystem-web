@@ -265,11 +265,24 @@
               >
             </el-menu>
             <el-menu>
-              <div v-for="item in testList" :key="item.main">
-                <el-menu-item :index="item.main">{{ item.main }} </el-menu-item>
-                <div v-for="littleitem in item.second" :key="littleitem.s">
-                  <el-menu-item :index="littleitem.s"
-                    >{{ littleitem.s }}
+              <div v-for="item in categoryList" :key="item.main_name">
+                <el-menu-item
+                  style="
+                    color: rgb(250, 128, 114);
+                    font-weight: 1000;
+                    font-size: 20px;
+                  "
+                  :index="item.main_name"
+                  >{{ item.main_name }}
+                </el-menu-item>
+                <div
+                  v-for="littleitem in item.second_category"
+                  :key="littleitem.second_name"
+                >
+                  <el-menu-item
+                    style="color: rgb(233, 150, 122); font-weight: 1000"
+                    :index="littleitem.second_name"
+                    >{{ littleitem.second_name }}
                   </el-menu-item>
                 </div>
               </div>
@@ -335,7 +348,7 @@
                 <el-card style="width: 90%; margin: 5%">
                   <el-container>
                     <el-header
-                      style="width: 100%; height: 200px; align-items: center"
+                      style="width: 100%; height: 200px; align-items: center;margin-top:10px"
                     >
                       <el-image
                         class="imgStyle1"
@@ -345,7 +358,7 @@
                       </el-image>
                     </el-header>
                     <el-main
-                      style="color: black; padding-top: 0; text-align: center"
+                      style="color: black; padding-top: 0; text-align: center;padding-bottom:10px"
                     >
                       <el-link
                         :underline="false"
@@ -365,8 +378,8 @@
               </el-col>
             </el-row>
           </el-main> </el-container
-        ><el-footer style="margin: 3% 0%; padding: 0px">
-          <el-row style="margin: 0% 0% 5%"
+        ><el-footer style="margin: 3% 0% 0.5%; padding: 0px">
+          <el-row style="margin: 0% 0% 0.5%"
             ><el-menu
               :default-active="activeIndex1"
               class="el-menu-demo"
@@ -403,6 +416,14 @@
                 style="color: rgb(250, 128, 114); font-weight: 1000"
                 >青春/动漫</el-menu-item
               >
+
+              <el-menu-item
+                v-for="item in categoryList"
+                :key="item.main_name"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                :index="item.main_name"
+                >{{ item.main_name }}</el-menu-item
+              >
             </el-menu>
           </el-row>
           <el-row class="rowStyle" type="flex">
@@ -417,17 +438,17 @@
               <el-card style="width: 90%; margin: 5%">
                 <el-container>
                   <el-header
-                    style="width: 100%; height: 200px; align-items: center"
+                    style="width: 100%; height: 150px; align-items: center;margin-top:10px"
                   >
                     <el-image
-                      class="imgStyle1"
+                      class="imgStyle4"
                       :src="book.Img"
                       @click.native="goToBookInfo"
                     >
                     </el-image>
                   </el-header>
                   <el-main
-                    style="color: black; padding-top: 0; text-align: center"
+                    style="color: black; padding-top:0; text-align: center;padding-bottom:10px"
                   >
                     <el-link
                       :underline="false"
@@ -461,6 +482,7 @@
 </template>
 <script>
 import axios from "axios";
+import { Message } from "element-ui";
 export default {
   data() {
     return {
@@ -476,10 +498,7 @@ export default {
         Name: "有本事",
         Author: "冯唐",
       },
-      testList: [
-        { main: "网络文学", second: [{ s: "男频" }, { s: "女频" }] },
-        { main: "小说", second: [{ s: "中国小说" }, { s: "外国小说" }] },
-      ],
+      categoryList: [],
       photoList: [
         { Img: require("../assets/1.jpg") },
         { Img: require("../assets/photo1.jpg") },
@@ -832,24 +851,43 @@ export default {
     getGoodsNum() {
       axios({
         url: this.$store.state.yuming + "/cartitem/getNum",
-        method: "GET",
+         method: "GET",
       })
         .then((res) => {
           const { code, data } = res.data;
           if (code == "200") {
-            this.goodsNum = data;
+           this.goodsNum = data;
           } else {
             this.$message.error("获取店铺状态失败,请刷新");
           }
         })
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
+         });
+     },
+    getAllCategory() {
+      axios({
+        url: this.$store.state.yuming + "/category/getAll",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.categoryList = data;
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
         });
     },
   },
   async created() {
     this.isLoading = true;
     await this.getGoodsNum();
+    await this.getAllCategory();
     this.isLoading = false;
   },
 };
@@ -865,6 +903,11 @@ export default {
 .imgStyle1 {
   width: 100%;
   height: 200px;
+  cursor: pointer;
+}
+.imgStyle4 {
+  width: 100%;
+  height: 150px;
   cursor: pointer;
 }
 .rowStyle {

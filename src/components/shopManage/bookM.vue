@@ -4,7 +4,7 @@
       <div class="logo3">
         <img width="250px" src="../../assets/jwbc.png" />
       </div>
-      <div class="title">管理平台</div>
+      <div class="title">店铺管理</div>
     </div>
     <div style="margin: 2% 10%">
       <el-page-header @back="goToManage" content="图书管理"></el-page-header>
@@ -46,7 +46,7 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column label="图片" width="180">
+          <el-table-column label="图片" width="130">
             <template slot-scope="scope"
               ><img :src="scope.row.bookimg" class="imgStyle"
             /></template>
@@ -78,8 +78,8 @@
           <el-table-column label="操作">
             <template slot-scope="scope"
               ><el-button
-                size="mini"
                 type="text"
+                style="font-size:20px"
                 @click="handleChange(scope.$index, scope.row)"
                 >修改图书信息</el-button
               >
@@ -823,7 +823,7 @@ export default {
 }
 .imgStyle {
   width: 100px;
-  height: 150px;
+  height: 120px;
 }
 .verticalBar1 {
   width: 3px;

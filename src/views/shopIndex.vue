@@ -76,7 +76,7 @@
               <el-card style="width: 90%; margin: 5%">
                 <el-container>
                   <el-header
-                    style="width: 100%; height: 200px; align-items: center"
+                    style="width: 100%; height: 200px; align-items: center;margin-top:10px"
                   >
                     <el-image
                       class="imgStyle"
@@ -85,7 +85,7 @@
                     >
                     </el-image>
                   </el-header>
-                  <el-main style="padding-top: 0; text-align: center">
+                  <el-main style="padding-top: 0; text-align: center;padding-bottom:10px">
                     <el-link
                       :underline="false"
                       class="book-name"
@@ -467,5 +467,8 @@ export default {
   width: 21.93%;
   color: white;
   cursor: pointer;
+}
+.el-card__body {
+  padding: 5px;
 }
 </style>

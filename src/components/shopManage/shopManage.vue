@@ -9,16 +9,20 @@
           size="meduim"
           class="pageperson"
           icon="el-icon-s-custom"
+          style="position: relative; left: 20px"
           @click="gotoPersonPage"
           >个人主页</el-button
         >
       </div>
     </div>
-    <div style="margin: 3% 10%">
-      <el-row style="margin: 0% 11.5% 5%">
-        <el-card>
+    <div style="display: flex; justify-content: center">
+      <el-row>
+        <el-card style="width: 916px; margin: 20px">
           <el-container>
-            <el-aside width="35px"><div class="verticalBar1"></div></el-aside>
+            <el-aside
+              style="width: 35px; padding-top: 20px; padding-bottom: 20px"
+              ><div class="verticalBar1"></div
+            ></el-aside>
             <el-main>
               <span style="font-weight: 1000">欢迎您，亲爱的店家 </span
               ><span
@@ -27,75 +31,75 @@
               >
               <p style="font-weight: 1000">
                 您可以在本页面使用如下功能: 图书管理 或 订单管理 或 退款管理 或
-                店铺管理
+                信息管理
               </p>
             </el-main>
           </el-container>
         </el-card>
       </el-row>
-      <el-row style="margin: 0% 10% 5%">
-        <el-col :span="12" class="el-colStyle">
-          <el-card class="el-cardStyle">
-            <el-col :span="24" style="text-align: center">
-              <p style="margin: 1%">各图书类别数量</p>
-              <div>
-                <div id="chartBar" class="bar-wrap"></div>
-              </div>
-            </el-col>
-          </el-card>
-        </el-col>
-        <el-col :span="12" class="el-colStyle">
-          <el-card class="el-cardStyle">
-            <el-col :span="4" style="text-align: center">
-              <p style="margin: 1%">今日新增订单数</p>
-              <p style="font-size: 40px">{{ newOrder }}</p>
-            </el-col>
-            <el-col :span="20" style="text-align: center">
-              <p style="margin: 1%">各订单类型所占比例</p>
-              <div>
-                <div id="chartPie" class="pie-wrap"></div>
-              </div>
-            </el-col>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row style="margin: 0% 10% 5%">
-        <el-col :span="12" class="el-colStyle">
-          <el-card class="el-cardStyle" shadow="hover" @click.native="goToBookM"
-            ><p class="iconfont-chuangyexiangmu" style="font-size: 40px"></p>
-            <p class="spanStyle">图书管理</p>
-          </el-card>
-        </el-col>
-        <el-col :span="12" class="el-colStyle">
-          <el-card
-            class="el-cardStyle"
-            shadow="hover"
-            @click.native="goToOrderM"
-            ><p class="iconfont-dingdan" style="font-size: 40px"></p>
-            <p class="spanStyle">订单管理</p></el-card
-          >
-        </el-col>
-      </el-row>
-      <el-row style="margin: 0% 10% 5%">
-        <el-col :span="12" class="el-colStyle">
-          <el-card
-            class="el-cardStyle"
-            shadow="hover"
-            @click.native="goToRefundM"
-            ><p class="iconfont-shouhou" style="font-size: 40px"></p>
-            <p class="spanStyle">退款管理</p></el-card
-          >
-        </el-col>
-        <el-col :span="12" class="el-colStyle">
-          <el-card
-            class="el-cardStyle"
-            shadow="hover"
-            @click.native="goToShopInfo"
-            ><p class="iconfont-shangpu-copy" style="font-size: 40px"></p>
-            <p class="spanStyle">店铺管理</p></el-card
-          >
-        </el-col>
-      </el-row>
+    </div>
+    <div class="box2">
+      <el-button type="text">
+        <el-card class="box-card2">
+          <el-col :span="24" style="text-align: center">
+            <p style="margin: 1%">各图书类别数量</p>
+            <div>
+              <div id="chartBar" class="bar-wrap"></div>
+            </div>
+          </el-col> </el-card
+      ></el-button>
+      <el-button type="text">
+        <el-card class="box-card2">
+          <el-col :span="6" style="text-align: center">
+            <p style="margin: 1%">今日新增订单数</p>
+            <p style="font-size: 40px">{{ newOrder }}</p>
+          </el-col>
+          <el-col :span="18" style="text-align: center">
+            <p style="margin: 1%">各订单类型所占比例</p>
+            <div>
+              <div id="chartPie" class="pie-wrap"></div>
+            </div>
+          </el-col>
+        </el-card>
+      </el-button>
+    </div>
+    <div class="box2">
+      <el-button type="text" @click.native="goToBookM">
+        <el-card class="box-card2">
+          <i
+            class="iconfont-chuangyexiangmu"
+            style="font-size: 50px; margin: 50px"
+          />
+          <div class="text item">图书管理</div>
+          <i style="color: #909399">修改图书信息，新增图书，下架图书。</i>
+        </el-card>
+      </el-button>
+      <el-button type="text" @click="goToOrderM">
+        <el-card class="box-card2">
+          <i class="iconfont-dingdan" style="font-size: 50px; margin: 50px" />
+          <div class="text item">订单管理</div>
+          <i style="color: #909399">查看订单详情，确认订单，取消订单。</i>
+        </el-card>
+      </el-button>
+    </div>
+    <div class="box2">
+      <el-button type="text" @click="goToRefundM">
+        <el-card class="box-card2">
+          <i class="iconfont-shouhou" style="font-size: 50px; margin: 50px" />
+          <div class="text item">退款管理</div>
+          <i style="color: #909399">查看退款订单详情，同意退款，拒绝退款。</i>
+        </el-card>
+      </el-button>
+      <el-button type="text" @click="goToShopInfo">
+        <el-card class="box-card2">
+          <i
+            class="iconfont-shangpu-copy"
+            style="font-size: 50px; margin: 50px"
+          />
+          <div class="text item">信息管理</div>
+          <i style="color: #909399">查看、修改店铺信息，注销店铺。</i>
+        </el-card>
+      </el-button>
     </div>
   </div>
 </template>
@@ -261,7 +265,7 @@ export default {
           formatter: "{b}: <br/>{c}({d}%)",
         },
         legend: {
-          right: 0,
+          right: 20,
           top: "center",
           itemGap: 5, //设置图例的间距
           orient: "vertical",
@@ -279,7 +283,7 @@ export default {
             name: "访问来源",
             type: "pie",
             radius: ["50%", "80%"],
-            center: ["40%", "50%"],
+            center: ["30%", "50%"],
             data: [
               {
                 value: 335,
@@ -382,7 +386,7 @@ export default {
   width: 200px;
   margin: 20px 100px;
   position: relative;
-  right: 120px;
+  right: 100px;
 }
 .shopping {
   display: flex;
@@ -400,7 +404,8 @@ export default {
   justify-content: center;
 }
 .el-cardStyle {
-  width: 90%;
+  width: 440px;
+  margin: 10px;
   display: flex;
   min-height: 100px;
   justify-content: center;
@@ -431,6 +436,20 @@ export default {
 .pie-wrap {
   width: 100%;
   height: 202.98px;
+}
+.text {
+  font-size: 20px;
+}
+.item {
+  padding: 18px 0;
+}
+.box2 {
+  display: flex;
+  justify-content: center;
+}
+.box-card2 {
+  width: 440px;
+  margin: 10px;
 }
 </style>
 

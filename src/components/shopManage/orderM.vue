@@ -4,9 +4,11 @@
       <div class="logo3">
         <img width="250px" src="../../assets/jwbc.png" />
       </div>
-      <div class="title">管理平台</div>
+      <div class="title">店铺管理</div>
     </div>
-     <div style="margin: 2% 10%"><el-page-header @back="goToManage" content="订单管理"></el-page-header></div>
+    <div style="margin: 2% 10%">
+      <el-page-header @back="goToManage" content="订单管理"></el-page-header>
+    </div>
     <div style="margin: 2% 10%">
       <el-row style="margin: 0% 0% 5%">
         <el-card>
@@ -80,15 +82,15 @@
           <el-table-column label="操作">
             <template slot-scope="scope"
               ><el-button
-                size="mini"
                 type="text"
+                style="font-size: 18px"
                 @click="handleInfo(scope.$index, scope.row)"
                 >查看详情</el-button
               >
               <el-divider direction="vertical"></el-divider>
               <el-button
-                size="mini"
                 type="text"
+                style="font-size: 18px"
                 @click="handleConfirm(scope.$index, scope.row)"
                 :disabled="
                   scope.row.state == '已退款' ||
@@ -99,8 +101,8 @@
               >
               <el-divider direction="vertical"></el-divider>
               <el-button
-                size="mini"
                 type="text"
+                style="font-size: 18px"
                 @click="handleRefuse(scope.$index, scope.row)"
                 :disabled="
                   scope.row.state == '已发货' || scope.row.state == '已收货'
@@ -113,7 +115,7 @@
       </el-card>
     </div>
     <div style="margin: 0% 10% 3%">
-      <el-button @click="batchConfirm" style="margin-left: 78%" type="danger"
+      <el-button @click="batchConfirm" style="margin-left: 78%" type="primary"
         >批量确认订单</el-button
       >
       <el-button @click="batchRefuse" type="warning">批量取消订单</el-button>
@@ -360,7 +362,7 @@ export default {
   margin-left: 30px;
   border-radius: 20%;
 }
-.title{
+.title {
   font-size: 35px;
   padding: 30px 10px;
   position: relative;
