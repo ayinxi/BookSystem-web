@@ -89,7 +89,7 @@
                 ><el-input-number v-model="num" :min="1"></el-input-number
               ></el-col>
               <el-col :span="4"
-                ><el-button type="primary" class="el-icon-shopping-cart-2"
+                ><el-button type="primary" class="el-icon-shopping-cart-2" @click.native="addShoppingTrolley"
                   >加入购物车</el-button
                 ></el-col
               >
@@ -150,6 +150,9 @@ export default {
     test() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "1-1" } });
     },
+    addShoppingTrolley(){
+      
+    }
   },
 };
 </script>
