@@ -22,6 +22,12 @@ const routes = [
     component: () => import('../components/personPage.vue')
   },
   {
+    path: '/myAddress',
+    name: 'myAddress',
+    meta: { auth: true },//登录鉴权
+    component: () => import('../views/myAddress.vue')
+  },
+  {
     path: '/change',
     name: 'change',
     meta: { auth: true },//登录鉴权

@@ -90,11 +90,11 @@ export default {
       this.$router.push("/adminManage");
     },
     append(data) {
-        newChild = { id: id++, label: 'testtest', children: [] };
+        //newChild = { id: id++, label: 'testtest', children: [] };
         if (!data.children) {
           this.$set(data, 'children', []);
         }
-        data.children.push(newChild);
+        //data.children.push(newChild);
       },
 
       remove(node, data) {
@@ -104,11 +104,7 @@ export default {
         children.splice(index, 1);
       },
 
-      rename(node, data){
-
-      },
-
-      renderContent(h, { node, data, store }) {
+      renderContent(h, { node, data }) {
         return (
           <span class="custom-tree-node">
             <span>{node.label}</span>
