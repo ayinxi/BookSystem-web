@@ -8,14 +8,22 @@
           v-model="input"
           style="width: 500px"
         >
-          <el-button slot="append" icon="el-icon-search" @click.native="goToSearch"> </el-button>
+          <el-button
+            slot="append"
+            icon="el-icon-search"
+            @click.native="goToSearch"
+          >
+          </el-button>
         </el-input>
       </div>
       <div v-if="hasRole">
         <el-row class="shopping">
           <el-col :span="10">
-            <el-badge :value="12" class="shopping">
-              <el-button size="meduim" icon="el-icon-shopping-cart-2" @click="gotoShopCar"
+            <el-badge :value="goodsNum" class="shopping">
+              <el-button
+                size="meduim"
+                icon="el-icon-shopping-cart-2"
+                @click="gotoShopCar"
                 >我的购物车</el-button
               >
             </el-badge>
@@ -36,10 +44,10 @@
       </div>
       <div v-else>
         <el-row class="hasNoRole">
-          <el-col >
+          <el-col>
             <el-button size="meduim" @click="gotoSign">注册</el-button>
           </el-col>
-          <el-col  style="margin:20px 0">
+          <el-col style="margin: 20px 0">
             <el-button size="meduim" class="pageperson" @click="gotoLogin"
               >登陆</el-button
             >
@@ -51,11 +59,13 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
       isLoading: false,
       input: "",
+      goodsNum: "",
     };
   },
   computed: {
@@ -68,7 +78,7 @@ export default {
   },
   methods: {
     goToSearch() {
-      this.$store.commit("gobalSearchText",this.input);
+      this.$store.commit("gobalSearchText", this.input);
       this.$router.push("/searchBook");
     },
     gotoSign() {
@@ -81,14 +91,37 @@ export default {
       this.$router.push("/person");
     },
     gotoShopCar() {
-      this.$router.push("/shopping")
+      this.$router.push("/shopping");
     },
     loginOut() {
       this.isLoading = true;
       this.$store.commit("clearCache");
-      sessionStorage.removeItem('token')
+      sessionStorage.removeItem("token");
       this.isLoading = false;
     },
+    //获取购物车中商品数量
+    getGoodsNum() {
+      axios({
+        url: this.$store.state.yuming + "/cartitem/getNum",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.goodsNum = data;
+          } else {
+            this.$message.error("获取店铺状态失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getGoodsNum();
+    this.isLoading = false;
   },
 };
 </script>
@@ -116,14 +149,14 @@ export default {
   justify-content: center;
   align-items: center;
   margin: 20px;
-  margin-left:500px;
+  margin-left: 500px;
 }
 .search2 {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px;
-  margin-left:350px;
+  margin-left: 350px;
 }
 .shopping {
   display: flex;
@@ -131,12 +164,12 @@ export default {
   align-items: center;
   margin: 20px;
 }
-.hasNoRole{
+.hasNoRole {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px;
-  margin-left:50px;
+  margin-left: 50px;
 }
 .pageperson {
   display: flex;

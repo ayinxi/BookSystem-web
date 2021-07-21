@@ -48,7 +48,7 @@ axios.interceptors.request.use(
   });
 
 
-axios.interceptors.response.use(function (response) { // ①10010 token过期（30天） ②10011 token无效
+axios.interceptors.response.use(function (response) { //token过期（12小时） code==9 token无效
   if (response.data.code === 9) {
     store.commit("clearCache");// 删除已经失效或过期的token（不删除也可以，因为登录后覆盖）    
     Message("登陆已过期")

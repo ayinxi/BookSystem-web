@@ -210,17 +210,40 @@
                         </div>
                       </el-form-item>
                       <el-form-item>
-                        <div style="display: flex; flex-direction: row-reverse">
-                          <el-button
-                            type="text"
-                            style="margin: 0 5px"
-                            @click="eidtAddress(item)"
-                            >编辑
-                          </el-button>
-                          <el-button type="text" style="margin: 0 5px"
-                            >删除
-                          </el-button>
-                        </div>
+                        <el-row
+                          style="display: flex; justify-content: flex-start"
+                        >
+                          <el-col>
+                            <el-button
+                              type="text"
+                              style="margin: 0 5px"
+                              v-if="item.status == 0"
+                              @click="setDefaultAddress(item)"
+                              >设为默认地址
+                            </el-button>
+                            <el-button
+                              type="text"
+                              style="margin: 0 5px"
+                              v-else
+                              disabled
+                              >默认地址
+                            </el-button>
+                          </el-col>
+                          <el-col>
+                            <el-button
+                              type="text"
+                              style="margin: 0 5px"
+                              @click="eidtAddress(item)"
+                              >编辑
+                            </el-button>
+                            <el-button
+                              type="text"
+                              style="margin: 0 5px"
+                              @click="editDelAddress(item)"
+                              >删除
+                            </el-button></el-col
+                          >
+                        </el-row>
                       </el-form-item>
                     </el-form>
                   </el-card>
@@ -236,7 +259,21 @@
                 ></el-row
               >
               <!--删除收货人信息-->
-
+              <el-dialog
+                title="提示"
+                :visible.sync="delAddressVisible"
+                width="30%"
+              >
+                <span>确认删除收货地址</span>
+                <span slot="footer" class="dialog-footer">
+                  <el-button @click="delAddressVisible = false"
+                    >取 消</el-button
+                  >
+                  <el-button type="primary" @click="confirmDelAddress"
+                    >确 定</el-button
+                  >
+                </span>
+              </el-dialog>
               <!--编辑收货人信息-->
               <el-dialog title="编辑收货人信息" :visible.sync="editInfoVisible">
                 <el-form
@@ -631,7 +668,7 @@ export default {
       orderId: "",
       isLoading: false,
       //收货地址loading
-      addressLoading:false,
+      addressLoading: false,
       activeName: "first",
       //是否上传了头像
       hasShopAvatar: false,
@@ -674,7 +711,8 @@ export default {
       //我的收货地址
       editInfoVisible: false,
       addInfoVisible: false,
-      radio: 0,
+      delAddressVisible: false,
+      delAddressId: "",
       newAddress: {
         name: "",
         phone: "",
@@ -822,9 +860,9 @@ export default {
         },
       }).then((res) => {
         if (res.data.code == 200) {
-          this.addressLoading=true;
+          this.addressLoading = true;
           this.getUserAddress();
-          this.addressLoading=false;
+          this.addressLoading = false;
           this.$message({
             message: "新增成功",
             type: "success",
@@ -856,9 +894,9 @@ export default {
         },
       }).then((res) => {
         if (res.data.code == 200) {
-          this.addressLoading=true;
+          this.addressLoading = true;
           this.getUserAddress();
-          this.addressLoading=false;
+          this.addressLoading = false;
           this.$message({
             message: "编辑成功",
             type: "success",
@@ -867,6 +905,68 @@ export default {
           this.$message.error("编辑失败，请重试");
         }
       });
+    },
+    //预备删除地址
+    editDelAddress(e) {
+      this.delAddressId = e.id;
+      this.delAddressVisible = true;
+    },
+    //确认删除地址
+    confirmDelAddress() {
+      this.delAddressVisible = false;
+      axios({
+        url: this.$store.state.yuming + "/user/address/delete",
+        method: "DELETE",
+        params: {
+          addressId: this.delAddressId,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.addressLoading = true;
+            this.getUserAddress();
+            this.addressLoading = false;
+            this.$message({
+              message: "删除成功",
+              type: "success",
+            });
+          } else {
+            this.$message.error("删除失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //设置默认地址
+    setDefaultAddress(e) {
+      axios({
+        url: this.$store.state.yuming + "/user/address/setDefault",
+        method: "POST",
+        params: {
+          addressId: e.id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.addressLoading = true;
+            this.getUserAddress();
+            this.addressLoading = false;
+          } else {
+            this.$message.error("设置默认地址失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
     },
     //确认申请成为商家
     confirmApply() {
