@@ -632,12 +632,10 @@ export default {
           this.formdata.append("repertory", this.lists1.Inventory);
           this.formdata.append("press", this.lists1.press);
           this.formdata.append("print_time", this.lists1.bookPubTime);
-          this.formdata.append(
-            "category_id",
-            this.lists1.classOne + this.lists1.classTwo
-          );
+          this.formdata.append("main_category_id", this.lists1.classOne);
+          this.formdata.append("second_category_id", this.lists1.classTwo);
           this.formdata.append("shop_id", this.shop_id);
-          this.formdata.append("edition",null);
+          this.formdata.append("edition", null);
           axios({
             url: this.$store.state.yuming + "/book/addBook",
             method: "POST",
