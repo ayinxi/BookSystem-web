@@ -25,9 +25,9 @@
     <div style="margin: 3% 10% 0%">
       <el-row style="margin: 0% 0% 5%">
         <el-card>
-          <el-col :span="8" style="text-align: center">
-            <p>今日新增退款订单数</p>
-            <p style="font-size: 40px">{{ newRefundOrder }}</p>
+          <el-col :span="8" >
+            <p style="text-align: center">今日新增退款订单数</p>
+            <p style="font-size: 40px;height:160px;line-height:160px;display:block;text-align: center;">{{ newRefundOrder }}</p>
           </el-col>
           <el-col :span="16" style="text-align: center">
             <p>各订单类型所占比例</p>
@@ -93,15 +93,15 @@
           <el-table-column label="操作">
             <template slot-scope="scope"
               ><el-button
-                size="mini"
                 type="text"
+                style="font-size:18px"
                 @click="handleInfo(scope.$index, scope.row)"
                 >查看详情</el-button
               >
               <el-divider direction="vertical"></el-divider>
               <el-button
-                size="mini"
                 type="text"
+                style="font-size:18px"
                 @click="handleConfirm(scope.$index, scope.row)"
                 :disabled="
                   scope.row.state == '已退款' || scope.row.state == '已拒绝退款'
@@ -110,8 +110,8 @@
               >
               <el-divider direction="vertical"></el-divider>
               <el-button
-                size="mini"
                 type="text"
+                style="font-size:18px"
                 @click="handleRefuse(scope.$index, scope.row)"
                 :disabled="
                   scope.row.state == '已退款' || scope.row.state == '已拒绝退款'
@@ -124,7 +124,7 @@
       </el-card>
     </div>
     <div style="margin: 0% 10% 3%">
-      <el-button @click="batchConfirm" style="margin-left: 78%" type="danger"
+      <el-button @click="batchConfirm" style="margin-left: 78%" type="primary"
         >批量同意退款</el-button
       >
       <el-button @click="batchRefuse" type="warning">批量拒绝退款</el-button>
@@ -315,7 +315,7 @@ export default {
             "已退款",
             "已拒绝退款",
           ],
-          right: 0,
+          right: 250,
           top: "center",
           itemGap: 5, //设置图例的间距
           orient: "vertical",
@@ -332,7 +332,7 @@ export default {
             //圆圈的粗细
             radius: ["50%", "80%"],
             //圆圈的位置
-            center: ["50%", "50%"],
+            center: ["40%", "50%"],
             data: [
               {
                 value: 234,
