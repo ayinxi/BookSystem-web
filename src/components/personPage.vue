@@ -205,7 +205,7 @@
                         </el-form-item>
                       </el-tooltip>
                       <el-form-item>
-                        <div style="display: flex">
+                        <div style="display: flex; flex-direction: row-reverse">
                           <el-button type="text">编辑 </el-button>
                           <el-button type="text">删除 </el-button>
                         </div>
@@ -598,6 +598,8 @@ export default {
       orderId: "",
       isLoading: false,
       activeName: "first",
+      //是否上传了头像
+      hasShopAvatar:false,
       userInfo: {
         avatar_s: "",
         username: "",
@@ -795,27 +797,35 @@ export default {
     },
     //确认申请成为商家
     confirmApply() {
-      this.formdata.append("shopper_name", this.applyShopInfo.shopper_name);
-      this.formdata.append("shop_name", this.applyShopInfo.shop_name);
-      this.formdata.append("apply_reason", this.applyShopInfo.apply_reason);
-      axios({
-        url: this.$store.state.yuming + "/registerShop",
-        method: "POST",
-        data: this.formdata,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }).then((res) => {
-        if (res.data.code == 200) {
-          this.$message({
-            message: "申请成功",
-            type: "success",
-          });
-          this.applyShopInfo = "";
-        } else {
-          this.$message.error("申请失败，请重试");
-        }
-      });
+      if (this.hasShopAvatar==false) {
+        this.$message.error("必须上传店铺头像哦~");
+        this.applyShopInfo.img= "";
+        this.applyShopInfo.shopper_name="";
+        this.applyShopInfo.shop_name="";
+        this.applyShopInfo.apply_reason="";
+      } else {
+        this.formdata.append("shopper_name", this.applyShopInfo.shopper_name);
+        this.formdata.append("shop_name", this.applyShopInfo.shop_name);
+        this.formdata.append("apply_reason", this.applyShopInfo.apply_reason);
+        axios({
+          url: this.$store.state.yuming + "/registerShop",
+          method: "POST",
+          data: this.formdata,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }).then((res) => {
+          if (res.data.code == 200) {
+            this.$message({
+              message: "申请成功",
+              type: "success",
+            });
+            this.applyShopInfo = "";
+          } else {
+            this.$message.error("申请失败，请重试");
+          }
+        });
+      }
     },
     //获取申请店铺历史信息
     getApplyHistory() {
@@ -913,6 +923,7 @@ export default {
     },
     getFile(file) {
       this.formdata.append("img", file);
+      this.hasShopAvatar = true;
       // 获取上传图片的本地URL，用于上传前的本地预览
       this.applyShopInfo.img = window.URL.createObjectURL(file);
       this.$refs.myCropper.close();
@@ -1020,7 +1031,7 @@ export default {
 }
 .addressCard {
   width: 300px;
-  height: 200px;
+  height: 300px;
   margin: 20px;
 }
 .clearfix:before,
