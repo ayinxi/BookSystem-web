@@ -29,164 +29,88 @@
         </el-steps>
       </div>
     </div>
+    <!--<div class="divider"></div>-->
     <!--content-->
     <div style="margin:0 10%">
+      <div v-if="page == 0">
     <header class="table-header">
       <el-row>
-        <el-col span="1" class="table-header-item">
-          <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange"></el-checkbox>
+        <el-col :span="1" class="table-header-item">
+          <el-checkbox v-model="checkAll" class="myRedCheckBox" @click="check_all"></el-checkbox>
         </el-col>
-        <el-col span="1" class="table-header-item">全选</el-col>
-        <el-col span="8" class="table-header-item">商品信息</el-col>
-        <el-col span="4" class="table-header-item">价格(元)</el-col>
-        <el-col span="4" class="table-header-item">数量</el-col>
-        <el-col span="4" class="table-header-item">小计(元)</el-col>
-        <el-col span="2" class="table-header-item">操作</el-col>
+        <el-col :span="1" class="table-header-item">全选</el-col>
+        <el-col :span="8" class="table-header-item">商品信息</el-col>
+        <el-col :span="4" class="table-header-item">价格(元)</el-col>
+        <el-col :span="4" class="table-header-item">数量</el-col>
+        <el-col :span="4" class="table-header-item">小计(元)</el-col>
+        <el-col :span="2" class="table-header-item">操作</el-col>
       </el-row>
     </header>
-    <container>
-      <div v-for="shop in bookList" :key="shop.id">
-        <el-row>
-          <el-col>
-            <el-checkbox style="margin:10px" :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange"></el-checkbox>
-             <span class="table-shop">{{shop.book_merchant}}</span>
+    <container class="table-container">
+      <div v-for="(item,index) in bookList" :key="index">
+        <el-row style="margin:10px">
+          <el-col :span="1">
+            <el-checkbox v-model="item.this_all" class="myRedCheckBox"></el-checkbox>
           </el-col>
+          <el-col :span="23" class="shop-name">{{item.book_merchant}}</el-col>
         </el-row>
-        <el-row>
-          <el-col>
-            
-          </el-col>
-        </el-row>
-      </div>
-    </container>
-
-
-
-
-
-
-      <!--我的购物车-->
-      <el-row v-if="page == 0">
-        <el-col>
-          <el-container>
-            <el-main>
-              <el-table
-              ref="multipleTable"
-              row-key="id"
-              :data="bookList"
-              style="width: 100%"
-              :tree-props="{
-                children: 'children',
-                hasChildren: 'hasChildren',
-              }"
-              default-expand-all
-              :header-cell-class-name="handleHead"
-              @selection-change="handleSelectionChange"
-              >
-                <el-table-column type="selection" width="50"></el-table-column>
-                <el-table-column label="店铺">
-                  <template slot-scope="scope">
-                    <el-link :href="'http://localhost:8083/'+scope.row.book_shopAddr">{{scope.row.book_merchant}}</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column show-overflow-tooltip width="400" label="商品">
-                  <template slot-scope="scope">
-                    <div style="display: inline-block">
-                      <el-row>
-                        <el-col span="12">
-                      <img :src="scope.row.book_img" v-if="scope.row.book_num"/>
-                        </el-col>
-                      <el-col span="12" style="text-align:center">
-                      <el-link :href="'http://localhost:8083/'+scope.row.bookAddr">{{scope.row.book_name}}</el-link>
-                      </el-col>
-                      </el-row>
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  label="单价（元）"
-                  prop="book_unitPrice"
-                ></el-table-column>
-                <el-table-column label="数量" prop="book_num" width="200">
-                  <template slot-scope="scope">
-                    <el-input-number
-                      v-if="scope.row.book_num"
-                      v-model="scope.row.book_num"
+        <div class="books">
+          <el-row v-for="(books,idx) in item.children" :key="idx" style="margin:10px">
+            <!--<el-divider v-if="idx!=0"></el-divider>-->
+            <el-col :span="1">
+              <el-checkbox style="margin:25px 0" v-model="books.check_one" class="myRedCheckBox"></el-checkbox>
+            </el-col>
+            <el-col :span="2">
+              <img :src="books.book_img" style="height:70px" />
+            </el-col>
+            <el-col :span="9">
+              <div style="margin-right:30px" class="book-name">{{books.book_name}}</div>
+              <div class="book-detail">作者：{{books.book_writer}}</div>
+              <div class="book-detail">出版社：{{books.book_publish}}</div>
+            </el-col>
+            <el-col :span="3">
+              <div style="margin:25px 0" class="table-unitprice">¥{{books.book_unitPrice}}</div>
+            </el-col>
+            <el-col :span="5">
+              <div style="margin:20px 0">
+                <el-input-number
+                      v-model="books.book_num"
                       :min="1"
-                      :max="scope.row.book_inventory"
+                      :max="books.book_inventory"
                       label="数量"
                       size="small"
                       :precision="0"
                       :step="1"
                     ></el-input-number>
-                  </template>
-                </el-table-column>
-                <el-table-column label="金额（元）">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.book_num">
-                      {{ scope.row.book_unitPrice * scope.row.book_num }}
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="操作">
-                  <template>
-                    <el-popover placement="top" width="160" v-model="visible">
-                      <p>您确定要删除商品吗？</p>
-                      <div style="text-align: right; margin: 0">
-                        <el-button
-                          size="mini"
-                          type="danger"
-                          @click="visible = false"
-                          >取消</el-button
-                        >
-                        <el-button
-                          size="mini"
-                          type="danger"
-                          @click="visible = false"
-                          >确定</el-button
-                        >
-                      </div>
-                      <el-button slot="reference" size="mini" type="text"
-                        >删除</el-button
-                      >
-                    </el-popover>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-main>
-            <el-footer>
-              <el-row>
-                <el-col span="7"
-                  ><el-button size="min" icon="el-icon-delete" type="text"
-                    >批量删除</el-button
-                  ></el-col
-                >
-                <el-col span="7">已选择 {{ totalNumber }} 件商品</el-col>
-                <el-col span="7">总价：¥{{ totalPrice }}</el-col>
-                <el-col span="3"
-                  ><el-button size="medium" type="danger" @click="page = 1"
-                    >结算</el-button
-                  >
-                </el-col>
-              </el-row>
-            </el-footer>
-          </el-container>
+              </div>
+            </el-col>
+            <el-col :span="3">
+              <div style="margin:25px 0" class="table-price">¥{{books.book_unitPrice*books.book_num}}</div>
+            </el-col>
+            <el-col :span="1">
+              <div style="margin:15px 0"><el-button type="text" class="table-button">删除</el-button></div>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
+    </container>
+    <footer class="table-footer">
+      <el-row>
+        <el-col :span="1" style="margin-left:10px" class="table-footer-item">
+          <el-checkbox v-model="checkAll" class="myRedCheckBox" @click="check_all"></el-checkbox>
+        </el-col>
+        <el-col :span="1" class="table-footer-item">全选</el-col>
+        <el-col :span="10" class="table-footer-item" style="margin:12px">
+           <el-button size="medium" type="text" class="table-button">批量删除</el-button>
+        </el-col>
+        <el-col :span="4" class="table-footer-item">已选<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
+        <el-col :span="4" class="table-footer-item" style="margin-top:12px">合计：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
+        <el-col :span="3" class="table-footer-item" style="margin-top:9px">
+          <el-button size="max" type="danger" @click="page = 1">结算</el-button>
         </el-col>
       </el-row>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    </footer>
+      </div>
 
 
 
@@ -363,9 +287,9 @@
             </el-table>
           </el-row>
           <el-row style="margin: 20px 0">
-            <el-col span="11">已选择 {{ totalNumber }} 件商品</el-col>
-            <el-col span="10">实付：¥{{ totalPrice }}</el-col>
-            <el-col span="3"
+            <el-col :span="11">已选择 {{ totalNumber }} 件商品</el-col>
+            <el-col :span="10">实付：¥{{ totalPrice }}</el-col>
+            <el-col :span="3"
               ><el-button size="medium" type="danger" @click="page = 2"
                 >提交订单</el-button
               ></el-col
@@ -373,17 +297,6 @@
           </el-row>
         </div>
       </div>
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -409,13 +322,6 @@
 
 
 
-
-
-
-
-
-
-
 <script>
 export default {
   components: {},
@@ -429,54 +335,69 @@ export default {
       multipleSelection: [],
       bookList: [
         {
-          id: 1,
+          merchant_id: 1,
           book_merchant: "横溢图书专营店",
-          book_shopAddr: "login",
+          this_all: false,
           children:[
             {
-              id: 11,
-              book_img: require("../assets/kuku.png"),
-              book_name: "C++从入门到放弃",
+              book_id: 11,
+              book_img: require("../assets/youbenshi.jpg"),
+              book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
+              book_writer: "冯唐",
+              book_publish: "东南大学出版社",
               book_unitPrice: 50,
               book_num: 2,
               book_inventory: 19,
               bookAddr: "login",
+              check_one: false,
             },
             {
-              id: 12,
-              book_img: require("../assets/kuku.png"),
-              book_name: "C++从入门到放弃",
+              book_id: 12,
+              book_img: require("../assets/youbenshi.jpg"),
+              book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
+              book_writer: "冯唐",
+              book_publish: "东南大学出版社",
               book_unitPrice: 50,
               book_num: 2,
               book_inventory: 19,
               bookAddr: "login",
+              check_one: false,
             },
           ]
         },
         {
-          id: 2,
+          merchant_id: 2,
           book_merchant: "新华书店网上商城自营图书",
-          book_shopAddr: "login",
+          this_all: false,
           children:[
             {
-              id: 21,
-              book_img: require("../assets/kuku.png"),
-              book_name: "C++从入门到放弃",
+              book_id: 21,
+              book_img: require("../assets/youbenshi.jpg"),
+              book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
+              book_writer: "冯唐",
+              book_publish: "东南大学出版社",
               book_unitPrice: 50,
               book_num: 2,
               book_inventory: 19,
+              check_one: false,
             },
             {
-              id: 22,
-              book_img: require("../assets/kuku.png"),
-              book_name: "C++从入门到放弃",
+              book_id: 22,
+              book_img: require("../assets/youbenshi.jpg"),
+              book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
+              book_writer: "冯唐",
+              book_publish: "东南大学出版社",
               book_unitPrice: 50,
               book_num: 2,
               book_inventory: 19,
+              check_one: false,
             },
           ]
         },
       ],
+      checkAll: false,
+      cpmylist: [],
+      goodsArr: [],
       defaultAddr: 0,
       consigneeInfoList:[
         {
@@ -511,33 +432,36 @@ export default {
     // 总数
     totalNumber() {
       var number_total = 0;
-      for (var i = 0; i < this.multipleSelection.length; i++) {
-        number_total += this.multipleSelection[i].book_num;
+      for (var i = 0; i < this.bookList.length; i++) {
+        for (var j = 0; j < this.bookList[i].children.length; j++) {
+          if (this.bookList[i].children[j].check_one == true) {
+            number_total += this.bookList[i].children[j].book_num;
+          }
+        }
       }
       return number_total;
     },
     // 总价
     totalPrice() {
       var price_total = 0;
-      for (var i = 0; i < this.multipleSelection.length; i++) {
-        price_total += this.multipleSelection[i].book_unitPrice * this.multipleSelection[i].book_num;
+      for (var i = 0; i < this.bookList.length; i++) {
+        for (var j = 0; j < this.bookList[i].children.length; j++) {
+          if (this.bookList[i].children[j].check_one == true) {
+            price_total += this.bookList[i].children[j].book_unitPrice * this.bookList[i].children[j].book_num;
+          }
+        }
       }
       return price_total;
     },
   },
   methods: {
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {this.$refs.multipleTable.toggleRowSelection(row);});
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-  }
+    //选择所有的购物车商品
+    check_all() {
+        this.bookList[0].this_all=true;
+    }
+  },
 }
+
 </script>
 <style>
 .bbb {
@@ -551,7 +475,7 @@ export default {
 }
 
 .divider{
-  background-color: rgb(200,42,39);
+  background-color: rgb(221, 68, 65);
   height: 0.5%;
   width: 100%;
   background-size: cover;
@@ -613,14 +537,92 @@ export default {
   border:1px solid rgb(221,221,221);
 }
 
+.table-container{
+  margin: 20px 0;
+}
+
+.table-footer{
+  margin: 30px 0;
+  background: rgb(245,245,245);
+  color:#303133;
+  height: 60px;
+  border:1px solid rgb(221,221,221);
+}
+
 .table-header-item
 {
   margin: 11px 0;
   font-size: 11px;
 }
 
+.table-footer-item
+{
+  margin: 20px 0;
+  font-size: 11px;
+}
+
 .table-shop
 {
   font-size: 13px;
+}
+
+.shop-name{
+  font-size: 13px;
+}
+.book-name{
+  font-size: 13px;
+}
+.book-detail{
+  font-size: 13px;
+  color:grey;
+}
+
+.books{
+  background: rgb(255, 255, 255);
+  color:#303133;
+  border:1px solid rgb(201, 201, 201);
+}
+
+/* 设置带边框的checkbox，选中后边框的颜色 */
+.myRedCheckBox.is-bordered.is-checked {
+  border-color: rgb(221, 68, 65);
+}
+
+/* 设置选中后的文字颜色 */
+.myRedCheckBox .el-checkbox__input.is-checked+.el-checkbox__label {
+  color: rgb(221, 68, 65);
+}
+
+/* 设置选中后对勾框的边框和背景颜色 */
+.myRedCheckBox .el-checkbox__input.is-checked .el-checkbox__inner, .myRedCheckBox .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  border-color: rgb(221, 68, 65);
+  background-color:rgb(221, 68, 65);
+}
+
+/* 设置checkbox获得焦点后，对勾框的边框颜色 */
+.myRedCheckBox .el-checkbox__input.is-focus .el-checkbox__inner{
+  border-color: rgb(221, 68, 65);
+}
+
+/* 设置鼠标经过对勾框，对勾框边框的颜色 */
+.myRedCheckBox .el-checkbox__inner:hover{
+  border-color: rgb(221, 68, 65);
+}
+
+.table-unitprice{
+  font-size: 13px;
+}
+.table-price{
+  font-size: 13px;
+  color: rgb(221, 68, 65);
+}
+.table-totalprice{
+  font-size: 20px;
+  color: rgb(221, 68, 65);
+}
+
+.table-button{
+  font-size: 13px;
+  color: black;
 }
 </style>
