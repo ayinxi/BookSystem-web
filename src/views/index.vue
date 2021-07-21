@@ -1,60 +1,96 @@
 <template>
   <div v-loading="isLoading">
     <div>
-      <div class="bbb"></div>
       <div class="header">
-        <div class="hasRole ? search2 :search2">
-          <el-input
-            placeholder="给孩子的第一本编程书籍"
-            v-model="input"
-            style="width: 500px"
-          >
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click.native="goToSearch"
+        <el-row>
+          <el-col :span="6">
+            <div class="logo">
+              <img
+                height="70px"
+                style="margin: 20px 0"
+                src="../assets/jwbc.png"
+              />
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div
+              style="margin:60px 0 60px 20px;display:flex;justify-content:center;align-item:center"
             >
-            </el-button>
-          </el-input>
-        </div>
-        <div v-if="hasRole">
-          <el-row class="shopping">
-            <el-col :span="10">
-              <el-badge :value="12" class="shopping">
+              <el-input
+                placeholder="给孩子的第一本编程书籍"
+                v-model="input"
+                style="width: 500px"
+              >
                 <el-button
-                  size="meduim"
-                  icon="el-icon-shopping-cart-2"
-                  @click.native="gotoShopCar"
-                  >我的购物车</el-button
+                  slot="append"
+                  icon="el-icon-search"
+                  @click.native="goToSearch"
+                  style="
+                    display: block;
+                    background-color: rgb(205, 92, 92);
+                    color: white;
+                  "
                 >
-              </el-badge>
-            </el-col>
-            <el-col :span="4" class="pageperson">
-              <el-button
-                size="meduim"
-                class="pageperson"
-                icon="el-icon-s-custom"
-                @click="gotoPersonPage"
-                >个人主页</el-button
-              >
-            </el-col>
-            <el-col @click.native="loginOut" style="margin-left: 30px">
-              <i class="iconfont-tuichu" style="font-size: 20px" />
-            </el-col>
-          </el-row>
-        </div>
-        <div v-else>
-          <el-row class="hasNoRole">
-            <el-col>
-              <el-button size="meduim" @click="gotoSign">注册</el-button>
-            </el-col>
-            <el-col style="margin: 20px 0">
-              <el-button size="meduim" class="pageperson" @click="gotoLogin"
-                >登陆</el-button
-              >
-            </el-col>
-          </el-row>
-        </div>
+                </el-button>
+              </el-input>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div v-if="hasRole" style="margin-left: 20px">
+              <el-row class="shopping">
+                <el-col :span="10">
+                  <el-badge
+                    :max="99"
+                    :value="goodsNum"
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    "
+                  >
+                    <el-button
+                      style="
+                        margin-right: 30px;
+                        display: block;
+                        background-color: rgb(205, 92, 92);
+                        color: white;
+                      "
+                      size="meduim"
+                      icon="el-icon-shopping-cart-2"
+                      @click.native="gotoShopCar"
+                      >我的购物车</el-button
+                    >
+                  </el-badge>
+                </el-col>
+                <el-col :span="10" class="pageperson">
+                  <el-button
+                    style="margin-left: 30px"
+                    size="meduim"
+                    class="pageperson"
+                    icon="el-icon-s-custom"
+                    @click="gotoPersonPage"
+                    >个人主页</el-button
+                  >
+                </el-col>
+                <el-col @click.native="loginOut" style="margin-left: 10px">
+                  <i class="iconfont-tuichu" style="font-size: 20px" />
+                </el-col>
+              </el-row>
+            </div>
+            <div v-else>
+              <el-row class="hasNoRole">
+                <el-col>
+                  <el-button size="meduim" @click="gotoSign">注册</el-button>
+                </el-col>
+                <el-col style="margin: 20px 0">
+                  <el-button size="meduim" class="pageperson" @click="gotoLogin"
+                    >登陆</el-button
+                  >
+                </el-col>
+              </el-row>
+            </div>
+          </el-col>
+        </el-row>
       </div>
     </div>
     <div>
@@ -232,7 +268,9 @@
               <div v-for="item in testList" :key="item.main">
                 <el-menu-item :index="item.main">{{ item.main }} </el-menu-item>
                 <div v-for="littleitem in item.second" :key="littleitem.s">
-                  <el-menu-item :index="littleitem.s">{{ littleitem.s }} </el-menu-item>
+                  <el-menu-item :index="littleitem.s"
+                    >{{ littleitem.s }}
+                  </el-menu-item>
                 </div>
               </div>
             </el-menu>
@@ -422,9 +460,11 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
+      goodsNum:"",
       activeIndex1: "1",
       activeIndex2: " ",
       currentPage: 1,
@@ -788,6 +828,29 @@ export default {
         (item) => item.ClassOne == "青春/动漫"
       );
     },
+    //获取购物车中商品数量
+    getGoodsNum() {
+      axios({
+        url: this.$store.state.yuming + "/cartitem/getNum",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.goodsNum = data;
+          } else {
+            this.$message.error("获取店铺状态失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getGoodsNum();
+    this.isLoading = false;
   },
 };
 </script>
@@ -860,26 +923,12 @@ export default {
 }
 .header {
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
-  margin-left: 10%;
-  margin-right: 10%;
-  height: 20%;
+  margin-left: 5%;
+  margin-right: 5%;
 }
-.search {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
-  margin-left: 500px;
-}
-.search2 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
-  margin-left: 350px;
-}
+
 .shopping {
   display: flex;
   justify-content: center;
@@ -897,5 +946,15 @@ export default {
   display: flex;
   justify-content: center;
   margin: 20px;
+}
+.logo {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+.searchButton {
+  display: inline-block;
+  background-color: rgb(205, 92, 92);
+  color: white;
 }
 </style>
