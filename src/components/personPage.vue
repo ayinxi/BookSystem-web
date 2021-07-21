@@ -175,7 +175,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="我的收货地址" name="second">
-          <el-row>
+          <el-row v-loading="addressLoading">
             <div style="margin-bottom: 20px">
               <el-row>
                 <el-col :key="item.id" v-for="item in myAddressList" :span="6">
@@ -191,23 +191,35 @@
                           {{ item.phone }}
                         </div>
                       </el-form-item>
-                      <el-tooltip effect="light" :content="item.address">
-                        <el-form-item label="详细地址" prop="name">
-                          <div
-                            style="
-                              display: flex;
-                              justify-content: flex-start;
-                              flex-wrap: wrap;
-                            "
-                          >
-                            {{ item.address }}
-                          </div>
-                        </el-form-item>
-                      </el-tooltip>
+                      <el-form-item label="详细地址" prop="name">
+                        <div
+                          style="
+                            display: flex;
+                            justify-content: flex-start;
+                            flex-wrap: wrap;
+                            word-break: break-all;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 1;
+                            -webkit-box-orient: vertical;
+                          "
+                          :title="item.address"
+                        >
+                          {{ item.address }}
+                        </div>
+                      </el-form-item>
                       <el-form-item>
                         <div style="display: flex; flex-direction: row-reverse">
-                          <el-button type="text">编辑 </el-button>
-                          <el-button type="text">删除 </el-button>
+                          <el-button
+                            type="text"
+                            style="margin: 0 5px"
+                            @click="eidtAddress(item)"
+                            >编辑
+                          </el-button>
+                          <el-button type="text" style="margin: 0 5px"
+                            >删除
+                          </el-button>
                         </div>
                       </el-form-item>
                     </el-form>
@@ -219,30 +231,51 @@
                   size="min"
                   icon="el-icon-setting"
                   type="text"
-                  @click="addInfoVisible = true"
+                  @click="clearNewAddress"
                   >添加收货人信息</el-button
                 ></el-row
               >
+              <!--删除收货人信息-->
+
               <!--编辑收货人信息-->
               <el-dialog title="编辑收货人信息" :visible.sync="editInfoVisible">
-                <el-form :model="editMyAddress" label-width="120px">
+                <el-form
+                  :model="editMyAddress"
+                  label-width="120px"
+                  :rules="newAddressRules"
+                >
                   <el-form-item label="姓名" prop="name">
-                    <el-input v-model="editMyAddress.name"></el-input>
+                    <el-input
+                      type="text"
+                      style="width: 200px"
+                      v-model="editMyAddress.name"
+                      clearable
+                    ></el-input>
                   </el-form-item>
                   <el-form-item label="电话号码" prop="phone">
-                    <el-input v-model="editMyAddress.phone"></el-input>
+                    <el-input
+                      type="text"
+                      style="width: 200px"
+                      v-model="editMyAddress.phone"
+                      clearable
+                    ></el-input>
                   </el-form-item>
                   <el-form-item label="详细地址" prop="address">
                     <el-input
+                      type="textarea"
+                      maxlength="50"
+                      show-word-limit
+                      clearable
+                      style="width: 500px"
+                      rows="5"
                       v-model="editMyAddress.address"
-                      autocomplete="off"
                     ></el-input>
                   </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                   <el-button @click="editInfoVisible = false">取消</el-button>
-                  <el-button type="danger" @click="editInfoVisible = false"
-                    >确认收货人信息</el-button
+                  <el-button type="primary" @click="confirmChangeAddress"
+                    >确认编辑</el-button
                   >
                 </div>
               </el-dialog>
@@ -597,9 +630,11 @@ export default {
       imgUrl: require("../assets/avatar.jpg"),
       orderId: "",
       isLoading: false,
+      //收货地址loading
+      addressLoading:false,
       activeName: "first",
       //是否上传了头像
-      hasShopAvatar:false,
+      hasShopAvatar: false,
       userInfo: {
         avatar_s: "",
         username: "",
@@ -646,6 +681,7 @@ export default {
         address: "",
       },
       editMyAddress: {
+        id: "",
         name: "",
         phone: "",
         address: "",
@@ -708,13 +744,6 @@ export default {
     },
   },
   methods: {
-    changeList(id) {
-      if (this.a == id) {
-        this.a = !this.a;
-      } else {
-        this.a = id;
-      }
-    },
     //返回首页
     gotoIndex() {
       this.$router.push("/");
@@ -773,6 +802,13 @@ export default {
         }
       });
     },
+    //清空newAddress
+    clearNewAddress() {
+      this.newAddress.name = "";
+      this.newAddress.address = "";
+      this.newAddress.phone = "";
+      this.addInfoVisible = true;
+    },
     //新增收货地址
     addNewAddress() {
       this.addInfoVisible = false;
@@ -786,6 +822,9 @@ export default {
         },
       }).then((res) => {
         if (res.data.code == 200) {
+          this.addressLoading=true;
+          this.getUserAddress();
+          this.addressLoading=false;
           this.$message({
             message: "新增成功",
             type: "success",
@@ -795,14 +834,48 @@ export default {
         }
       });
     },
+    //编辑收货地址
+    eidtAddress(e) {
+      this.editInfoVisible = true;
+      this.editMyAddress.id = e.id;
+      this.editMyAddress.name = e.name;
+      this.editMyAddress.phone = e.phone;
+      this.editMyAddress.address = e.address;
+    },
+    //确认编辑收货地址
+    confirmChangeAddress() {
+      this.editInfoVisible = false;
+      axios({
+        url: this.$store.state.yuming + "/user/address/update",
+        method: "POST",
+        params: {
+          addressId: this.editMyAddress.id,
+          address: this.editMyAddress.address,
+          name: this.editMyAddress.name,
+          phone: this.editMyAddress.phone,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.addressLoading=true;
+          this.getUserAddress();
+          this.addressLoading=false;
+          this.$message({
+            message: "编辑成功",
+            type: "success",
+          });
+        } else {
+          this.$message.error("编辑失败，请重试");
+        }
+      });
+    },
     //确认申请成为商家
     confirmApply() {
-      if (this.hasShopAvatar==false) {
+      if (this.hasShopAvatar == false) {
         this.$message.error("必须上传店铺头像哦~");
-        this.applyShopInfo.img= "";
-        this.applyShopInfo.shopper_name="";
-        this.applyShopInfo.shop_name="";
-        this.applyShopInfo.apply_reason="";
+        this.applyShopInfo.img = "";
+        this.applyShopInfo.shopper_name = "";
+        this.applyShopInfo.shop_name = "";
+        this.applyShopInfo.apply_reason = "";
       } else {
         this.formdata.append("shopper_name", this.applyShopInfo.shopper_name);
         this.formdata.append("shop_name", this.applyShopInfo.shop_name);
@@ -820,7 +893,10 @@ export default {
               message: "申请成功",
               type: "success",
             });
-            this.applyShopInfo = "";
+            this.applyShopInfo.img = "";
+            this.applyShopInfo.shopper_name = "";
+            this.applyShopInfo.shop_name = "";
+            this.applyShopInfo.apply_reason = "";
           } else {
             this.$message.error("申请失败，请重试");
           }
@@ -1031,7 +1107,7 @@ export default {
 }
 .addressCard {
   width: 300px;
-  height: 300px;
+  height: 250px;
   margin: 20px;
 }
 .clearfix:before,
