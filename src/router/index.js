@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import store from '../store'
 Vue.use(VueRouter)
 
 
@@ -155,7 +155,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.auth) {
     //store.state.token 表示已经登录 可以直接next
     //没有登录 跳转到/login 并携带参数redirect 方便登录后直接跳转到to.path
-    if (sessionStorage.getItem("token")) {
+    if (store.state.token) {
       next();
     } else {
       next({
