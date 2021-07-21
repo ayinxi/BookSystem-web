@@ -194,6 +194,29 @@ export default {
         });
       }
     },
+    //获取购物车中商品数量
+    getGoodsNum() {
+      axios({
+        url: this.$store.state.yuming + "/cartitem/getNum",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.goodsNum = data;
+          } else {
+            this.$message.error("获取店铺状态失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    async created() {
+      this.isLoading = true;
+      await this.getGoodsNum();
+      this.isLoading = false;
+    },
   },
 };
 </script>
