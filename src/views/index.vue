@@ -21,7 +21,10 @@
           <el-row class="shopping">
             <el-col :span="10">
               <el-badge :value="12" class="shopping">
-                <el-button size="meduim" icon="el-icon-shopping-cart-2" @click.native="gotoShopCar"
+                <el-button
+                  size="meduim"
+                  icon="el-icon-shopping-cart-2"
+                  @click.native="gotoShopCar"
                   >我的购物车</el-button
                 >
               </el-badge>
@@ -225,6 +228,14 @@
                 >2018年及以前出版</el-menu-item
               >
             </el-menu>
+            <el-menu>
+              <div v-for="item in testList" :key="item.main">
+                <el-menu-item :index="item.main">{{ item.main }} </el-menu-item>
+                <div v-for="littleitem in item.second" :key="littleitem.s">
+                  <el-menu-item :index="littleitem.s">{{ littleitem.s }} </el-menu-item>
+                </div>
+              </div>
+            </el-menu>
           </el-aside>
           <el-main>
             <el-row style="margin-bottom: 1%">
@@ -279,7 +290,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <img src="../assets/xssj.png" style="width:100%;height:60px">
+              <img src="../assets/xssj.png" style="width: 100%; height: 60px" />
             </el-row>
             <el-row class="rowStyle" type="flex">
               <el-col :span="6" v-for="book in newBookList" :key="book.Name">
@@ -425,6 +436,10 @@ export default {
         Name: "有本事",
         Author: "冯唐",
       },
+      testList: [
+        { main: "网络文学", second: [{ s: "男频" }, { s: "女频" }] },
+        { main: "小说", second: [{ s: "中国小说" }, { s: "外国小说" }] },
+      ],
       photoList: [
         { Img: require("../assets/1.jpg") },
         { Img: require("../assets/photo1.jpg") },
@@ -669,7 +684,7 @@ export default {
       this.$router.push("/person");
     },
     gotoShopCar() {
-      this.$router.push("/shopping")
+      this.$router.push("/shopping");
     },
     loginOut() {
       this.isLoading = true;
