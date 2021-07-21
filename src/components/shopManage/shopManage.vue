@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header">
       <div class="logo4">
         <img width="250px" src="../../assets/jwbc.png" />
@@ -91,7 +91,7 @@
             class="el-cardStyle"
             shadow="hover"
             @click.native="goToShopInfo"
-            ><p class="iconfont-shangpu" style="font-size: 40px"></p>
+            ><p class="iconfont-shangpu-copy" style="font-size: 40px"></p>
             <p class="spanStyle">店铺管理</p></el-card
           >
         </el-col>
@@ -102,9 +102,12 @@
 
 <script>
 import echarts from "echarts";
+import axios from "axios";
+import { Message } from "element-ui";
 export default {
   data() {
     return {
+      isLoading: false,
       newOrder: 123,
       shopname: "这是一家好店",
     };
@@ -114,6 +117,11 @@ export default {
     this.$nextTick(() => {
       this.drawPieChart();
     });
+  },
+  computed: {
+    hasUsername() {
+      return this.$store.state.username;
+    },
   },
   methods: {
     gotoPersonPage() {
@@ -128,7 +136,7 @@ export default {
     goToRefundM() {
       this.$router.push("/refundM");
     },
-    goToShopInfo(){
+    goToShopInfo() {
       this.$router.push("/shopInfo");
     },
     drawBarChart() {
@@ -170,7 +178,7 @@ export default {
             },
             axisLabel: {
               //---坐标轴 标签
-              interval:0,
+              interval: 0,
               show: true, //---是否显示
               inside: false, //---是否朝内
               rotate: 0, //---旋转角度
@@ -330,6 +338,32 @@ export default {
         ],
       });
     },
+    getShopInfo() {
+      axios({
+        url: this.$store.state.yuming + "/shop/getPassed",
+        method: "GET",
+        params: {
+          username: this.hasUsername,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.shopname = data.shop_name;
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getShopInfo();
+    this.isLoading = false;
   },
 };
 </script>
@@ -348,7 +382,7 @@ export default {
   width: 200px;
   margin: 20px 100px;
   position: relative;
-  right: 315px;
+  right: 120px;
 }
 .shopping {
   display: flex;

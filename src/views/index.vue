@@ -21,7 +21,10 @@
           <el-row class="shopping">
             <el-col :span="10">
               <el-badge :value="12" class="shopping">
-                <el-button size="meduim" icon="el-icon-shopping-cart-2"
+                <el-button
+                  size="meduim"
+                  icon="el-icon-shopping-cart-2"
+                  @click.native="gotoShopCar"
                   >我的购物车</el-button
                 >
               </el-badge>
@@ -225,10 +228,18 @@
                 >2018年及以前出版</el-menu-item
               >
             </el-menu>
+            <el-menu>
+              <div v-for="item in testList" :key="item.main">
+                <el-menu-item :index="item.main">{{ item.main }} </el-menu-item>
+                <div v-for="littleitem in item.second" :key="littleitem.s">
+                  <el-menu-item :index="littleitem.s">{{ littleitem.s }} </el-menu-item>
+                </div>
+              </div>
+            </el-menu>
           </el-aside>
           <el-main>
-            <el-row style="margin-bottom: 5%">
-              <el-col :span="17">
+            <el-row style="margin-bottom: 1%">
+              <el-col :span="16">
                 <el-carousel
                   :interval="5000"
                   arrow="never"
@@ -240,6 +251,7 @@
                   </el-carousel-item>
                 </el-carousel>
               </el-col>
+              <el-col :span="1"><span>&emsp;</span></el-col>
               <el-col :span="7">
                 <el-card class="cStyle">
                   <el-row style="height: 40px; margin: 5%"
@@ -278,40 +290,40 @@
               </el-col>
             </el-row>
             <el-row>
-              <p>新书上架</p>
+              <img src="../assets/xssj.png" style="width: 100%; height: 60px" />
             </el-row>
             <el-row class="rowStyle" type="flex">
               <el-col :span="6" v-for="book in newBookList" :key="book.Name">
-                <el-card style="width:90%;margin:5%">
-                <el-container>
-                  <el-header
-                    style="width: 100%; height: 200px; align-items: center"
-                  >
-                    <el-image
-                      class="imgStyle1"
-                      :src="book.Img"
-                      @click.native="goToBookInfo()"
+                <el-card style="width: 90%; margin: 5%">
+                  <el-container>
+                    <el-header
+                      style="width: 100%; height: 200px; align-items: center"
                     >
-                    </el-image>
-                  </el-header>
-                  <el-main
-                    style="color: black; padding-top: 0; text-align: center"
-                  >
-                    <el-link
-                      :underline="false"
-                      class="book-name"
-                      @click="goToBookInfo()"
-                      >{{ book.Name }}</el-link
+                      <el-image
+                        class="imgStyle1"
+                        :src="book.Img"
+                        @click.native="goToBookInfo()"
+                      >
+                      </el-image>
+                    </el-header>
+                    <el-main
+                      style="color: black; padding-top: 0; text-align: center"
                     >
-                    <p style="color: rgb(128, 192, 192); margin: 0%">
-                      {{ book.Author }}
-                    </p>
-                    <p style="color: red; font-weight: 1000; margin: 0%">
-                      ￥{{ book.Price }}
-                    </p>
-                  </el-main>
-                </el-container>
-                </el-card> 
+                      <el-link
+                        :underline="false"
+                        class="book-name"
+                        @click="goToBookInfo()"
+                        >{{ book.Name }}</el-link
+                      >
+                      <p style="color: rgb(128, 192, 192); margin: 0%">
+                        {{ book.Author }}
+                      </p>
+                      <p style="color: red; font-weight: 1000; margin: 0%">
+                        ￥{{ book.Price }}
+                      </p>
+                    </el-main>
+                  </el-container>
+                </el-card>
               </el-col>
             </el-row>
           </el-main> </el-container
@@ -364,36 +376,36 @@
               )"
               :key="book.Name"
             >
-            <el-card style="width:90%;margin:5%">
-              <el-container>
-                <el-header
-                  style="width: 100%; height: 200px; align-items: center"
-                >
-                  <el-image
-                    class="imgStyle1"
-                    :src="book.Img"
-                    @click.native="goToBookInfo"
+              <el-card style="width: 90%; margin: 5%">
+                <el-container>
+                  <el-header
+                    style="width: 100%; height: 200px; align-items: center"
                   >
-                  </el-image>
-                </el-header>
-                <el-main
-                  style="color: black; padding-top: 0; text-align: center"
-                >
-                  <el-link
-                    :underline="false"
-                    class="book-name"
-                    @click="goToBookInfo"
-                    >{{ book.Name }}</el-link
+                    <el-image
+                      class="imgStyle1"
+                      :src="book.Img"
+                      @click.native="goToBookInfo"
+                    >
+                    </el-image>
+                  </el-header>
+                  <el-main
+                    style="color: black; padding-top: 0; text-align: center"
                   >
-                  <p style="color: rgb(128, 192, 192); margin: 0%">
-                    {{ book.Author }}
-                  </p>
-                  <p style="color: red; font-weight: 1000; margin: 0%">
-                    ￥{{ book.Price }}
-                  </p>
-                </el-main>
-              </el-container>
-            </el-card>
+                    <el-link
+                      :underline="false"
+                      class="book-name"
+                      @click="goToBookInfo"
+                      >{{ book.Name }}</el-link
+                    >
+                    <p style="color: rgb(128, 192, 192); margin: 0%">
+                      {{ book.Author }}
+                    </p>
+                    <p style="color: red; font-weight: 1000; margin: 0%">
+                      ￥{{ book.Price }}
+                    </p>
+                  </el-main>
+                </el-container>
+              </el-card>
             </el-col>
           </el-row>
           <el-pagination
@@ -424,6 +436,10 @@ export default {
         Name: "有本事",
         Author: "冯唐",
       },
+      testList: [
+        { main: "网络文学", second: [{ s: "男频" }, { s: "女频" }] },
+        { main: "小说", second: [{ s: "中国小说" }, { s: "外国小说" }] },
+      ],
       photoList: [
         { Img: require("../assets/1.jpg") },
         { Img: require("../assets/photo1.jpg") },
@@ -655,7 +671,7 @@ export default {
   },
   methods: {
     goToSearch() {
-      this.$store.commit("gobalSearchText",this.input);
+      this.$store.commit("gobalSearchText", this.input);
       this.$router.push("/searchBook");
     },
     gotoSign() {
@@ -666,6 +682,9 @@ export default {
     },
     gotoPersonPage() {
       this.$router.push("/person");
+    },
+    gotoShopCar() {
+      this.$router.push("/shopping");
     },
     loginOut() {
       this.isLoading = true;
@@ -819,8 +838,6 @@ export default {
 }
 .cStyle {
   height: 400px;
-  position: relative;
-  left: 20px;
   padding: 0px;
 }
 .tscStyle {

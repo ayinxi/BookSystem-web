@@ -77,24 +77,36 @@
               this.Lists.shopName
             }}</el-link>
             <h2>{{ this.Lists.Name }}</h2>
-            <p style="color: gray; margin: 0%">{{ this.Lists.Author }}</p>
+            <p style="color: gray; margin: 0%">
+              {{ this.Lists.Author }} {{ this.Lists.PubTime }}出版
+              {{ this.Lists.press }}
+            </p>
             <p>
               继《无所畏》后暌违三年，冯唐全新作品。44篇全新智慧之作+10幅金句书法+35幅私人摄影作品！你可以不屠龙，但不能不磨剑。一个人有本事才是靠得住的财富。随书附赠2张冯唐字画书签！
             </p>
             <p style="color: red; font-weight: 1000; margin: 0%">
               ￥{{ this.Lists.Price }}
             </p>
-            <el-row :gutter="20" type="flex" style="padding: 10px 0;margin:5% 0%">
+            <el-row
+              :gutter="20"
+              type="flex"
+              style="padding: 10px 0; margin: 5% 0%"
+            >
               <el-col :span="5"
                 ><el-input-number v-model="num" :min="1"></el-input-number
               ></el-col>
               <el-col :span="4"
-                ><el-button type="primary" class="el-icon-shopping-cart-2"
+                ><el-button
+                  type="primary"
+                  class="el-icon-shopping-cart-2"
+                  @click.native="addShoppingTrolley"
                   >加入购物车</el-button
                 ></el-col
               >
               <el-col :span="4"
-                ><el-button type="danger">立即购买</el-button></el-col
+                ><el-button type="danger" @click.native="buy"
+                  >立即购买</el-button
+                ></el-col
               >
             </el-row>
           </el-main>
@@ -105,6 +117,8 @@
 </template>
 <script>
 import Home from "./Home.vue";
+import axios from "axios";
+import { Message } from "element-ui";
 export default {
   components: {
     Home,
@@ -120,9 +134,11 @@ export default {
         Author: "冯唐",
         ClassOne: "网络文学",
         ClassTwo: "男频",
-        Price: 10,
-        PubTime: 2021,
+        Price: "10.00",
+        PubTime: "2021-1-1",
+        press: "东南出版社",
       },
+      formdata: new FormData(),
     };
   },
   methods: {
@@ -149,6 +165,35 @@ export default {
     },
     test() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "1-1" } });
+    },
+    addShoppingTrolley() {
+      this.formdata.append("book_id", "1e285d4ef607f80871e946801839fc10");
+      this.formdata.append("sum", this.num);
+      axios({
+        url: this.$store.state.yuming + "/cartitem/addCartItem",
+        method: "POST",
+        data: this.formdata,
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+            message: "加入购物车成功",
+            type: "success",
+          });
+          this.num = 1;
+        } else {
+          this.$message.error("加入购物车失败，请重试");
+        }
+      });
+    },
+    buy() {
+      if (this.$store.state.token != "") {
+        this.$router.push("/shopping");
+      } else {
+        this.$message({
+          message: "请登录后再购买",
+          type: "error",
+        });
+      }
     },
   },
 };

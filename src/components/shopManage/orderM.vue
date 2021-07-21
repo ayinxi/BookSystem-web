@@ -4,12 +4,11 @@
       <div class="logo3">
         <img width="250px" src="../../assets/jwbc.png" />
       </div>
-      <el-button size="medium" @click.native="goToManage" type="danger" plain
-        >返回商家管理页面</el-button
-      >
+      <div class="title">管理平台</div>
     </div>
-    <div style="margin: 2% 18%">
-      <el-row style="margin: 0% 12% 5%">
+     <div style="margin: 2% 10%"><el-page-header @back="goToManage" content="订单管理"></el-page-header></div>
+    <div style="margin: 2% 10%">
+      <el-row style="margin: 0% 0% 5%">
         <el-card>
           <el-container>
             <el-aside width="35px"><div class="verticalBar1"></div></el-aside>
@@ -346,7 +345,7 @@ export default {
   width: 200px;
   margin: 20px 100px;
   position: relative;
-  right: 306px;
+  right: 250px;
 }
 .el-table .warning-row {
   background: oldlace;
@@ -360,5 +359,11 @@ export default {
   margin-right: 0px;
   margin-left: 30px;
   border-radius: 20%;
+}
+.title{
+  font-size: 35px;
+  padding: 30px 10px;
+  position: relative;
+  left: 180px;
 }
 </style>
