@@ -174,7 +174,7 @@ router.beforeEach((to, from, next) => {
     }
   }
   else if (to.meta.adminAuth) {
-    if (store.state.role == 1) {
+    if (store.state.role == 2) {
       next();
     } else {
       next({
