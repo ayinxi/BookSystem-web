@@ -178,28 +178,41 @@
           <el-row>
             <div style="margin-bottom: 20px">
               <el-row>
-                <el-radio-group v-model="radio">
-                  <el-radio-button
-                    :label="item.id"
-                    :key="item.id"
-                    v-for="item in myAddressList"
-                    style="margin: 20px"
-                  >
-                    <div class="addressCard">
-                      <el-form ref="item" :v-model="item" label-width="80px">
-                        <el-form-item label="姓名:" prop="name">
-                          <span>{{ item.name }}</span>
+                <el-col :key="item.id" v-for="item in myAddressList" :span="6">
+                  <el-card class="addressCard">
+                    <el-form ref="item" :v-model="item" label-width="80px">
+                      <el-form-item label="姓名：" prop="name">
+                        <div style="display: flex; justify-content: flex-start">
+                          {{ item.name }}
+                        </div>
+                      </el-form-item>
+                      <el-form-item label="电话号码" prop="phone">
+                        <div style="display: flex; justify-content: flex-start">
+                          {{ item.phone }}
+                        </div>
+                      </el-form-item>
+                      <el-tooltip effect="light" :content="item.address">
+                        <el-form-item label="详细地址" prop="name">
+                          <div
+                            style="
+                              display: flex;
+                              justify-content: flex-start;
+                              flex-wrap: wrap;
+                            "
+                          >
+                            {{ item.address }}
+                          </div>
                         </el-form-item>
-                        <el-form-item label="电话号码:" prop="phone">
-                          <span>{{ item.name }}</span>
-                        </el-form-item>
-                        <el-form-item label="详细地址:" prop="name">
-                          <span>{{ item.name }}</span>
-                        </el-form-item>
-                      </el-form>
-                    </div>
-                  </el-radio-button>
-                </el-radio-group>
+                      </el-tooltip>
+                      <el-form-item>
+                        <div style="display: flex">
+                          <el-button type="text">编辑 </el-button>
+                          <el-button type="text">删除 </el-button>
+                        </div>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                </el-col>
               </el-row>
               <el-row
                 ><el-button
@@ -235,21 +248,42 @@
               </el-dialog>
               <!--添加收货人信息-->
               <el-dialog title="添加收货人信息" :visible.sync="addInfoVisible">
-                <el-form :model="newAddress" label-width="120px">
-                  <el-form-item label="姓名">
-                    <el-input v-model="newAddress.name"></el-input>
+                <el-form
+                  ref="newAddress"
+                  :model="newAddress"
+                  label-width="120px"
+                  :rules="newAddressRules"
+                >
+                  <el-form-item label="姓名" prop="name">
+                    <el-input
+                      type="text"
+                      v-model="newAddress.name"
+                      style="width: 200px"
+                    ></el-input>
                   </el-form-item>
-                  <el-form-item label="电话号码">
-                    <el-input v-model="newAddress.phone"></el-input>
+                  <el-form-item label="电话号码" prop="phone">
+                    <el-input
+                      type="text"
+                      v-model="newAddress.phone"
+                      style="width: 200px"
+                    ></el-input>
                   </el-form-item>
-                  <el-form-item label="详细地址">
-                    <el-input v-model="newAddress.address"></el-input>
+                  <el-form-item label="详细地址" prop="address">
+                    <el-input
+                      type="textarea"
+                      maxlength="50"
+                      show-word-limit
+                      clearable
+                      style="width: 500px"
+                      rows="5"
+                      v-model="newAddress.address"
+                    ></el-input>
                   </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                   <el-button @click="addInfoVisible = false">取消</el-button>
-                  <el-button type="danger" @click="addInfoVisible = false"
-                    >确认新增收货人信息</el-button
+                  <el-button type="primary" @click="addNewAddress"
+                    >确认新增</el-button
                   >
                 </div>
               </el-dialog>
@@ -268,7 +302,7 @@
               ref="applyShopInfo"
               :model="applyShopInfo"
               label-width="80px"
-              :rules="rules"
+              :rules="applyRules"
             >
               <el-row>
                 <el-col>
@@ -616,22 +650,41 @@ export default {
       },
       myAddressList: [
         {
-          id: "1",
-          name: "1",
-          phone: "2",
-          address: "3",
-        },
-        {
-          id: "2",
-          name: "11",
-          phone: "22",
-          address: "33",
+          id: "",
+          name: "",
+          phone: "",
+          address: "",
         },
       ],
       //评分
       value: 0,
       dialogVisible: false,
-      rules: {
+      newAddressRules: {
+        phone: [
+          { required: true, message: "电话号码不得为空", trigger: "blur" },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error("请输入电话号码"));
+              } else if (!/^1\d{10}$/.test(value)) {
+                callback(new Error("请输入正确的11位手机号码"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "blur",
+          },
+        ],
+        name: [
+          { required: true, message: "姓名不得为空", trigger: "blur" },
+          { max: 10, message: "姓名不得超过十个字", trigger: "blur" },
+        ],
+        address: [
+          { required: true, message: "地址不得为空", trigger: "blur" },
+          { max: 50, message: "地址不得超过五十个字", trigger: "blur" },
+        ],
+      },
+      applyRules: {
         img: [{ required: true, message: "店铺头像不得为空", trigger: "blur" }],
         shopper_name: [
           { required: true, message: "店主名不得为空", trigger: "blur" },
@@ -700,6 +753,46 @@ export default {
       this.orderId = 4;
       this.$router.push("/userOrder/" + this.orderId);
     },
+    //获取用户的收货地址
+    getUserAddress() {
+      axios({
+        url: this.$store.state.yuming + "/user/address/getAll",
+        method: "GET",
+        params: {
+          address: this.newAddress.address,
+          phone: this.newAddress.phone,
+          name: this.newAddress.name,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.myAddressList = res.data.data;
+        } else {
+          this.$message.error("获取收货地址，请重试");
+        }
+      });
+    },
+    //新增收货地址
+    addNewAddress() {
+      this.addInfoVisible = false;
+      axios({
+        url: this.$store.state.yuming + "/user/address/add",
+        method: "POST",
+        params: {
+          address: this.newAddress.address,
+          phone: this.newAddress.phone,
+          name: this.newAddress.name,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+            message: "新增成功",
+            type: "success",
+          });
+        } else {
+          this.$message.error("新增失败，请重试");
+        }
+      });
+    },
     //确认申请成为商家
     confirmApply() {
       this.formdata.append("shopper_name", this.applyShopInfo.shopper_name);
@@ -761,6 +854,7 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.userInfo = data;
+            this.$store.commit("role", data.identity);
           } else {
             this.$message.error("获取用户信息失败");
             this.$router.push("/");
@@ -802,6 +896,11 @@ export default {
           });
         });
     },
+    async isLoadShop() {
+      if (this.$store.state.role == 1) {
+        await this.getShopInfo();
+      }
+    },
     //上传图片触发
     handleCrop(file) {
       this.$nextTick(() => {
@@ -827,7 +926,14 @@ export default {
     changePhotoFile(file) {
       let type = this.getSuffix(file.name);
       const isLt6M = file.size / 1024 / 1024 < 6;
-      if (type == "JPG" || type == "JPEG" || type == "PNG"|| type == "jpg" || type == "png"|| type == "jpge") {
+      if (
+        type == "JPG" ||
+        type == "JPEG" ||
+        type == "PNG" ||
+        type == "jpg" ||
+        type == "png" ||
+        type == "jpge"
+      ) {
         if (!isLt6M) {
           this.$message.error("上传头像图片大小不能超过 6MB!");
         } else {
@@ -841,10 +947,11 @@ export default {
   async created() {
     this.isLoading = true;
     await this.getUserInfo();
-    if (this.$store.state.role == 1) {
-      await this.getShopInfo();
+    await this.isLoadShop();
+    if (this.$store.state.role == 0) {
+      await this.getApplyHistory();
     }
-    await this.getApplyHistory();
+    await this.getUserAddress();
     this.isLoading = false;
   },
 };
@@ -912,9 +1019,9 @@ export default {
   height: 200px;
 }
 .addressCard {
-  width: 200px;
+  width: 300px;
   height: 200px;
-  margin: 2px;
+  margin: 20px;
 }
 .clearfix:before,
 .clearfix:after {
