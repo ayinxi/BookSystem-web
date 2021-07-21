@@ -201,6 +201,7 @@ export default {
                 type: "success",
                 message: "注销成功",
               });
+              this.$router.push("/person")
             } else {
               this.$message.error("注销失败");
             }
