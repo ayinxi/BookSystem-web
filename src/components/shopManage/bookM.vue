@@ -1,78 +1,78 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header">
       <div class="logo3">
         <img width="250px" src="../../assets/jwbc.png" />
       </div>
-      <el-button size="medium" @click.native="goToManage"
-        >返回商家管理页面</el-button
-      >
+      <div class="title">管理平台</div>
     </div>
-    <div style="margin: 2% 18%">
-      <el-row style="margin: 0% 12% 5%">
+    <div style="margin: 2% 10%">
+      <el-page-header @back="goToManage" content="图书管理"></el-page-header>
+    </div>
+    <div style="margin: 2% 10%">
+      <el-row style="margin: 0% 0% 5%">
         <el-card>
           <el-container>
             <el-aside width="35px"><div class="verticalBar1"></div></el-aside>
             <el-main>
               <span style="font-weight: 1000">欢迎您，亲爱的店家 </span>
               <p style="font-weight: 1000">
-                您可以在本页面进行图书管理，包括: 调整图书信息 新增图书 下架图书
+                您可以在本页面进行图书管理，包括: 修改图书信息 新增图书 下架图书
               </p>
             </el-main>
           </el-container>
         </el-card>
       </el-row>
     </div>
-    <div style="margin: 3% 18% 0%">
-      <el-row style="margin: 0% 12% 5%">
-        <el-card>
-          <el-col :span="8" style="text-align: center">
-            <p>图书总数</p>
-            <p style="font-size: 40px">{{ this.tableData.length }}</p>
-          </el-col>
-          <el-col :span="16" style="text-align: center">
-            <p>各图书类别所占比例</p>
-            <div>
-              <div id="chartPie" class="pie-wrap"></div>
-            </div>
-          </el-col>
-        </el-card>
-      </el-row>
-    </div>
     <div style="margin: 3% 10%">
       <el-card>
+        <el-form label-width="120px">
+          <el-form-item label="书名搜索：">
+            <el-input
+              v-model="searchText"
+              placeholder="输入书名模糊搜索"
+            ></el-input>
+          </el-form-item>
+        </el-form>
         <el-table
           ref="multipleTable"
-          :data="tableData"
+          :data="
+            tableData.filter((x) => {
+              return x.bookname.includes(searchText);
+            })
+          "
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column label="图书图片" width="180">
+          <el-table-column label="图片" width="180">
             <template slot-scope="scope"
               ><img :src="scope.row.bookimg" class="imgStyle"
             /></template>
           </el-table-column>
-          <el-table-column label="图书名称" width="120">
+          <el-table-column label="名称" width="120">
             <template slot-scope="scope">{{ scope.row.bookname }}</template>
           </el-table-column>
-          <el-table-column label="图书作者" width="120">
+          <el-table-column label="作者" width="100">
             <template slot-scope="scope">{{ scope.row.bookauthor }}</template>
           </el-table-column>
-          <el-table-column label="图书出版时间" width="120">
+          <el-table-column label="出版时间" width="100">
             <template slot-scope="scope">{{ scope.row.bookPubTime }}</template>
           </el-table-column>
-          <el-table-column label="图书一级分类" width="120">
+          <el-table-column label="出版社" width="120">
+            <template slot-scope="scope">{{ scope.row.press }}</template>
+          </el-table-column>
+          <el-table-column label="一级分类" width="100">
             <template slot-scope="scope">{{ scope.row.classone }}</template>
           </el-table-column>
-          <el-table-column label="图书二级分类" width="120">
+          <el-table-column label="二级分类" width="100">
             <template slot-scope="scope">{{ scope.row.classtwo }}</template>
           </el-table-column>
-          <el-table-column label="图书单价" width="120">
+          <el-table-column label="单价" width="100">
             <template slot-scope="scope">{{ scope.row.bookprice }}</template>
           </el-table-column>
-          <el-table-column label="图书库存" width="120">
+          <el-table-column label="库存" width="100">
             <template slot-scope="scope">{{ scope.row.inventory }}</template>
           </el-table-column>
           <el-table-column label="操作">
@@ -104,56 +104,237 @@
       <el-dialog
         title="修改图书信息"
         :visible.sync="dialogChangeVisible"
-        width="80%"
+        width="60%"
         :before-close="handleClose"
         center
       >
-        <el-form ref="lists1" :model="lists1" label-width="110px">
+        <el-form
+          ref="lists1"
+          :model="lists1"
+          label-width="130px"
+          :rules="rules"
+        >
           <el-row>
             <el-col :span="11">
               <el-form-item label="图书图片：" prop="bookImg">
                 <span
                   ><el-upload
                     class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    ref="upload"
+                    action="http://47.94.131.208:8888"
                     :show-file-list="false"
+                    :on-change="changePhotoFile"
                     :on-success="handleAvatarSuccess"
                     :before-upload="beforeAvatarUpload"
+                    :auto-upload="false"
+                    :name="this.lists1.bookImg"
                   >
                     <img
                       v-if="lists1.bookImg"
                       :src="lists1.bookImg"
                       class="avatar"
                     />
-                    <i
-                      v-else
-                      class="el-icon-plus avatar-uploader-icon"
-                    ></i> </el-upload
+                    <img v-else src="../../assets/avatar.jpg" class="avatar" />
+                    <div class="avatar-uploader-icon">
+                      <i
+                        class="el-icon-warning-outline"
+                        style="margin-right: 5px"
+                      ></i>
+                      <i style="color: #909399">点击图片进行修改</i>
+                    </div>
+                  </el-upload>
+                  <my-cropper
+                    ref="myCropper"
+                    @getFile="getFile"
+                    @upAgain="upAgain"
+                  ></my-cropper
                 ></span>
               </el-form-item>
             </el-col>
             <el-col :span="1"><span>&emsp;</span></el-col>
             <el-col :span="11">
+              <el-form-item label="图书出版时间：" prop="bookPubTime">
+                <el-date-picker
+                  v-model="lists1.bookPubTime"
+                  type="date"
+                  placeholder="选择出版时间"
+                  :picker-options="pickerOptions"
+                  value-format="yyyy-MM-dd"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row
+            ><el-col :span="11">
               <el-form-item label="图书名称：" prop="bookName">
                 <el-input v-model="lists1.bookName"></el-input>
+              </el-form-item> </el-col
+            ><el-col :span="1"><span>&emsp;</span></el-col
+            ><el-col :span="11">
+              <el-form-item label="图书作者：" prop="bookAuthor">
+                <el-input v-model="lists1.bookAuthor"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item label="图书作者：" prop="bookAuthor">
-                <el-input v-model="lists1.bookAuthor"></el-input>
+              <el-form-item label="图书出版社：" prop="press">
+                <el-input v-model="lists1.press"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="1"><span>&emsp;</span></el-col>
+            <el-col :span="11">
+              <el-form-item label="图书单价：" prop="bookPrice">
+                <el-input v-model="lists1.bookPrice"> </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row
+            ><el-col :span="11">
+              <el-form-item label="图书一级分类：" prop="classOne">
+                <el-select
+                  v-model="lists1.classOne"
+                  @change="change1"
+                  placeholder="请选择图书一级分类"
+                >
+                  <el-option
+                    v-for="option in optionData.One"
+                    :key="option.value"
+                    :label="option.name"
+                    :value="option.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="1"><span>&emsp;</span></el-col>
+            <el-col :span="11">
+              <el-form-item label="图书库存：" prop="Inventory">
+                <el-input v-model.number="lists1.Inventory"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row
+            ><el-col :span="11">
+              <el-form-item label="图书二级分类：" prop="classTwo">
+                <el-select
+                  v-model="lists1.classTwo"
+                  placeholder="请选择图书二级分类"
+                >
+                  <el-option
+                    v-for="option in optionData.Two[index2]"
+                    :key="option.value"
+                    :label="option.name"
+                    :value="option.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="cancel1">取 消</el-button>
+          <el-button type="primary" @click="changeBook">确 定</el-button>
+        </span>
+      </el-dialog>
+    </div>
+    <div>
+      <el-dialog
+        title="新增图书"
+        :visible.sync="dialogAddVisible"
+        width="60%"
+        :before-close="handleClose"
+        center
+      >
+        <el-form
+          ref="lists1"
+          :model="lists1"
+          label-width="130px"
+          :rules="rules"
+        >
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="图书图片：" prop="bookImg">
+                <span
+                  ><el-upload
+                    class="avatar-uploader"
+                    ref="upload"
+                    action="http://47.94.131.208:8888"
+                    :show-file-list="false"
+                    :on-change="changePhotoFile"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload"
+                    :auto-upload="false"
+                    :name="this.lists1.bookImg"
+                  >
+                    <img
+                      v-if="lists1.bookImg"
+                      :src="lists1.bookImg"
+                      class="avatar"
+                    />
+                    <img v-else src="../../assets/avatar.jpg" class="avatar" />
+                    <div class="avatar-uploader-icon">
+                      <i
+                        class="el-icon-warning-outline"
+                        style="margin-right: 5px"
+                      ></i>
+                      <i style="color: #909399">点击图片进行修改</i>
+                    </div>
+                  </el-upload>
+                  <my-cropper
+                    ref="myCropper"
+                    @getFile="getFile"
+                    @upAgain="upAgain"
+                  ></my-cropper
+                ></span>
               </el-form-item>
             </el-col>
             <el-col :span="1"><span>&emsp;</span></el-col>
             <el-col :span="11">
               <el-form-item label="图书出版时间：" prop="bookPubTime">
-                <el-input v-model="lists1.bookPubTime"></el-input>
+                <el-date-picker
+                  v-model="lists1.bookPubTime"
+                  type="date"
+                  placeholder="选择出版时间"
+                  :picker-options="pickerOptions"
+                  value-format="yyyy-MM-dd"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row
+            ><el-col :span="11">
+              <el-form-item label="图书名称：" prop="bookName">
+                <el-input
+                  v-model="lists1.bookName"
+                ></el-input> </el-form-item></el-col
+            ><el-col :span="1"><span>&emsp;</span></el-col>
+            <el-col :span="11">
+              <el-form-item label="图书作者：" prop="bookAuthor">
+                <el-input v-model="lists1.bookAuthor"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
+              <el-form-item label="图书出版社：" prop="press">
+                <el-input v-model="lists1.press"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="1"><span>&emsp;</span></el-col>
+            <el-col :span="11">
+              <el-form-item label="图书单价：" prop="bookPrice">
+                <el-input v-model="lists1.bookPrice"> </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row
+            ><el-col :span="11">
               <el-form-item label="图书一级分类：" prop="classOne">
                 <el-select
                   v-model="lists1.classOne"
@@ -171,6 +352,12 @@
             </el-col>
             <el-col :span="1"><span>&emsp;</span></el-col>
             <el-col :span="11">
+              <el-form-item label="图书库存：" prop="Inventory">
+                <el-input v-model.number="lists1.Inventory"></el-input>
+              </el-form-item>
+            </el-col> </el-row
+          ><el-row
+            ><el-col :span="11">
               <el-form-item label="图书二级分类：" prop="classTwo">
                 <el-select
                   v-model="lists1.classTwo"
@@ -187,146 +374,33 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="图书单价：" prop="bookPrice">
-                <el-input v-model="lists1.bookPrice"> </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1"><span>&emsp;</span></el-col>
-            <el-col :span="11">
-              <el-form-item label="图书库存：" prop="Inventory">
-                <el-input v-model="lists1.Inventory"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogChangeVisible = false">取 消</el-button>
-          <el-button type="primary" @click="changeBook">确 定</el-button>
-        </span>
-      </el-dialog>
-    </div>
-    <div>
-      <el-dialog
-        title="新增图书"
-        :visible.sync="dialogAddVisible"
-        width="80%"
-        :before-close="handleClose"
-        center
-      >
-        <el-form ref="lists" :model="lists" label-width="110px">
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="图书图片：" prop="bookImg">
-                <span
-                  ><el-upload
-                    class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload"
-                  >
-                    <img
-                      v-if="lists.bookImg"
-                      :src="lists.bookImg"
-                      class="avatar"
-                    />
-                    <i
-                      v-else
-                      class="el-icon-plus avatar-uploader-icon"
-                    ></i> </el-upload
-                ></span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1"><span>&emsp;</span></el-col>
-            <el-col :span="11">
-              <el-form-item label="图书名称：" prop="bookName">
-                <el-input v-model="lists.bookName"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="图书作者：" prop="bookAuthor">
-                <el-input v-model="lists.bookAuthor"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1"><span>&emsp;</span></el-col>
-            <el-col :span="11">
-              <el-form-item label="图书出版时间：" prop="bookPubTime">
-                <el-input v-model="lists.bookPubTime"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="图书一级分类：" prop="classOne">
-                <el-select
-                  v-model="lists.classOne"
-                  @change="change2"
-                  placeholder="请选择图书一级分类"
-                >
-                  <el-option
-                    v-for="option in optionData.One"
-                    :key="option.value"
-                    :label="option.name"
-                    :value="option.value"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1"><span>&emsp;</span></el-col>
-            <el-col :span="11">
-              <el-form-item label="图书二级分类：" prop="classTwo">
-                <el-select
-                  v-model="lists.classTwo"
-                  placeholder="请选择图书二级分类"
-                >
-                  <el-option
-                    v-for="option in optionData.Two[index3]"
-                    :key="option.value"
-                    :label="option.name"
-                    :value="option.value"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="图书单价：" prop="bookPrice">
-                <el-input v-model="lists.bookPrice"> </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1"><span>&emsp;</span></el-col>
-            <el-col :span="11">
-              <el-form-item label="图书库存：" prop="Inventory">
-                <el-input v-model="lists.Inventory"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogAddVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addBook">确 定</el-button>
+          <el-button @click="cancel2">取 消</el-button>
+          <el-button type="primary" @click="addBook('lists1')">确 定</el-button>
         </span>
       </el-dialog>
     </div>
   </div>
 </template>
 <script>
-import echarts from "echarts";
+import MyCropper from "../cropper.vue";
+import axios from "axios";
+import { Message } from "element-ui";
 export default {
+  components: {
+    MyCropper,
+  },
   data() {
     return {
+      searchText: "",
+      isLoading: false,
       dialogChangeVisible: false,
       dialogAddVisible: false,
       itemKey: 0,
       index: 0,
       index2: 0,
-      index3: 0,
+      shop_id: "",
       optionData: {
         One: [
           { value: "网络文学", name: "网络文学" },
@@ -366,9 +440,10 @@ export default {
           bookauthor: "张三",
           classone: "小说",
           classtwo: "中国小说",
-          bookprice: 10,
-          inventory: 100,
-          bookPubTime: 2021,
+          bookprice: "10.00",
+          inventory: "100",
+          bookPubTime: "2021-1-1",
+          press: "某某出版社",
         },
         {
           bookimg: require("../../assets/kuku.png"),
@@ -376,9 +451,10 @@ export default {
           bookauthor: "李四",
           classone: "小说",
           classtwo: "外国小说",
-          bookprice: 11,
-          inventory: 101,
-          bookPubTime: 2020,
+          bookprice: "11.00",
+          inventory: "101",
+          bookPubTime: "2020-2-2",
+          press: "某某出版社",
         },
       ],
       lists1: {
@@ -387,27 +463,93 @@ export default {
         bookAuthor: "",
         classOne: "",
         classTwo: "",
-        bookPrice: 0,
-        Inventory: 0,
-        bookPubTime: 0,
-      },
-      lists: {
-        bookImg: "",
-        bookName: "",
-        bookAuthor: "",
-        classOne: "",
-        classTwo: "",
-        bookPrice: 0,
-        Inventory: 0,
-        bookPubTime: 0,
+        bookPrice: "",
+        Inventory: "",
+        bookPubTime: "",
+        press: "",
       },
       multipleSelection: [],
+      formdata: new FormData(),
+      rules: {
+        bookName: [
+          {
+            type: "string",
+            required: true,
+            message: "请输入书名",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 20,
+            message: "长度在 1 到 20 个字符",
+            trigger: "blur",
+          },
+        ],
+        bookAuthor: [
+          {
+            type: "string",
+            required: true,
+            message: "请输入作者",
+            trigger: "blur",
+          },
+        ],
+        classOne: [
+          {
+            required: true,
+            message: "请选择图书一级分类",
+            trigger: "change",
+          },
+        ],
+        classTwo: [
+          {
+            required: true,
+            message: "请选择图书二级分类",
+            trigger: "change",
+          },
+        ],
+        bookPrice: [
+          {
+            required: true,
+            pattern: /^\d+\.?\d{2,2}$/,
+            message: "请输入正确的金额（具有两位小数）",
+            trigger: "blur",
+          },
+        ],
+        Inventory: [
+          {
+            type: "integer",
+            required: true,
+            message: "请输入书本库存",
+            trigger: "blur",
+          },
+        ],
+        bookPubTime: [
+          {
+            required: true,
+            message: "请选择书本出版时间",
+            trigger: "blur",
+          },
+        ],
+        press: [
+          {
+            type: "string",
+            required: true,
+            message: "请输入出版社",
+            trigger: "blur",
+          },
+        ],
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        },
+      },
     };
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.drawPieChart();
-    });
+  computed: {
+    hasUsername() {
+      return this.$store.state.username;
+    },
   },
   methods: {
     change1() {
@@ -423,19 +565,6 @@ export default {
         this.index2 = 4;
       }
     },
-    change2() {
-      if (this.lists.classOne == "网络文学") {
-        this.index3 = 0;
-      } else if (this.lists.classOne == "教育") {
-        this.index3 = 1;
-      } else if (this.lists.classOne == "小说") {
-        this.index3 = 2;
-      } else if (this.lists.classOne == "文艺") {
-        this.index3 = 3;
-      } else if (this.lists.classOne == "青春/动漫") {
-        this.index3 = 4;
-      }
-    },
     goToManage() {
       this.$router.push("/shopManage");
     },
@@ -448,6 +577,7 @@ export default {
       this.lists1.bookPrice = this.tableData[index].bookprice;
       this.lists1.Inventory = this.tableData[index].inventory;
       this.lists1.bookPubTime = this.tableData[index].bookPubTime;
+      this.lists1.press = this.tableData[index].press;
       this.index = index;
       this.dialogChangeVisible = true;
     },
@@ -460,37 +590,95 @@ export default {
       this.tableData[this.index].bookprice = this.lists1.bookPrice;
       this.tableData[this.index].inventory = this.lists1.Inventory;
       this.tableData[this.index].bookPubTime = this.lists1.bookPubTime;
+      this.tableData[this.index].press = this.lists1.press;
+      this.dialogChangeVisible = false;
+      this.lists1.bookImg = "";
+      this.lists1.bookName = "";
+      this.lists1.bookAuthor = "";
+      this.lists1.classOne = "";
+      this.lists1.classTwo = "";
+      this.lists1.bookPrice = "";
+      this.lists1.Inventory = "";
+      this.lists1.bookPubTime = "";
+      this.lists1.press = "";
+    },
+    addBook(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          /*var temp = {
+            bookImg: "",
+            bookName: "",
+            bookAuthor: "",
+            classOne: "",
+            classTwo: "",
+            bookPrice: "",
+            Inventory: "",
+            bookPubTime: "",
+            press: "",
+          };
+          temp.bookImg = this.lists1.bookImg;
+          temp.bookName = this.lists1.bookName;
+          temp.bookAuthor = this.lists1.bookAuthor;
+          temp.classOne = this.lists1.classOne;
+          temp.classTwo = this.lists1.classTwo;
+          temp.bookPrice = this.lists1.bookPrice;
+          temp.Inventory = this.lists1.Inventory;
+          temp.bookPubTime = this.lists1.bookPubTime;
+          temp.press = this.lists1.press;*/
+          //this.tableData.unshift(this.lists1);
+          this.formdata.append("book_name", this.lists1.bookName);
+          this.formdata.append("author", this.lists1.bookAuthor);
+          this.formdata.append("price", this.lists1.bookPrice);
+          this.formdata.append("repertory", this.lists1.Inventory);
+          this.formdata.append("press", this.lists1.press);
+          this.formdata.append("print_time", this.lists1.bookPubTime);
+          this.formdata.append("main_category_id", this.lists1.classOne);
+          this.formdata.append("second_category_id", this.lists1.classTwo);
+          this.formdata.append("shop_id", this.shop_id);
+          this.formdata.append("edition", null);
+          axios({
+            url: this.$store.state.yuming + "/book/addBook",
+            method: "POST",
+            data: this.formdata,
+          }).then((res) => {
+            if (res.data.code == 200) {
+              this.$message({
+                message: "新增图书成功",
+                type: "success",
+              });
+              this.lists1 = "";
+              this.dialogAddVisible = false;
+            } else {
+              this.$message.error("新增图书失败，请重试");
+            }
+          });
+        } else {
+          return false;
+        }
+      });
+    },
+    cancel1() {
+      this.lists1.bookImg = "";
+      this.lists1.bookName = "";
+      this.lists1.bookAuthor = "";
+      this.lists1.classOne = "";
+      this.lists1.classTwo = "";
+      this.lists1.bookPrice = "";
+      this.lists1.Inventory = "";
+      this.lists1.bookPubTime = "";
+      this.lists1.press = "";
       this.dialogChangeVisible = false;
     },
-    addBook() {
-      var temp = {
-        index: this.tableData.length,
-        bookimg: "",
-        bookname: "",
-        bookauthor: "",
-        classone: "",
-        classywo: "",
-        bookprice: 0,
-        inventory: 0,
-        bookPubTime: 0,
-      };
-      temp.bookimg = this.lists.bookImg;
-      temp.bookname = this.lists.bookName;
-      temp.bookauthor = this.lists.bookAuthor;
-      temp.classone = this.lists.classOne;
-      temp.classtwo = this.lists.classTwo;
-      temp.bookprice = this.lists.bookPrice;
-      temp.inventory = this.lists.Inventory;
-      temp.bookPubTime = this.lists.bookPubTime;
-      this.tableData.unshift(temp);
-      this.lists.bookImg = "";
-      this.lists.bookName = "";
-      this.lists.bookAuthor = "";
-      this.lists.classOne = "";
-      this.lists.classTwo = "";
-      this.lists.bookPrice = 0;
-      this.lists.Inventory = 0;
-      this.lists.bookPubTime = 0;
+    cancel2() {
+      this.lists1.bookImg = "";
+      this.lists1.bookName = "";
+      this.lists1.bookAuthor = "";
+      this.lists1.classOne = "";
+      this.lists1.classTwo = "";
+      this.lists1.bookPrice = "";
+      this.lists1.Inventory = "";
+      this.lists1.bookPubTime = "";
+      this.lists1.press = "";
       this.dialogAddVisible = false;
     },
     deleteBook() {
@@ -529,122 +717,91 @@ export default {
       this.$confirm("确认关闭？")
         .then(() => {
           done();
+          this.lists1.bookImg = "";
+          this.lists1.bookName = "";
+          this.lists1.bookAuthor = "";
+          this.lists1.classOne = "";
+          this.lists1.classTwo = "";
+          this.lists1.bookPrice = "";
+          this.lists1.Inventory = "";
+          this.lists1.bookPubTime = "";
+          this.lists1.press = "";
         })
         .catch(() => {});
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG) {
-        this.$message.error("上传图书图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传图书图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
-    drawPieChart() {
-      this.chartPie = echarts.init(
-        document.getElementById("chartPie"),
-        "macarons"
-      );
-      this.chartPie.setOption({
-        //显示在上面的文字
-        tooltip: {
-          trigger: "item",
-          // formatter: "{a}<br/>{b}: <br/>{c}({d}%)",  其中 {a}指向name名称（访问来源）
-          formatter: "{b}: <br/>{c}({d}%)",
-        },
-        legend: {
-          data: ["网络文学", "教育", "小说", "文艺", "青春/动漫"],
-          right: 500,
-          orient: "vertical",
-          // 下面注释的代码是控制分类放在哪个地方,需要体验的话，直接把上面的代码注释，把下面的代码解开注释即可
-          //   data: ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"],
-          //   left: "center",
-          //   top: "bottom",
-          //   orient: "horizontal"
-        },
-        series: [
-          {
-            name: "访问来源",
-            type: "pie",
-            //圆圈的粗细
-            radius: ["50%", "80%"],
-            //圆圈的位置
-            center: ["50%", "50%"],
-            data: [
-              {
-                value: 234,
-                name: "网络文学",
-              },
-              {
-                value: 135,
-                name: "教育",
-              },
-              {
-                value: 548,
-                name: "小说",
-              },
-              {
-                value: 562,
-                name: "文艺",
-              },
-              {
-                value: 165,
-                name: "青春/动漫",
-              },
-            ],
-            //动画持续时间：2秒
-            animationDuration: 2000,
-            //控制是否显示指向文字的,默认为true
-            label: {
-              show: false,
-              position: "center",
-              //以下代码可以代表指向小文字的
-              //   show: true,
-              //   formatter: "{b} : {c} ({d}%)",
-              //   textStyle: {
-              //     color: "#333",
-              //     fontSize: 14,
-              //   },
-            },
-            itemStyle: {
-              //这里是更添加阴影
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-              },
-              //这里是更改颜色
-              normal: {
-                color: function (params) {
-                  var colorList = [
-                    "#5470c6",
-                    "#91cc75",
-                    "#fac858",
-                    "#ee6666",
-                    "#73c0de",
-                    "#3ba272",
-                    "#fc8452",
-                    "#9a60b4",
-                    "#ea7ccc",
-                  ];
-                  return colorList[params.dataIndex];
-                },
-              },
-            },
-          },
-        ],
+    //上传图片触发
+    handleCrop(file) {
+      this.$nextTick(() => {
+        this.$refs.myCropper.open(file.raw || file);
       });
     },
+    // 点击弹框重新时触发
+    upAgain() {
+      this.$refs["upload"].$refs["upload-inner"].handleClick();
+    },
+    getFile(file) {
+      this.formdata.append("img", file);
+      // 获取上传图片的本地URL，用于上传前的本地预览
+      this.lists1.bookImg = window.URL.createObjectURL(file);
+      this.$refs.myCropper.close();
+    },
+    //头像上传成功之后的方法,进行回调
+    handleAvatarSuccess(res) {
+      if (res.code === 0) {
+        this.lists1.bookImg = res.img;
+        // this.handleCrop(file);
+      } else {
+        this.$message.error("上传出错");
+      }
+    },
+    //上传图片时会被调用
+    changePhotoFile(file) {
+      this.handleCrop(file);
+    },
+    //头像上传之前的方法
+    beforeAvatarUpload(file) {
+      const isJPG =
+        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      const isLt6M = file.size / 1024 / 1024 < 6;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
+      }
+      if (!isLt6M) {
+        this.$message.error("上传头像图片大小不能超过 6MB!");
+      }
+      return isJPG && isLt6M;
+    },
+    //获取店铺信息
+    getShopInfo() {
+      axios({
+        url: this.$store.state.yuming + "/shop/getPassed",
+        method: "GET",
+        params: {
+          username: this.hasUsername,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.shop_id = data;
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getShopInfo();
+    this.isLoading = false;
   },
 };
 </script>
@@ -662,7 +819,7 @@ export default {
   width: 200px;
   margin: 20px 100px;
   position: relative;
-  right: 306px;
+  right: 250px;
 }
 .imgStyle {
   width: 100px;
@@ -678,31 +835,18 @@ export default {
   margin-left: 30px;
   border-radius: 20%;
 }
-.pie-wrap {
-  width: 100%;
-  height: 126px;
-}
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
 .avatar {
   width: 178px;
   height: 178px;
   display: block;
+}
+.title {
+  font-size: 35px;
+  padding: 30px 10px;
+  position: relative;
+  left: 180px;
+}
+.el-select {
+  width: 100%;
 }
 </style>

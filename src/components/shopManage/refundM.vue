@@ -4,12 +4,11 @@
       <div class="logo3">
         <img width="250px" src="../../assets/jwbc.png" />
       </div>
-      <el-button size="medium" @click.native="goToManage" type="danger" plain
-        >返回商家管理页面</el-button
-      >
+      <div class="title">管理平台</div>
     </div>
-    <div style="margin: 2% 18%">
-      <el-row style="margin: 0% 12% 5%">
+    <div style="margin: 2% 10%"><el-page-header @back="goToManage" content="退款管理"></el-page-header></div>
+    <div style="margin: 2% 10%">
+      <el-row style="margin: 0% 0% 5%">
         <el-card>
           <el-container>
             <el-aside width="35px"><div class="verticalBar1"></div></el-aside>
@@ -23,8 +22,8 @@
         </el-card>
       </el-row>
     </div>
-    <div style="margin: 3% 18% 0%">
-      <el-row style="margin: 0% 12% 5%">
+    <div style="margin: 3% 10% 0%">
+      <el-row style="margin: 0% 0% 5%">
         <el-card>
           <el-col :span="8" style="text-align: center">
             <p>今日新增退款订单数</p>
@@ -33,7 +32,7 @@
           <el-col :span="16" style="text-align: center">
             <p>各订单类型所占比例</p>
             <div>
-              <div id="chartPie" class="pie-wrap"></div>
+              <div id="chartPie" class="pie-wrap1"></div>
             </div>
           </el-col>
         </el-card>
@@ -312,14 +311,13 @@ export default {
         },
         legend: {
           data: [
-            "未发货",
-            "已发货",
             "正在申请退款",
             "已退款",
             "已拒绝退款",
-            "已收货",
           ],
-          right: 500,
+          right: 0,
+          top: "center",
+          itemGap: 5, //设置图例的间距
           orient: "vertical",
           // 下面注释的代码是控制分类放在哪个地方,需要体验的话，直接把上面的代码注释，把下面的代码解开注释即可
           //   data: ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"],
@@ -409,7 +407,7 @@ export default {
   width: 200px;
   margin: 20px 100px;
   position: relative;
-  right: 306px;
+  right: 250px;
 }
 .verticalBar1 {
   width: 3px;
@@ -421,8 +419,14 @@ export default {
   margin-left: 30px;
   border-radius: 20%;
 }
-.pie-wrap {
+.pie-wrap1 {
   width: 100%;
-  height: 126px;
+  height: 200px;
+}
+.title{
+  font-size: 35px;
+  padding: 30px 10px;
+  position: relative;
+  left: 180px;
 }
 </style>

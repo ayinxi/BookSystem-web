@@ -69,6 +69,13 @@
       "unicode_decimal": 58962
     },
     {
+      "icon_id": "22979386",
+      "name": "商铺",
+      "font_class": "shangpu-copy",
+      "unicode": "f14e",
+      "unicode_decimal": 61774
+    },
+    {
       "icon_id": "17967617",
       "name": "商铺",
       "font_class": "shangpu",

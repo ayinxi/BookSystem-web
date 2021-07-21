@@ -5,7 +5,7 @@
       <el-container style="margin: 0% 5%">
         <el-header style="padding: 0">
           <el-row class="rowStyle1">
-            <el-col class="colStyle" @click.native="goBackToIndex"
+            <el-col class="colStyle2" @click.native="goBackToIndex"
               >全部商品分类</el-col
             >
             <el-col>
@@ -59,7 +59,9 @@
                 style="cursor: pointer"
                 >{{ this.Lists.ClassOne }}</el-breadcrumb-item
               >
-              <el-breadcrumb-item @click.native="test" style="cursor: pointer"
+              <el-breadcrumb-item
+                @click.native="test"
+                style="cursor: pointer"
                 >{{ this.Lists.ClassTwo }}</el-breadcrumb-item
               >
               <el-breadcrumb-item>图书名称</el-breadcrumb-item>
@@ -68,31 +70,43 @@
         </el-header>
         <el-container style="margin-top: 3%">
           <el-aside width="25%">
-            <img class="imgStyle3" src="../assets/kuku.png" />
+            <img class="imgStyle3" :src="this.Lists.Img" />
           </el-aside>
           <el-main
-            ><el-link :underline="false" @click.native="goToShopIndex"
-              >店铺名称</el-link
-            >
+            ><el-link :underline="false" @click.native="goToShopIndex">{{
+              this.Lists.shopName
+            }}</el-link>
             <h2>{{ this.Lists.Name }}</h2>
-            <p style="color: gray; margin: 0%">{{ this.Lists.Author }}</p>
+            <p style="color: gray; margin: 0%">
+              {{ this.Lists.Author }} {{ this.Lists.PubTime }}出版
+              {{ this.Lists.press }}
+            </p>
             <p>
-              这是一段简介这是一段简介这是一段简介这是一段简介这是一段简介这是一段简介这是一段简介这是一段简介这是一段简介这是一段简介这是一段简介这是一段简介
+              继《无所畏》后暌违三年，冯唐全新作品。44篇全新智慧之作+10幅金句书法+35幅私人摄影作品！你可以不屠龙，但不能不磨剑。一个人有本事才是靠得住的财富。随书附赠2张冯唐字画书签！
             </p>
             <p style="color: red; font-weight: 1000; margin: 0%">
               ￥{{ this.Lists.Price }}
             </p>
-            <el-row :gutter="20" type="flex" style="padding:10px 0">
+            <el-row
+              :gutter="20"
+              type="flex"
+              style="padding: 10px 0; margin: 5% 0%"
+            >
               <el-col :span="5"
                 ><el-input-number v-model="num" :min="1"></el-input-number
               ></el-col>
-              <el-col :span="3"
-                ><el-button type="primary" class="el-icon-shopping-cart-2"
+              <el-col :span="4"
+                ><el-button
+                  type="primary"
+                  class="el-icon-shopping-cart-2"
+                  @click.native="addShoppingTrolley"
                   >加入购物车</el-button
                 ></el-col
               >
               <el-col :span="4"
-                ><el-button type="danger">立即购买</el-button></el-col
+                ><el-button type="danger" @click.native="buy"
+                  >立即购买</el-button
+                ></el-col
               >
             </el-row>
           </el-main>
@@ -103,6 +117,8 @@
 </template>
 <script>
 import Home from "./Home.vue";
+import axios from "axios";
+import { Message } from "element-ui";
 export default {
   components: {
     Home,
@@ -112,14 +128,17 @@ export default {
       activeIndex1: "",
       num: 1,
       Lists: {
-        Img: "",
-        Name: "",
-        Author: "",
-        ClassOne: "",
-        ClassTwo: "",
-        Price: 0,
-        PubTime: 0,
+        shopName: "这是一家好店",
+        Img: require("../assets/youbenshi.jpg"),
+        Name: "有本事",
+        Author: "冯唐",
+        ClassOne: "网络文学",
+        ClassTwo: "男频",
+        Price: "10.00",
+        PubTime: "2021-1-1",
+        press: "东南出版社",
       },
+      formdata: new FormData(),
     };
   },
   methods: {
@@ -127,25 +146,54 @@ export default {
       this.$router.push("/");
     },
     NetworkFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex1: "1" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "1" } });
     },
     EducationFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex1: "2" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "2" } });
     },
     NovelFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex1: "3" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "3" } });
     },
     LandAFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex1: "4" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "4" } });
     },
     YandCFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex1: "5" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "5" } });
     },
     goToShopIndex() {
       this.$router.push("/shopIndex");
     },
     test() {
-      this.$router.push({ path: "/", query: { activeIndex2: "1-1" } });
+      this.$router.push({ path: "/classSort", query: { activeIndex2: "1-1" } });
+    },
+    addShoppingTrolley() {
+      this.formdata.append("book_id", "1e285d4ef607f80871e946801839fc10");
+      this.formdata.append("sum", this.num);
+      axios({
+        url: this.$store.state.yuming + "/cartitem/addCartItem",
+        method: "POST",
+        data: this.formdata,
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+            message: "加入购物车成功",
+            type: "success",
+          });
+          this.num = 1;
+        } else {
+          this.$message.error("加入购物车失败，请重试");
+        }
+      });
+    },
+    buy() {
+      if (this.$store.state.token != "") {
+        this.$router.push("/shopping");
+      } else {
+        this.$message({
+          message: "请登录后再购买",
+          type: "error",
+        });
+      }
     },
   },
 };
@@ -161,11 +209,13 @@ export default {
   align-items: center;
   background-color: rgb(205, 92, 92);
 }
-.colStyle {
+.colStyle2 {
   text-align: center;
   font-weight: 1000;
   width: 21.93%;
   color: white;
   cursor: pointer;
+  justify-content: center;
+  align-items: center;
 }
 </style>

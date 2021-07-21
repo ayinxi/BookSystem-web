@@ -4,6 +4,7 @@ import store from './store'
 import App from './App.vue'
 import axios from 'axios'
 import ElementUI from 'element-ui';
+import { Message } from "element-ui";
 import 'element-ui/lib/theme-chalk/index.css';
 import "./assets/iconfont/iconfont.css";
 
@@ -50,13 +51,13 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(function (response) { // ①10010 token过期（30天） ②10011 token无效
   if (response.data.code === 9) {
     store.commit("clearCache");// 删除已经失效或过期的token（不删除也可以，因为登录后覆盖）    
-    this.$message('登陆已过期');
+    Message("登陆已过期")
     router.replace({
       path: '/login' // 到登录页重新获取token    
     })
-  } else if (response.data.token) { // 判断token是否存在，如果存在说明需要更新token    
-    store.commit('token', response.data.token) // 覆盖原来的token(默认一天刷新一次)
-    sessionStorage.setItem('token', response.data.token)    
+  } else if (response.headers.token) { // 判断token是否存在，如果存在说明需要更新token    
+    store.commit('token', response.headers.token) // 覆盖原来的token(默认一天刷新一次)
+    sessionStorage.setItem('token', response.headers.token)    
   }
   return response
 }, function (error) {

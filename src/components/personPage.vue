@@ -174,10 +174,159 @@
             </div>
           </div>
         </el-tab-pane>
+        <el-tab-pane label="我的收货地址" name="second">
+          <el-row v-loading="addressLoading">
+            <div style="margin-bottom: 20px">
+              <el-row>
+                <el-col :key="item.id" v-for="item in myAddressList" :span="6">
+                  <el-card class="addressCard">
+                    <el-form ref="item" :v-model="item" label-width="80px">
+                      <el-form-item label="姓名：" prop="name">
+                        <div style="display: flex; justify-content: flex-start">
+                          {{ item.name }}
+                        </div>
+                      </el-form-item>
+                      <el-form-item label="电话号码" prop="phone">
+                        <div style="display: flex; justify-content: flex-start">
+                          {{ item.phone }}
+                        </div>
+                      </el-form-item>
+                      <el-form-item label="详细地址" prop="name">
+                        <div
+                          style="
+                            display: flex;
+                            justify-content: flex-start;
+                            flex-wrap: wrap;
+                            word-break: break-all;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 1;
+                            -webkit-box-orient: vertical;
+                          "
+                          :title="item.address"
+                        >
+                          {{ item.address }}
+                        </div>
+                      </el-form-item>
+                      <el-form-item>
+                        <div style="display: flex; flex-direction: row-reverse">
+                          <el-button
+                            type="text"
+                            style="margin: 0 5px"
+                            @click="eidtAddress(item)"
+                            >编辑
+                          </el-button>
+                          <el-button type="text" style="margin: 0 5px"
+                            >删除
+                          </el-button>
+                        </div>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                </el-col>
+              </el-row>
+              <el-row
+                ><el-button
+                  size="min"
+                  icon="el-icon-setting"
+                  type="text"
+                  @click="clearNewAddress"
+                  >添加收货人信息</el-button
+                ></el-row
+              >
+              <!--删除收货人信息-->
+
+              <!--编辑收货人信息-->
+              <el-dialog title="编辑收货人信息" :visible.sync="editInfoVisible">
+                <el-form
+                  :model="editMyAddress"
+                  label-width="120px"
+                  :rules="newAddressRules"
+                >
+                  <el-form-item label="姓名" prop="name">
+                    <el-input
+                      type="text"
+                      style="width: 200px"
+                      v-model="editMyAddress.name"
+                      clearable
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item label="电话号码" prop="phone">
+                    <el-input
+                      type="text"
+                      style="width: 200px"
+                      v-model="editMyAddress.phone"
+                      clearable
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item label="详细地址" prop="address">
+                    <el-input
+                      type="textarea"
+                      maxlength="50"
+                      show-word-limit
+                      clearable
+                      style="width: 500px"
+                      rows="5"
+                      v-model="editMyAddress.address"
+                    ></el-input>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="editInfoVisible = false">取消</el-button>
+                  <el-button type="primary" @click="confirmChangeAddress"
+                    >确认编辑</el-button
+                  >
+                </div>
+              </el-dialog>
+              <!--添加收货人信息-->
+              <el-dialog title="添加收货人信息" :visible.sync="addInfoVisible">
+                <el-form
+                  ref="newAddress"
+                  :model="newAddress"
+                  label-width="120px"
+                  :rules="newAddressRules"
+                >
+                  <el-form-item label="姓名" prop="name">
+                    <el-input
+                      type="text"
+                      v-model="newAddress.name"
+                      style="width: 200px"
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item label="电话号码" prop="phone">
+                    <el-input
+                      type="text"
+                      v-model="newAddress.phone"
+                      style="width: 200px"
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item label="详细地址" prop="address">
+                    <el-input
+                      type="textarea"
+                      maxlength="50"
+                      show-word-limit
+                      clearable
+                      style="width: 500px"
+                      rows="5"
+                      v-model="newAddress.address"
+                    ></el-input>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="addInfoVisible = false">取消</el-button>
+                  <el-button type="primary" @click="addNewAddress"
+                    >确认新增</el-button
+                  >
+                </div>
+              </el-dialog>
+            </div>
+          </el-row>
+        </el-tab-pane>
         <el-tab-pane
           v-if="this.userInfo.identity == 0"
           label="申请成为商家"
-          name="second"
+          name="third"
         >
           <div
             style="display: flex; justify-content: center; align-items: center"
@@ -186,7 +335,7 @@
               ref="applyShopInfo"
               :model="applyShopInfo"
               label-width="80px"
-              :rules="rules"
+              :rules="applyRules"
             >
               <el-row>
                 <el-col>
@@ -208,8 +357,6 @@
                       action="http://47.94.131.208:8888"
                       :show-file-list="false"
                       :on-change="changePhotoFile"
-                      :on-success="handleAvatarSuccess"
-                      :before-upload="beforeAvatarUpload"
                       :auto-upload="false"
                       :name="this.applyShopInfo.img"
                     >
@@ -258,7 +405,7 @@
                       show-word-limit
                       style="width: 250px"
                     ></el-input>
-                    <div class="avatar-uploader-icon">
+                    <div>
                       <i
                         class="el-icon-warning-outline"
                         style="margin-right: 5px"
@@ -298,10 +445,111 @@
         <el-tab-pane
           v-if="this.userInfo.identity == 0"
           label="申请历史"
-          name="third"
+          name="fourth"
         >
+          <el-table
+            :data="applyHistory"
+            style="width: 100%"
+            :default-sort="{ prop: 'create_time', order: 'descending' }"
+          >
+            <el-table-column type="expand">
+              <template slot-scope="props">
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <el-row>
+                    <el-form-item label="申请理由">
+                      <span>{{ props.row.apply_reason }}</span>
+                    </el-form-item>
+                  </el-row>
+                  <el-row>
+                    <el-form-item
+                      label="审核结果"
+                      v-if="props.row.apply_status == 2"
+                    >
+                      <el-tag v-if="props.row.pass_status == 1" type="success"
+                        >已通过</el-tag
+                      >
+                      <el-tag v-if="props.row.pass_status == 2" type="danger"
+                        >已拒绝</el-tag
+                      >
+                    </el-form-item>
+                  </el-row>
+                  <el-row>
+                    <el-form-item
+                      label="审核意见"
+                      v-if="props.row.apply_status == 2"
+                    >
+                      <span>{{ props.row.check_opinion }}</span>
+                    </el-form-item>
+                  </el-row>
+                  <el-row>
+                    <el-form-item
+                      label="存在状态"
+                      v-if="props.row.exist_status != -1"
+                    >
+                      <el-tag v-if="props.row.exist_status == 1" type="success"
+                        >未注销</el-tag
+                      >
+                      <el-tag v-if="props.row.exist_status == 2" type="warning"
+                        >已注销</el-tag
+                      >
+                    </el-form-item>
+                  </el-row>
+                </el-form>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="create_time"
+              label="申请时间"
+              sortable
+            ></el-table-column>
+            <el-table-column label="店铺头像">
+              <template slot-scope="scope">
+                <el-popover placement="right" title="" trigger="hover">
+                  <img class="img-max" :src="scope.row.avatar_b" />
+                  <img
+                    class="img-min"
+                    slot="reference"
+                    :src="scope.row.avatar_s"
+                    :alt="scope.row.avatar_s"
+                    style="max-height: 50px; max-width: 130px"
+                  />
+                </el-popover>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="shop_name"
+              label="店铺名称"
+            ></el-table-column>
+            <el-table-column
+              prop="shopper_name"
+              label="店主名称"
+            ></el-table-column>
+            <el-table-column prop="apply_status" label="审核状态">
+              <template v-slot="x">
+                <el-tag v-if="x.row.apply_status == 1" type="warning"
+                  >未审核</el-tag
+                >
+                <el-tag v-if="x.row.apply_status == 2" type="success"
+                  >已审核</el-tag
+                >
+                <el-tag v-if="x.row.apply_status == 3" type="info"
+                  >已取消</el-tag
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template v-slot="x">
+                <el-button
+                  size="medium"
+                  v-if="x.row.apply_status == 1"
+                  type="text"
+                  >撤销</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
         </el-tab-pane>
-        <el-tab-pane v-else label="我的店铺" name="fourth">
+        <el-tab-pane v-else label="我的店铺" name="fifth">
           <div
             style="display: flex; justify-content: center; align-items: center"
           >
@@ -311,7 +559,7 @@
               label-width="80px"
               label-position="left"
             >
-              <el-row style="margin-top: 20px">
+              <el-row style="margin-top: 30px">
                 <el-col>
                   <el-form-item label="店铺封面" prop="img">
                     <img
@@ -346,8 +594,18 @@
                       show-score
                       text-color="#ff9900"
                       score-template="{value}"
+                      style="margin-top: 10px"
                     >
                     </el-rate>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-form-item>
+                    <el-button type="text" @click="gotoShopManager"
+                      >点击管理我的商铺</el-button
+                    >
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -372,39 +630,100 @@ export default {
       imgUrl: require("../assets/avatar.jpg"),
       orderId: "",
       isLoading: false,
+      //收货地址loading
+      addressLoading:false,
       activeName: "first",
+      //是否上传了头像
+      hasShopAvatar: false,
       userInfo: {
         avatar_s: "",
         username: "",
         name: "",
         password: "",
-        identity: 0,
+        identity: "",
       },
+      //申请店铺
       applyShopInfo: {
         img: "",
         shopper_name: "",
         shop_name: "",
         apply_reason: "",
       },
+      //店铺信息
       shopInfo: {
-        apply_status: -1,
-        shoopper_name: "",
+        apply_status: "",
+        shopper_name: "",
         shop_name: "",
         avatar_b: "",
-        rate: 3.7,
+        rate: "",
       },
+      //店铺申请历史信息
       applyHistory: [
         {
           avatar_b: "",
           shop_name: "",
-          shoopper_name: "",
+          shopper_name: "",
           apply_reason: "",
+          apply_status: "",
+          pass_status: "",
+          exist_status: "",
+          check_opinion: "",
+        },
+      ],
+      //收货地址
+      //我的收货地址
+      editInfoVisible: false,
+      addInfoVisible: false,
+      radio: 0,
+      newAddress: {
+        name: "",
+        phone: "",
+        address: "",
+      },
+      editMyAddress: {
+        id: "",
+        name: "",
+        phone: "",
+        address: "",
+      },
+      myAddressList: [
+        {
+          id: "",
+          name: "",
+          phone: "",
+          address: "",
         },
       ],
       //评分
       value: 0,
       dialogVisible: false,
-      rules: {
+      newAddressRules: {
+        phone: [
+          { required: true, message: "电话号码不得为空", trigger: "blur" },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error("请输入电话号码"));
+              } else if (!/^1\d{10}$/.test(value)) {
+                callback(new Error("请输入正确的11位手机号码"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "blur",
+          },
+        ],
+        name: [
+          { required: true, message: "姓名不得为空", trigger: "blur" },
+          { max: 10, message: "姓名不得超过十个字", trigger: "blur" },
+        ],
+        address: [
+          { required: true, message: "地址不得为空", trigger: "blur" },
+          { max: 50, message: "地址不得超过五十个字", trigger: "blur" },
+        ],
+      },
+      applyRules: {
+        img: [{ required: true, message: "店铺头像不得为空", trigger: "blur" }],
         shopper_name: [
           { required: true, message: "店主名不得为空", trigger: "blur" },
         ],
@@ -433,8 +752,13 @@ export default {
     gotoChange() {
       this.$router.push("/change");
     },
+    gotoShopManager() {
+      this.$router.push("/shopManage");
+    },
     //跳转收货地址页面
-    gotoAddress() {},
+    gotoAddress() {
+      this.activeName = "second";
+    },
     //跳转全部页面
     gotoAllOrder() {
       this.orderId = 0;
@@ -460,31 +784,149 @@ export default {
       this.orderId = 4;
       this.$router.push("/userOrder/" + this.orderId);
     },
-    //确认申请成为商家
-    confirmApply() {
-      this.formdata.append("shopper_name", this.applyShopInfo.shopper_name);
-      this.formdata.append("shop_name", this.applyShopInfo.shop_name);
-      this.formdata.append("apply_reason", this.applyShopInfo.apply_reason);
+    //获取用户的收货地址
+    getUserAddress() {
       axios({
-        url: this.$store.state.yuming + "/registerShop",
-        method: "POST",
-        data: this.formdata,
-        headers: {
-          "Content-Type": "multipart/form-data",
+        url: this.$store.state.yuming + "/user/address/getAll",
+        method: "GET",
+        params: {
+          address: this.newAddress.address,
+          phone: this.newAddress.phone,
+          name: this.newAddress.name,
         },
       }).then((res) => {
         if (res.data.code == 200) {
-          this.$message({
-            message: "申请成功",
-            type: "success",
-          });
+          this.myAddressList = res.data.data;
         } else {
-          this.$message.error("申请失败，请重试");
+          this.$message.error("获取收货地址，请重试");
         }
       });
     },
+    //清空newAddress
+    clearNewAddress() {
+      this.newAddress.name = "";
+      this.newAddress.address = "";
+      this.newAddress.phone = "";
+      this.addInfoVisible = true;
+    },
+    //新增收货地址
+    addNewAddress() {
+      this.addInfoVisible = false;
+      axios({
+        url: this.$store.state.yuming + "/user/address/add",
+        method: "POST",
+        params: {
+          address: this.newAddress.address,
+          phone: this.newAddress.phone,
+          name: this.newAddress.name,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.addressLoading=true;
+          this.getUserAddress();
+          this.addressLoading=false;
+          this.$message({
+            message: "新增成功",
+            type: "success",
+          });
+        } else {
+          this.$message.error("新增失败，请重试");
+        }
+      });
+    },
+    //编辑收货地址
+    eidtAddress(e) {
+      this.editInfoVisible = true;
+      this.editMyAddress.id = e.id;
+      this.editMyAddress.name = e.name;
+      this.editMyAddress.phone = e.phone;
+      this.editMyAddress.address = e.address;
+    },
+    //确认编辑收货地址
+    confirmChangeAddress() {
+      this.editInfoVisible = false;
+      axios({
+        url: this.$store.state.yuming + "/user/address/update",
+        method: "POST",
+        params: {
+          addressId: this.editMyAddress.id,
+          address: this.editMyAddress.address,
+          name: this.editMyAddress.name,
+          phone: this.editMyAddress.phone,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.addressLoading=true;
+          this.getUserAddress();
+          this.addressLoading=false;
+          this.$message({
+            message: "编辑成功",
+            type: "success",
+          });
+        } else {
+          this.$message.error("编辑失败，请重试");
+        }
+      });
+    },
+    //确认申请成为商家
+    confirmApply() {
+      if (this.hasShopAvatar == false) {
+        this.$message.error("必须上传店铺头像哦~");
+        this.applyShopInfo.img = "";
+        this.applyShopInfo.shopper_name = "";
+        this.applyShopInfo.shop_name = "";
+        this.applyShopInfo.apply_reason = "";
+      } else {
+        this.formdata.append("shopper_name", this.applyShopInfo.shopper_name);
+        this.formdata.append("shop_name", this.applyShopInfo.shop_name);
+        this.formdata.append("apply_reason", this.applyShopInfo.apply_reason);
+        axios({
+          url: this.$store.state.yuming + "/registerShop",
+          method: "POST",
+          data: this.formdata,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }).then((res) => {
+          if (res.data.code == 200) {
+            this.$message({
+              message: "申请成功",
+              type: "success",
+            });
+            this.applyShopInfo.img = "";
+            this.applyShopInfo.shopper_name = "";
+            this.applyShopInfo.shop_name = "";
+            this.applyShopInfo.apply_reason = "";
+          } else {
+            this.$message.error("申请失败，请重试");
+          }
+        });
+      }
+    },
     //获取申请店铺历史信息
-    getApplyHistory() {},
+    getApplyHistory() {
+      axios({
+        url: this.$store.state.yuming + "/user/getAllShop",
+        method: "GET",
+        params: {
+          username: this.hasUsername,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.applyHistory = data;
+          } else {
+            this.$message.error("获取店铺申请历史信息失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
     //获取用户信息
     getUserInfo() {
       axios({
@@ -498,6 +940,7 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.userInfo = data;
+            this.$store.commit("role", data.identity);
           } else {
             this.$message.error("获取用户信息失败");
             this.$router.push("/");
@@ -539,6 +982,11 @@ export default {
           });
         });
     },
+    async isLoadShop() {
+      if (this.$store.state.role == 1) {
+        await this.getShopInfo();
+      }
+    },
     //上传图片触发
     handleCrop(file) {
       this.$nextTick(() => {
@@ -551,50 +999,52 @@ export default {
     },
     getFile(file) {
       this.formdata.append("img", file);
+      this.hasShopAvatar = true;
       // 获取上传图片的本地URL，用于上传前的本地预览
-      this.imgUrl=window.URL.createObjectURL(file)
+      this.applyShopInfo.img = window.URL.createObjectURL(file);
       this.$refs.myCropper.close();
     },
-    //头像上传成功之后的方法,进行回调
-    handleAvatarSuccess(res) {
-      if (res.code === 0) {
-        this.userInfo.avatar_b = res.img;
-        // this.handleCrop(file);
-      } else {
-        this.$message.error("上传出错");
-      }
+    // 提取文件后缀名
+    getSuffix(str) {
+      const fileExtension = str.substring(str.lastIndexOf(".") + 1);
+      return fileExtension;
     },
     //上传图片时会被调用
     changePhotoFile(file) {
-      this.handleCrop(file);
-    },
-    //头像上传之前的方法
-    beforeAvatarUpload(file) {
-      const isJPG =
-        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      let type = this.getSuffix(file.name);
       const isLt6M = file.size / 1024 / 1024 < 6;
-
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
+      if (
+        type == "JPG" ||
+        type == "JPEG" ||
+        type == "PNG" ||
+        type == "jpg" ||
+        type == "png" ||
+        type == "jpge"
+      ) {
+        if (!isLt6M) {
+          this.$message.error("上传头像图片大小不能超过 6MB!");
+        } else {
+          this.handleCrop(file);
+        }
+      } else {
+        this.$message.error("上传头像图片只能是 JPG、JPEG或PNG 格式!");
       }
-      if (!isLt6M) {
-        this.$message.error("上传头像图片大小不能超过 6MB!");
-      }
-      return isJPG && isLt6M;
     },
   },
   async created() {
     this.isLoading = true;
     await this.getUserInfo();
-    if (this.$store.state.role == 1) {
-      await this.getShopInfo();
+    await this.isLoadShop();
+    if (this.$store.state.role == 0) {
+      await this.getApplyHistory();
     }
+    await this.getUserAddress();
     this.isLoading = false;
   },
 };
 </script>
 
-<style scoped>
+<style  scoped>
 .header {
   display: flex;
   justify-content: flex-start;
@@ -647,17 +1097,31 @@ export default {
   height: 150px;
   border-radius: 50%;
 }
-.bbb {
-  background: url("../assets/3.jpg") no-repeat;
-  background-position: center;
-  height: 20%;
-  width: 100%;
-  background-size: cover;
-  position: absolute;
+.img-min {
+  width: 50px;
+  height: 50px;
 }
-.logo {
-  display: flex;
-  justify-content: center;
+.img-max {
+  width: 200px;
+  height: 200px;
+}
+.addressCard {
+  width: 300px;
+  height: 250px;
   margin: 20px;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+.text {
+  font-size: 14px;
+}
+.item {
+  margin-bottom: 18px;
 }
 </style>

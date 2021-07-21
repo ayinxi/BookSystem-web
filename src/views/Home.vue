@@ -8,7 +8,7 @@
           v-model="input"
           style="width: 500px"
         >
-          <el-button slot="append" icon="el-icon-search"> </el-button>
+          <el-button slot="append" icon="el-icon-search" @click.native="goToSearch"> </el-button>
         </el-input>
       </div>
       <div v-if="hasRole">
@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      input: " ",
+      input: "",
     };
   },
   computed: {
@@ -67,6 +67,10 @@ export default {
     },
   },
   methods: {
+    goToSearch() {
+      this.$store.commit("gobalSearchText",this.input);
+      this.$router.push("/searchBook");
+    },
     gotoSign() {
       this.$router.push("/sign");
     },

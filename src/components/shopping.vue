@@ -565,7 +565,6 @@ export default {
 {
   font-size: 13px;
 }
-
 .shop-name{
   font-size: 13px;
 }

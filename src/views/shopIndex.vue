@@ -51,8 +51,8 @@
         </el-header>
         <el-container>
           <el-aside width="18%" align="center">
-            <p>{{ this.shop.shopname }}</p>
             <img class="imgStyle2" :src="this.shop.shopimg" />
+            <p>{{ this.shop.shopname }}</p>
             <el-rate
               v-model="this.shop.shoprate"
               disabled
@@ -73,6 +73,7 @@
                 :key="book.Name"
                 v-show="book.Show"
               >
+              <el-card style="width: 90%; margin: 5%">
                 <el-container>
                   <el-header
                     style="width: 100%; height: 200px; align-items: center"
@@ -97,6 +98,7 @@
                     </p>
                   </el-main>
                 </el-container>
+              </el-card>
               </el-col>
             </el-row>
             <el-pagination
@@ -447,6 +449,7 @@ export default {
 .imgStyle2 {
   width: 80%;
   height: 200px;
+  margin-top:100px;
 }
 .rowStyle {
   display: flex;

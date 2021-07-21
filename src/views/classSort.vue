@@ -1,6 +1,59 @@
 <template>
   <div>
-    <Home />
+    <div>
+      <div class="bbb"></div>
+      <div class="header">
+        <div class="hasRole ? search2 :search2">
+          <el-input
+            placeholder="给孩子的第一本编程书籍"
+            v-model="input"
+            style="width: 500px"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click.native="goToSearch"
+            >
+            </el-button>
+          </el-input>
+        </div>
+        <div v-if="hasRole">
+          <el-row class="shopping">
+            <el-col :span="10">
+              <el-badge :value="12" class="shopping">
+                <el-button size="meduim" icon="el-icon-shopping-cart-2" @click.native="gotoShopCar"
+                  >我的购物车</el-button
+                >
+              </el-badge>
+            </el-col>
+            <el-col :span="4" class="pageperson">
+              <el-button
+                size="meduim"
+                class="pageperson"
+                icon="el-icon-s-custom"
+                @click="gotoPersonPage"
+                >个人主页</el-button
+              >
+            </el-col>
+            <el-col @click.native="loginOut" style="margin-left: 30px">
+              <i class="iconfont-tuichu" style="font-size: 20px" />
+            </el-col>
+          </el-row>
+        </div>
+        <div v-else>
+          <el-row class="hasNoRole">
+            <el-col>
+              <el-button size="meduim" @click="gotoSign">注册</el-button>
+            </el-col>
+            <el-col style="margin: 20px 0">
+              <el-button size="meduim" class="pageperson" @click="gotoLogin"
+                >登陆</el-button
+              >
+            </el-col>
+          </el-row>
+        </div>
+      </div>
+    </div>
     <div>
       <el-container style="margin: 0% 5%">
         <el-container>
@@ -14,7 +67,7 @@
               class="el-menu-vertical-demo"
               :default-active="activeIndex2"
             >
-              <el-menu-item index="1">
+              <el-menu-item index="1" @click.native="NetworkFilter">
                 <i class="el-icon-reading"></i>
                 <span
                   slot="title"
@@ -38,7 +91,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >女频</el-menu-item
               >
-              <el-menu-item index="2">
+              <el-menu-item index="2" @click.native="EducationFilter">
                 <i class="el-icon-medal-1"></i>
                 <span
                   slot="title"
@@ -62,7 +115,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >教辅资料</el-menu-item
               >
-              <el-menu-item index="3">
+              <el-menu-item index="3" @click.native="NovelFilter">
                 <i class="el-icon-notebook-1"></i>
                 <span
                   slot="title"
@@ -86,7 +139,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >外国小说</el-menu-item
               >
-              <el-menu-item index="4">
+              <el-menu-item index="4" @click.native="LandAFilter">
                 <i class="el-icon-collection"></i>
                 <span
                   slot="title"
@@ -110,7 +163,7 @@
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >艺术</el-menu-item
               >
-              <el-menu-item index="5">
+              <el-menu-item index="5" @click.native="YandCFilter">
                 <i class="el-icon-magic-stick"></i>
                 <span
                   slot="title"
@@ -189,7 +242,7 @@
                     <el-image
                       class="imgStyle1"
                       :src="book.Img"
-                      @click.native="goToBookInfo()"
+                      @click.native="goToBookInfo"
                     >
                     </el-image>
                   </el-header>
@@ -199,7 +252,7 @@
                     <el-link
                       :underline="false"
                       class="book-name"
-                      @click="goToBookInfo()"
+                      @click="goToBookInfo"
                       >{{ book.Name }}</el-link
                     >
                     <p style="color: rgb(128, 192, 192); margin: 0%">
@@ -227,16 +280,14 @@
   </div>
 </template>
 <script>
-import Home from "./Home.vue";
 export default {
-  components: {
-    Home,
-  },
   data() {
     return {
       activeIndex2: " ",
       currentPage: 1,
       pageSize: 16,
+      isLoading: false,
+      input: "",
       Lists: [
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -477,7 +528,37 @@ export default {
       ],
     };
   },
+  computed: {
+    hasRole() {
+      return this.$store.state.roleHasLoad;
+    },
+    hasLogin() {
+      return this.$store.state.token;
+    },
+  },
   methods: {
+    goToSearch() {
+      this.$store.commit("gobalSearchText",this.input);
+      this.$router.push("/searchBook");
+    },
+    gotoSign() {
+      this.$router.push("/sign");
+    },
+    gotoLogin() {
+      this.$router.push("/login");
+    },
+    gotoShopCar() {
+      this.$router.push("/shopping")
+    },
+    gotoPersonPage() {
+      this.$router.push("/person");
+    },
+    loginOut() {
+      this.isLoading = true;
+      this.$store.commit("clearCache");
+      sessionStorage.removeItem("token");
+      this.isLoading = false;
+    },
     showAll() {
       this.$router.push("/");
     },
@@ -643,5 +724,54 @@ export default {
 }
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
+}
+.bbb {
+  background: url("../assets/3.jpg") no-repeat;
+  background-position: center;
+  height: 20%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
+}
+.header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-left: 10%;
+  margin-right: 10%;
+  height: 20%;
+}
+.search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  margin-left: 500px;
+}
+.search2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  margin-left: 350px;
+}
+.shopping {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+.hasNoRole {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  margin-left: 50px;
+}
+.pageperson {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
 }
 </style>
