@@ -111,6 +111,7 @@
             </el-row>
           </el-main>
         </el-container>
+        <div style="font-size:25px"><el-divider content-position="left">用户评价</el-divider></div>
         <el-footer>
           <div v-for="item in evaluationList" :key="item.userName">
             <el-card style="margin:0 0 20px">

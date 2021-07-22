@@ -83,14 +83,14 @@
             <template slot-scope="scope"
               ><el-button
                 type="text"
-                style="font-size: 18px"
+                style="font-size: 15px"
                 @click="handleInfo(scope.$index, scope.row)"
                 >查看详情</el-button
               >
               <el-divider direction="vertical"></el-divider>
               <el-button
                 type="text"
-                style="font-size: 18px"
+                style="font-size: 15px"
                 @click="handleConfirm(scope.$index, scope.row)"
                 :disabled="
                   scope.row.state == '已退款' ||
@@ -102,7 +102,7 @@
               <el-divider direction="vertical"></el-divider>
               <el-button
                 type="text"
-                style="font-size: 18px"
+                style="font-size: 15px"
                 @click="handleRefuse(scope.$index, scope.row)"
                 :disabled="
                   scope.row.state == '已发货' || scope.row.state == '已收货'

@@ -79,7 +79,7 @@
             <template slot-scope="scope"
               ><el-button
                 type="text"
-                style="font-size:20px"
+                style="font-size:15px"
                 @click="handleChange(scope.$index, scope.row)"
                 >修改图书信息</el-button
               >

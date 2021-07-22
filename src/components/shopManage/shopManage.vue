@@ -430,9 +430,6 @@ export default {
   width: 100%;
   height: 200px;
 }
-.el-card__body {
-  width: 100%;
-}
 .pie-wrap {
   width: 100%;
   height: 202.98px;

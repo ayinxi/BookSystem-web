@@ -38,19 +38,25 @@
               >
               </el-rate>
             </p>
-            <el-button type="text" @click.native="dialogChangeVisible = true" style="font-size:18px"
+            <el-button
+              type="text"
+              @click.native="dialogChangeVisible = true"
+              style="font-size: 18px"
               >更改店铺信息</el-button
             >
-            <el-button type="text" @click.native="logoutShop" style="font-size:18px"
+            <el-button
+              type="text"
+              @click.native="logoutShop"
+              style="font-size: 18px"
               >注销店铺</el-button
             >
           </el-main>
-        </el-container>
-      </el-card>
+        </el-container> </el-card
+      ><div style="font-size:25px"><el-divider content-position="left">用户评价</el-divider></div>
       <div v-for="item in evaluationList" :key="item.userName">
         <el-card style="margin: 10px 0">
           <el-container>
-            <el-aside style="width: 160px; text-align: center">
+            <el-aside style="width: 180px; text-align: center">
               <el-image class="avatar" :src="item.userImg"></el-image>
               <p>{{ item.userName }}</p>
             </el-aside>
@@ -370,8 +376,8 @@ export default {
   left: 180px;
 }
 .avatar {
-  width: 150px;
-  height: 150px;
+  width: 178px;
+  height: 178px;
   border-radius: 50%;
 }
 </style>
