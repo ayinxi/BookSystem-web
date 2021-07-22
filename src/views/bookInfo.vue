@@ -111,6 +111,27 @@
             </el-row>
           </el-main>
         </el-container>
+        <el-footer>
+          <div v-for="item in evaluationList" :key="item.userName">
+            <el-card style="margin:0 0 20px">
+              <el-container>
+              <el-aside style="width:160px;text-align:center">
+                <el-image class="avatar" :src="item.userImg"></el-image>
+                <p>{{ item.userName }}</p>
+              </el-aside>
+              <el-main>
+                <el-rate
+                  v-model="item.rate"
+                  disabled
+                  score-template="{value}"
+                >
+                </el-rate>
+                <p>{{ item.evaluation }}</p>
+              </el-main>
+              </el-container>
+            </el-card>
+          </div>
+        </el-footer>
       </el-container>
     </div>
   </div>
@@ -137,6 +158,20 @@ export default {
         PubTime: "2021-1-1",
         press: "东南出版社",
       },
+      evaluationList: [
+        {
+          userName: "芜湖",
+          userImg: require("../assets/avatar.jpg"),
+          rate: 5,
+          evaluation: "这本书真好看",
+        },
+        {
+          userName: "胃口很挑",
+          userImg: require("../assets/avatar.jpg"),
+          rate: 1,
+          evaluation: "太烂了",
+        },
+      ],
       formdata: new FormData(),
     };
   },
@@ -239,5 +274,10 @@ export default {
   cursor: pointer;
   justify-content: center;
   align-items: center;
+}
+.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
 }
 </style>

@@ -96,7 +96,7 @@
         style="margin-left: 80%"
         >新增图书</el-button
       >
-      <el-button size="medium" type="danger" @click.native="deleteBook()"
+      <el-button size="medium" type="warning" @click.native="deleteBook()"
         >下架所选图书</el-button
       >
     </div>

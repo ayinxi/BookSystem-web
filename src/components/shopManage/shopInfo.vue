@@ -38,15 +38,30 @@
               >
               </el-rate>
             </p>
-            <el-button type="text" @click.native="dialogChangeVisible = true"
+            <el-button type="text" @click.native="dialogChangeVisible = true" style="font-size:18px"
               >更改店铺信息</el-button
             >
-            <el-button type="text" @click.native="logoutShop"
+            <el-button type="text" @click.native="logoutShop" style="font-size:18px"
               >注销店铺</el-button
             >
           </el-main>
         </el-container>
       </el-card>
+      <div v-for="item in evaluationList" :key="item.userName">
+        <el-card style="margin: 10px 0">
+          <el-container>
+            <el-aside style="width: 160px; text-align: center">
+              <el-image class="avatar" :src="item.userImg"></el-image>
+              <p>{{ item.userName }}</p>
+            </el-aside>
+            <el-main>
+              <el-rate v-model="item.rate" disabled score-template="{value}">
+              </el-rate>
+              <p>{{ item.evaluation }}</p>
+            </el-main>
+          </el-container>
+        </el-card>
+      </div>
     </div>
     <el-dialog
       title="更改店铺信息"
@@ -129,6 +144,20 @@ export default {
         avatar_b: "",
         rate: 5,
       },
+      evaluationList: [
+        {
+          userName: "芜湖",
+          userImg: require("../../assets/avatar.jpg"),
+          rate: 5,
+          evaluation: "这本书真好看",
+        },
+        {
+          userName: "胃口很挑",
+          userImg: require("../../assets/avatar.jpg"),
+          rate: 1,
+          evaluation: "太烂了",
+        },
+      ],
       formdata: new FormData(),
       rules: {
         shop_name: [
@@ -201,7 +230,7 @@ export default {
                 type: "success",
                 message: "注销成功",
               });
-              this.$router.push("/person")
+              this.$router.push("/person");
             } else {
               this.$message.error("注销失败");
             }
