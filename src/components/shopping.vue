@@ -9,7 +9,7 @@
         <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
       </div>
       <div class="title" style="margin-right:250px">
-        <el-page-header v-if="page == 0" content="购物车"></el-page-header>
+        <el-page-header v-if="page == 0" @back="gotoHome" content="购物车"></el-page-header>
         <el-page-header
           v-if="page == 1"
           @back="page = 0"
@@ -116,7 +116,7 @@
       </el-row>
       </el-card>
     </footer>
-      </div>
+    </div>
 
 
 
@@ -245,6 +245,60 @@
           <el-row>
             <h3>送货清单</h3>
           </el-row>
+          <header>
+      <el-card class="header-card">
+      <el-row>
+        <el-col :span="14" class="table-header-item">商品信息</el-col>
+        <el-col :span="4" class="table-header-item">价格(元)</el-col>
+        <el-col :span="4" class="table-header-item">数量</el-col>
+        <el-col :span="2" class="table-header-item">小计(元)</el-col>
+      </el-row>
+      </el-card>
+    </header>
+    <container class="table-container">
+      <div v-for="(item,index) in bookList" :key="index">
+        <el-card style="margin: 20px 0">
+        <el-row style="margin:10px">
+          <el-col class="shop-name"><i class="el-icon-goods"></i> {{item.book_merchant}}</el-col>
+        </el-row>
+        <div class="books">
+          <el-row v-for="(books,idx) in item.children" :key="idx" style="margin:10px">
+            <!--<el-divider v-if="idx!=0"></el-divider>-->
+            <el-col :span="2">
+              <img :src="books.book_img" style="height:70px" />
+            </el-col>
+            <el-col :span="9">
+              <div style="margin-right:30px" class="book-name">{{books.book_name}}</div>
+              <div class="book-detail">作者：{{books.book_writer}}</div>
+              <div class="book-detail">出版社：{{books.book_publish}}</div>
+            </el-col>
+            <el-col :span="4" :offset="3">
+              <div style="margin:25px 0" class="table-unitprice">¥{{books.book_unitPrice}}</div>
+            </el-col>
+            <el-col :span="2">
+              <div style="margin:20px 0">{{books.book_num}}</div>
+            </el-col>
+            <el-col :span="2" :offset="2">
+              <div style="margin:25px 0" class="table-price">¥{{books.book_unitPrice*books.book_num}}</div>
+            </el-col>
+          </el-row>
+        </div>
+        </el-card>
+      </div>
+    </container>
+    <footer>
+      <el-card>
+      <el-row>
+        <el-col :span="18" :offset="1" class="table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
+        <el-col :span="3" class="table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
+        <el-col :span="2" class="table-footer-item" style="margin-top:9px">
+          <el-button size="max" type="danger" round="true" @click="page = 2">提交订单</el-button>
+        </el-col>
+      </el-row>
+      </el-card>
+    </footer>
+      </div>
+      <!--
           <el-row>
             <el-table :data="selectList" style="width: 100%">
               <el-table-column label="书籍图片">
@@ -301,6 +355,7 @@
               ></el-col
             >
           </el-row>
+          -->
         </div>
       </div>
 
@@ -321,7 +376,7 @@
         </el-row>
       </div>
     </div>
-  </div>
+  <!--</div>-->
 </template>
 
 
@@ -461,6 +516,10 @@ export default {
     },
   },
   methods: {
+    //回到主页
+    gotoHome() {
+      this.$router.push("/");
+    },
     //选择所有的购物车商品
     check_all() {
         this.bookList[0].this_all=true;
