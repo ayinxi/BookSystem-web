@@ -13,13 +13,11 @@
             </div>
           </el-col>
           <el-col :span="12">
-            <div
-              style="margin:60px 0 60px 20px;display:flex;justify-content:center;align-item:center"
-            >
+            <div class="hasRole ? search1 : search2 ">
               <el-input
                 placeholder="给孩子的第一本编程书籍"
                 v-model="input"
-                style="width: 500px"
+                style="width:500px"
               >
                 <el-button
                   slot="append"
@@ -35,8 +33,8 @@
               </el-input>
             </div>
           </el-col>
-          <el-col :span="6">
-            <div v-if="hasRole" style="margin-left: 20px">
+          <el-col :span="6" v-if="hasRole">
+            <div style="margin-left: 20px">
               <el-row class="shopping">
                 <el-col :span="10">
                   <el-badge
@@ -77,7 +75,9 @@
                 </el-col>
               </el-row>
             </div>
-            <div v-else>
+          </el-col>
+          <el-col :span="6" v-else>
+            <div style="margin-left: 150px">
               <el-row class="hasNoRole">
                 <el-col>
                   <el-button size="meduim" @click="gotoSign">注册</el-button>
@@ -348,7 +348,12 @@
                 <el-card style="width: 90%; margin: 5%">
                   <el-container>
                     <el-header
-                      style="width: 100%; height: 200px; align-items: center;margin-top:10px"
+                      style="
+                        width: 100%;
+                        height: 200px;
+                        align-items: center;
+                        margin-top: 10px;
+                      "
                     >
                       <el-image
                         class="imgStyle1"
@@ -358,7 +363,12 @@
                       </el-image>
                     </el-header>
                     <el-main
-                      style="color: black; padding-top: 0; text-align: center;padding-bottom:10px"
+                      style="
+                        color: black;
+                        padding-top: 0;
+                        text-align: center;
+                        padding-bottom: 10px;
+                      "
                     >
                       <el-link
                         :underline="false"
@@ -438,7 +448,12 @@
               <el-card style="width: 90%; margin: 5%">
                 <el-container>
                   <el-header
-                    style="width: 100%; height: 150px; align-items: center;margin-top:10px"
+                    style="
+                      width: 100%;
+                      height: 150px;
+                      align-items: center;
+                      margin-top: 10px;
+                    "
                   >
                     <el-image
                       class="imgStyle4"
@@ -448,7 +463,12 @@
                     </el-image>
                   </el-header>
                   <el-main
-                    style="color: black; padding-top:0; text-align: center;padding-bottom:10px"
+                    style="
+                      color: black;
+                      padding-top: 0;
+                      text-align: center;
+                      padding-bottom: 10px;
+                    "
                   >
                     <el-link
                       :underline="false"
@@ -486,7 +506,7 @@ import { Message } from "element-ui";
 export default {
   data() {
     return {
-      goodsNum:"",
+      goodsNum: "",
       activeIndex1: "1",
       activeIndex2: " ",
       currentPage: 1,
@@ -851,20 +871,20 @@ export default {
     getGoodsNum() {
       axios({
         url: this.$store.state.yuming + "/cartitem/getNum",
-         method: "GET",
+        method: "GET",
       })
         .then((res) => {
           const { code, data } = res.data;
           if (code == "200") {
-           this.goodsNum = data;
+            this.goodsNum = data;
           } else {
             this.$message.error("获取店铺状态失败,请刷新");
           }
         })
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
-         });
-     },
+        });
+    },
     getAllCategory() {
       axios({
         url: this.$store.state.yuming + "/category/getAll",
@@ -886,7 +906,9 @@ export default {
   },
   async created() {
     this.isLoading = true;
-    await this.getGoodsNum();
+    if (this.$store.state.token) {
+      await this.getGoodsNum();
+    }
     await this.getAllCategory();
     this.isLoading = false;
   },
@@ -999,5 +1021,17 @@ export default {
   display: inline-block;
   background-color: rgb(205, 92, 92);
   color: white;
+}
+.search1 {
+  margin: 60px 0 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.search2 {
+  margin: 60px 0px 60px 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

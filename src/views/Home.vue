@@ -120,7 +120,9 @@ export default {
   },
   async created() {
     this.isLoading = true;
-    await this.getGoodsNum();
+    if (this.$store.state.token) {
+      await this.getGoodsNum();
+    }
     this.isLoading = false;
   },
 };
