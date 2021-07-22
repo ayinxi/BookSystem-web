@@ -13,7 +13,7 @@
       <el-row style="margin: 0% 0% 5%">
         <el-card>
           <el-container>
-            <el-aside width="35px"><div class="verticalBar1"></div></el-aside>
+            <el-aside style="width:35px;padding-top: 10px; padding-bottom: 20px"><div class="verticalBar1"></div></el-aside>
             <el-main>
               <span style="font-weight: 1000">欢迎您，亲爱的店家 </span>
               <p style="font-weight: 1000">

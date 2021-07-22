@@ -13,7 +13,10 @@
       <el-row style="margin: 0% 0% 5%">
         <el-card>
           <el-container>
-            <el-aside width="35px"><div class="verticalBar1"></div></el-aside>
+            <el-aside
+              style="width: 35px; padding-top: 10px; padding-bottom: 20px"
+              ><div class="verticalBar1"></div
+            ></el-aside>
             <el-main>
               <span style="font-weight: 1000">欢迎您，亲爱的店家 </span>
               <p style="font-weight: 1000">
@@ -79,9 +82,19 @@
             <template slot-scope="scope"
               ><el-button
                 type="text"
-                style="font-size:15px"
+                style="font-size: 15px; width: 100%; text-align: left"
                 @click="handleChange(scope.$index, scope.row)"
                 >修改图书信息</el-button
+              ><el-button
+                type="text"
+                style="
+                  font-size: 15px;
+                  margin-left: 0px;
+                  width: 100%;
+                  text-align: left;
+                "
+                @click="handleChangeBriefInfo(scope.$index, scope.row)"
+                >修改图书简介</el-button
               >
             </template>
           </el-table-column>
@@ -208,7 +221,6 @@
                 </el-select>
               </el-form-item>
             </el-col>
-
             <el-col :span="1"><span>&emsp;</span></el-col>
             <el-col :span="11">
               <el-form-item label="图书库存：" prop="Inventory">
@@ -381,26 +393,44 @@
         </span>
       </el-dialog>
     </div>
+    <div>
+      <el-dialog
+        title="图书简介"
+        :visible.sync="dialogBriefVisible"
+        width="60%"
+        :before-close="handleClose"
+        center
+        ><el-input type="textarea" autosize v-model="this.briefInfo"></el-input
+        ><span slot="footer" class="dialog-footer">
+          <el-button @click="cancel3">取 消</el-button>
+          <el-button type="primary" @click="changeBriefInfo">确 定</el-button>
+        </span></el-dialog
+      >
+    </div>
   </div>
 </template>
 <script>
 import MyCropper from "../cropper.vue";
 import axios from "axios";
 import { Message } from "element-ui";
+import qs from "qs";
 export default {
   components: {
     MyCropper,
   },
   data() {
     return {
+      book_id: [],
       searchText: "",
       isLoading: false,
       dialogChangeVisible: false,
       dialogAddVisible: false,
+      dialogBriefVisible: false,
       itemKey: 0,
       index: 0,
       index2: 0,
       shop_id: "",
+      briefInfo: "",
       optionData: {
         One: [
           { value: "网络文学", name: "网络文学" },
@@ -435,6 +465,7 @@ export default {
       },
       tableData: [
         {
+          bookid: "1",
           bookimg: require("../../assets/kuku.png"),
           bookname: "书本1号",
           bookauthor: "张三",
@@ -444,8 +475,11 @@ export default {
           inventory: "100",
           bookPubTime: "2021-1-1",
           press: "某某出版社",
+          briefInfo:
+            "《嫌疑人X的献身》是日本推理小说作家东野圭吾创作的长篇推理小说，也是“伽利略系列”的第三本小说。 该作讲述一个数学天才为了帮助一对母女隐藏杀害前夫的罪行，和警方展开了一连串的斗智，制造整个骗局。 [1] 该作同时获得直木奖和本格推理小说大奖，同时摘得“这本小说了不起”、“本格推理小说Top 10”、“周刊文艺推理小说Top 10”三大推理小说排行榜年度总冠军",
         },
         {
+          bookid: "2",
           bookimg: require("../../assets/kuku.png"),
           bookname: "书本2号",
           bookauthor: "李四",
@@ -455,9 +489,12 @@ export default {
           inventory: "101",
           bookPubTime: "2020-2-2",
           press: "某某出版社",
+          briefInfo:
+            "《嫌疑人X的献身》是日本推理小说作家东野圭吾创作的长篇推理小说，也是“伽利略系列”的第三本小说。 该作讲述一个数学天才为了帮助一对母女隐藏杀害前夫的罪行，和警方展开了一连串的斗智，制造整个骗局。 [1] 该作同时获得直木奖和本格推理小说大奖，同时摘得“这本小说了不起”、“本格推理小说Top 10”、“周刊文艺推理小说Top 10”三大推理小说排行榜年度总冠军",
         },
       ],
       lists1: {
+        bookid: "",
         bookImg: "",
         bookName: "",
         bookAuthor: "",
@@ -470,6 +507,8 @@ export default {
       },
       multipleSelection: [],
       formdata: new FormData(),
+      imgdata: new FormData(),
+      briefdata: new FormData(),
       rules: {
         bookName: [
           {
@@ -581,7 +620,35 @@ export default {
       this.index = index;
       this.dialogChangeVisible = true;
     },
+    handleChangeBriefInfo(index) {
+      this.briefInfo = this.tableData[index].briefInfo;
+      this.briefdata.append("book_id", this.tableData[index].bookid);
+      this.index = index;
+      this.dialogBriefVisible = true;
+    },
+    changeBriefInfo() {
+      this.briefdata.append("detail", this.briefInfo);
+      axios({
+        url: this.$store.state.yuming + "/book/updateDetail",
+        method: "POST",
+        data: this.briefdata,
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+            message: "修改图书简介成功",
+            type: "success",
+          });
+          this.dialogBriefVisible = false;
+          this.briefInfo = "";
+          this.briefdata = new FormData();
+        } else {
+          this.$message.error("修改图书简介失败，请重试");
+          this.formdata = new FormData();
+        }
+      });
+    },
     changeBook() {
+      this.tableData[this.index].bookid = this.lists1.bookid;
       this.tableData[this.index].bookimg = this.lists1.bookImg;
       this.tableData[this.index].bookname = this.lists1.bookName;
       this.tableData[this.index].bookauthor = this.lists1.bookAuthor;
@@ -591,16 +658,35 @@ export default {
       this.tableData[this.index].inventory = this.lists1.Inventory;
       this.tableData[this.index].bookPubTime = this.lists1.bookPubTime;
       this.tableData[this.index].press = this.lists1.press;
-      this.dialogChangeVisible = false;
-      this.lists1.bookImg = "";
-      this.lists1.bookName = "";
-      this.lists1.bookAuthor = "";
-      this.lists1.classOne = "";
-      this.lists1.classTwo = "";
-      this.lists1.bookPrice = "";
-      this.lists1.Inventory = "";
-      this.lists1.bookPubTime = "";
-      this.lists1.press = "";
+      this.formdata.append("book_id", this.lists1.bookid);
+      this.formdata.append("book_name", this.lists1.bookName);
+      this.formdata.append("author", this.lists1.bookAuthor);
+      this.formdata.append("price", this.lists1.bookPrice);
+      this.formdata.append("repertory", this.lists1.Inventory);
+      this.formdata.append("press", this.lists1.press);
+      this.formdata.append("print_time", this.lists1.bookPubTime);
+      this.formdata.append("main_category_id", this.lists1.classOne);
+      this.formdata.append("second_category_id", this.lists1.classTwo);
+      this.formdata.append("shop_id", this.shop_id);
+      this.formdata.append("edition", null);
+      axios({
+        url: this.$store.state.yuming + "/book/updateBook",
+        method: "POST",
+        data: this.formdata,
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+            message: "修改图书成功",
+            type: "success",
+          });
+          this.dialogChangeVisible = false;
+          this.lists1 = "";
+          this.formdata = new FormData();
+        } else {
+          this.$message.error("修改图书失败，请重试");
+          this.formdata = new FormData();
+        }
+      });
     },
     addBook(formName) {
       this.$refs[formName].validate((valid) => {
@@ -646,10 +732,12 @@ export default {
                 message: "新增图书成功",
                 type: "success",
               });
-              this.lists1 = "";
               this.dialogAddVisible = false;
+              this.lists1 = "";
+              this.formdata = new FormData();
             } else {
               this.$message.error("新增图书失败，请重试");
+              this.formdata = new FormData();
             }
           });
         } else {
@@ -681,13 +769,51 @@ export default {
       this.lists1.press = "";
       this.dialogAddVisible = false;
     },
+    cancel3() {
+      this.briefInfo = "";
+      this.dialogBriefVisible = false;
+    },
     deleteBook() {
       this.$confirm("是否下架所选图书?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
+      }).then(() => {
+        /*for (let i = 0; i < this.multipleSelection.length; i++) {
+          this.book_id.push(this.multipleSelection[i].bookid);
+        }
+        window.console.log(this.book_id);*/
+        axios({
+          url: this.$store.state.yuming + "/book/multiDelete",
+          method: "DELETE",
+          params: {
+            book_id: ["01ac472660008cb1199aa2ff90bc9848"],
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params, { indices: false });
+          },
+        })
+          .then((res) => {
+            const { code } = res.data;
+            if (code == "200") {
+              this.$message({
+                type: "success",
+                message: "下架所选图书成功",
+              });
+              this.book_id = [];
+            } else {
+              this.$message.error("下架所选图书失败");
+              this.book_id = [];
+            }
+          })
+          .catch(() => {
+            Message({
+              type: "error",
+              message: "出现错误，请稍后再试",
+            });
+          });
+      });
+      /*.then(() => {
           let multData = this.multipleSelection;
           let tableData1 = this.tableData;
           let multDataLen = multData.length;
@@ -711,7 +837,7 @@ export default {
             type: "info",
             message: "已放弃下架所选图书",
           });
-        });
+        });*/
     },
     handleClose(done) {
       this.$confirm("确认关闭？")
@@ -743,9 +869,30 @@ export default {
       this.$refs["upload"].$refs["upload-inner"].handleClick();
     },
     getFile(file) {
-      this.formdata.append("img", file);
-      // 获取上传图片的本地URL，用于上传前的本地预览
-      this.lists1.bookImg = window.URL.createObjectURL(file);
+      if (this.dialogChangeVisible == true) {
+        this.imgdata.append("img", file);
+        this.imgdata.append("book_id", "01ac472660008cb1199aa2ff90bc9848");
+        axios({
+          url: this.$store.state.yuming + "/book/updateImg",
+          method: "POST",
+          data: this.imgdata,
+        }).then((res) => {
+          if (res.data.code == 200) {
+            this.lists1.bookImg = window.URL.createObjectURL(file);
+            this.$message({
+              message: "更改图书图片成功",
+              type: "success",
+            });
+            this.imgdata = new FormData();
+          } else {
+            this.$message.error("更改图书图片失败，请重试");
+            this.imgdata = new FormData();
+          }
+        });
+      } else {
+        this.formdata.append("img", file);
+        this.lists1.bookImg = window.URL.createObjectURL(file);
+      }
       this.$refs.myCropper.close();
     },
     //头像上传成功之后的方法,进行回调

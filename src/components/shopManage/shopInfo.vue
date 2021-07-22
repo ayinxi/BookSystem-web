@@ -52,7 +52,9 @@
             >
           </el-main>
         </el-container> </el-card
-      ><el-divider content-position="left"><span style="font-size:25px">用户评价</span></el-divider>
+      ><el-divider content-position="left"
+        ><span style="font-size: 25px">用户评价</span></el-divider
+      >
       <div v-for="item in evaluationList" :key="item.userName">
         <el-card style="margin: 10px 0">
           <el-container>
@@ -165,6 +167,7 @@ export default {
         },
       ],
       formdata: new FormData(),
+      imgdata: new FormData(),
       rules: {
         shop_name: [
           {
@@ -291,9 +294,24 @@ export default {
       this.$refs["upload"].$refs["upload-inner"].handleClick();
     },
     getFile(file) {
-      this.formdata.append("img", file);
+      this.imgdata.append("img", file);
+      this.imgdata.append("username",this.hasUsername)
       // 获取上传图片的本地URL，用于上传前的本地预览
-      this.shopInfo.avatar_b = window.URL.createObjectURL(file);
+      axios({
+        url: this.$store.state.yuming + "/shop/updateAvatar",
+        method: "POST",
+        data: this.imgdata,
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.shopInfo.avatar_b = window.URL.createObjectURL(file);
+          this.$message({
+            message: "更改头像成功",
+            type: "success",
+          });
+        } else {
+          this.$message.error("更改头像失败，请重试");
+        }
+      });
       this.$refs.myCropper.close();
     },
     //头像上传成功之后的方法,进行回调

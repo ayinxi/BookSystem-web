@@ -1,57 +1,96 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div>
-      <div class="bbb"></div>
       <div class="header">
-        <div class="hasRole ? search2 :search2">
-          <el-input
-            placeholder="给孩子的第一本编程书籍"
-            v-model="input"
-            style="width: 500px"
-          >
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click.native="goToSearch"
-            >
-            </el-button>
-          </el-input>
-        </div>
-        <div v-if="hasRole">
-          <el-row class="shopping">
-            <el-col :span="10">
-              <el-badge :value="12" class="shopping">
-                <el-button size="meduim" icon="el-icon-shopping-cart-2" @click.native="gotoShopCar"
-                  >我的购物车</el-button
+        <el-row>
+          <el-col :span="6">
+            <div class="logo">
+              <img
+                height="70px"
+                style="margin: 20px 0"
+                src="../assets/jwbc.png"
+              />
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="hasRole ? search1 : search2">
+              <el-input
+                placeholder="给孩子的第一本编程书籍"
+                v-model="input"
+                style="width: 500px"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-search"
+                  @click.native="goToSearch"
+                  style="
+                    display: block;
+                    background-color: rgb(205, 92, 92);
+                    color: white;
+                  "
                 >
-              </el-badge>
-            </el-col>
-            <el-col :span="4" class="pageperson">
-              <el-button
-                size="meduim"
-                class="pageperson"
-                icon="el-icon-s-custom"
-                @click="gotoPersonPage"
-                >个人主页</el-button
-              >
-            </el-col>
-            <el-col @click.native="loginOut" style="margin-left: 30px">
-              <i class="iconfont-tuichu" style="font-size: 20px" />
-            </el-col>
-          </el-row>
-        </div>
-        <div v-else>
-          <el-row class="hasNoRole">
-            <el-col>
-              <el-button size="meduim" @click="gotoSign">注册</el-button>
-            </el-col>
-            <el-col style="margin: 20px 0">
-              <el-button size="meduim" class="pageperson" @click="gotoLogin"
-                >登陆</el-button
-              >
-            </el-col>
-          </el-row>
-        </div>
+                </el-button>
+              </el-input>
+            </div>
+          </el-col>
+          <el-col :span="6" v-if="hasRole">
+            <div style="margin-left: 20px">
+              <el-row class="shopping">
+                <el-col :span="10">
+                  <el-badge
+                    :max="99"
+                    :value="goodsNum"
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    "
+                  >
+                    <el-button
+                      style="
+                        margin-right: 30px;
+                        display: block;
+                        background-color: rgb(205, 92, 92);
+                        color: white;
+                      "
+                      size="meduim"
+                      icon="el-icon-shopping-cart-2"
+                      @click.native="gotoShopCar"
+                      >我的购物车</el-button
+                    >
+                  </el-badge>
+                </el-col>
+                <el-col :span="10" class="pageperson">
+                  <el-button
+                    style="margin-left: 30px"
+                    size="meduim"
+                    class="pageperson"
+                    icon="el-icon-s-custom"
+                    @click="gotoPersonPage"
+                    >个人主页</el-button
+                  >
+                </el-col>
+                <el-col @click.native="loginOut" style="margin-left: 10px">
+                  <i class="iconfont-tuichu" style="font-size: 20px" />
+                </el-col>
+              </el-row>
+            </div>
+          </el-col>
+          <el-col :span="6" v-else>
+            <div style="margin-left: 150px">
+              <el-row class="hasNoRole">
+                <el-col>
+                  <el-button size="meduim" @click="gotoSign">注册</el-button>
+                </el-col>
+                <el-col style="margin: 20px 0">
+                  <el-button size="meduim" class="pageperson" @click="gotoLogin"
+                    >登陆</el-button
+                  >
+                </el-col>
+              </el-row>
+            </div>
+          </el-col>
+        </el-row>
       </div>
     </div>
     <div>
@@ -235,36 +274,46 @@
                 )"
                 :key="book.Name"
               >
-              <el-card style="width: 90%; margin: 5%">
-                <el-container>
-                  <el-header
-                    style="width: 100%; height: 200px; align-items: center;margin-top:10px"
-                  >
-                    <el-image
-                      class="imgStyle1"
-                      :src="book.Img"
-                      @click.native="goToBookInfo"
+                <el-card style="width: 90%; margin: 5%">
+                  <el-container>
+                    <el-header
+                      style="
+                        width: 100%;
+                        height: 200px;
+                        align-items: center;
+                        margin-top: 10px;
+                      "
                     >
-                    </el-image>
-                  </el-header>
-                  <el-main
-                    style="color: black; padding-top: 0; text-align: center;padding-bottom:10px"
-                  >
-                    <el-link
-                      :underline="false"
-                      class="book-name"
-                      @click="goToBookInfo"
-                      >{{ book.Name }}</el-link
+                      <el-image
+                        class="imgStyle1"
+                        :src="book.Img"
+                        @click.native="goToBookInfo"
+                      >
+                      </el-image>
+                    </el-header>
+                    <el-main
+                      style="
+                        color: black;
+                        padding-top: 0;
+                        text-align: center;
+                        padding-bottom: 10px;
+                      "
                     >
-                    <p style="color: rgb(128, 192, 192); margin: 0%">
-                      {{ book.Author }}
-                    </p>
-                    <p style="color: red; font-weight: 1000; margin: 0%">
-                      ￥{{ book.Price }}
-                    </p>
-                  </el-main>
-                </el-container>
-              </el-card>
+                      <el-link
+                        :underline="false"
+                        class="book-name"
+                        @click="goToBookInfo"
+                        >{{ book.Name }}</el-link
+                      >
+                      <p style="color: rgb(128, 192, 192); margin: 0%">
+                        {{ book.Author }}
+                      </p>
+                      <p style="color: red; font-weight: 1000; margin: 0%">
+                        ￥{{ book.Price }}
+                      </p>
+                    </el-main>
+                  </el-container>
+                </el-card>
               </el-col>
             </el-row>
             <el-pagination
@@ -282,6 +331,7 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -540,7 +590,7 @@ export default {
   },
   methods: {
     goToSearch() {
-      this.$store.commit("gobalSearchText",this.input);
+      this.$store.commit("gobalSearchText", this.input);
       this.$router.push("/searchBook");
     },
     gotoSign() {
@@ -550,7 +600,7 @@ export default {
       this.$router.push("/login");
     },
     gotoShopCar() {
-      this.$router.push("/shopping")
+      this.$router.push("/shopping");
     },
     gotoPersonPage() {
       this.$router.push("/person");
@@ -641,8 +691,25 @@ export default {
         (item) => item.ClassOne == "青春/动漫"
       );
     },
+    getGoodsNum() {
+      axios({
+        url: this.$store.state.yuming + "/cartitem/getNum",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.goodsNum = data;
+          } else {
+            this.$message.error("获取店铺状态失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
   },
-  created() {
+  async created() {
     var query = this.$route.query;
     if (query) {
       var temp = query.activeIndex2;
@@ -663,6 +730,12 @@ export default {
       if (temp == "5-1") this.YouthFuilter();
       if (temp == "5-2") this.CartoonFuilter();
     }
+    this.isLoading = true;
+    if (this.$store.state.token) {
+      await this.getGoodsNum();
+    }
+    await this.getAllCategory();
+    this.isLoading = false;
   },
 };
 </script>
@@ -727,36 +800,12 @@ export default {
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
 }
-.bbb {
-  background: url("../assets/3.jpg") no-repeat;
-  background-position: center;
-  height: 20%;
-  width: 100%;
-  background-size: cover;
-  position: absolute;
-  z-index: -1;
-}
 .header {
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
-  margin-left: 10%;
-  margin-right: 10%;
-  height: 20%;
-}
-.search {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
-  margin-left: 500px;
-}
-.search2 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
-  margin-left: 350px;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 .shopping {
   display: flex;
@@ -775,5 +824,27 @@ export default {
   display: flex;
   justify-content: center;
   margin: 20px;
+}
+.logo {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+.searchButton {
+  display: inline-block;
+  background-color: rgb(205, 92, 92);
+  color: white;
+}
+.search1 {
+  margin: 60px 0 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.search2 {
+  margin: 60px 0px 60px 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

@@ -288,7 +288,7 @@
               </div>
             </el-menu>
           </el-aside>
-          <el-main>
+          <el-main style="padding-top:0px">
             <el-row style="margin-bottom: 1%">
               <el-col :span="16">
                 <el-carousel
@@ -520,7 +520,7 @@ export default {
       },
       categoryList: [],
       photoList: [
-        { Img: require("../assets/1.jpg") },
+        { Img: require("../assets/4.jpg") },
         { Img: require("../assets/photo1.jpg") },
         { Img: require("../assets/photo2.jpg") },
         { Img: require("../assets/photo3.jpg") },
@@ -977,15 +977,6 @@ export default {
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
 }
-.bbb {
-  background: url("../assets/3.jpg") no-repeat;
-  background-position: center;
-  height: 20%;
-  width: 100%;
-  background-size: cover;
-  position: absolute;
-  z-index: -1;
-}
 .header {
   display: flex;
   justify-content: flex-start;
@@ -993,7 +984,6 @@ export default {
   margin-left: 5%;
   margin-right: 5%;
 }
-
 .shopping {
   display: flex;
   justify-content: center;
