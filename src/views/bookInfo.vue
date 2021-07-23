@@ -1,6 +1,98 @@
 <template>
-  <div>
-    <Home />
+  <div v-loading="isLoading">
+    <div>
+      <div class="header">
+        <el-row>
+          <el-col :span="6">
+            <div class="logo">
+              <img
+                height="70px"
+                style="margin: 20px 0"
+                src="../assets/jwbc.png"
+              />
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="hasRole ? search1 : search2 ">
+              <el-input
+                placeholder="给孩子的第一本编程书籍"
+                v-model="input"
+                style="width:500px"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-search"
+                  @click.native="goToSearch"
+                  style="
+                    display: block;
+                    background-color: rgb(205, 92, 92);
+                    color: white;
+                  "
+                >
+                </el-button>
+              </el-input>
+            </div>
+          </el-col>
+          <el-col :span="6" v-if="hasRole">
+            <div style="margin-left: 20px">
+              <el-row class="shopping">
+                <el-col :span="10">
+                  <el-badge
+                    :max="99"
+                    :value="goodsNum"
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    "
+                  >
+                    <el-button
+                      style="
+                        margin-right: 30px;
+                        display: block;
+                        background-color: rgb(205, 92, 92);
+                        color: white;
+                      "
+                      size="meduim"
+                      icon="el-icon-shopping-cart-2"
+                      @click.native="gotoShopCar"
+                      >我的购物车</el-button
+                    >
+                  </el-badge>
+                </el-col>
+                <el-col :span="10" class="pageperson">
+                  <el-button
+                    style="margin-left: 30px"
+                    size="meduim"
+                    class="pageperson"
+                    icon="el-icon-s-custom"
+                    @click.native="gotoPersonPage"
+                    >个人主页</el-button
+                  >
+                </el-col>
+                <el-col @click.native="loginOut" style="margin-left: 10px">
+                  <i class="iconfont-tuichu" style="font-size: 20px" />
+                </el-col>
+              </el-row>
+            </div>
+          </el-col>
+          <el-col :span="6" v-else>
+            <div style="margin-left: 150px">
+              <el-row class="hasNoRole">
+                <el-col>
+                  <el-button size="meduim" @click="gotoSign">注册</el-button>
+                </el-col>
+                <el-col style="margin: 20px 0">
+                  <el-button size="meduim" class="pageperson" @click="gotoLogin"
+                    >登陆</el-button
+                  >
+                </el-col>
+              </el-row>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
     <div>
       <el-container style="margin: 0% 5%">
         <el-header style="padding: 0">
@@ -111,7 +203,7 @@
             </el-row>
           </el-main>
         </el-container>
-        <div style="font-size:25px"><el-divider content-position="left">用户评价</el-divider></div>
+        <div style="font-size:25px"><el-divider content-position="left"><span style="font-size:25px">用户评价</span></el-divider></div>
         <el-footer>
           <div v-for="item in evaluationList" :key="item.userName">
             <el-card style="margin:0 0 20px">
@@ -138,14 +230,11 @@
   </div>
 </template>
 <script>
-import Home from "./Home.vue";
 import axios from "axios";
 export default {
-  components: {
-    Home,
-  },
   data() {
     return {
+      isLoading:false,
       activeIndex1: "",
       num: 1,
       Lists: {
@@ -176,7 +265,33 @@ export default {
       formdata: new FormData(),
     };
   },
+  computed: {
+    hasRole() {
+      return this.$store.state.roleHasLoad;
+    },
+    hasLogin() {
+      return this.$store.state.token;
+    },
+  },
   methods: {
+    gotoSign() {
+      this.$router.push("/sign");
+    },
+    gotoLogin() {
+      this.$router.push("/login");
+    },
+    gotoPersonPage() {
+      this.$router.push("/person");
+    },
+    gotoShopCar() {
+      this.$router.push("/shopping");
+    },
+    loginOut() {
+      this.isLoading = true;
+      this.$store.commit("clearCache");
+      sessionStorage.removeItem("token");
+      this.isLoading = false;
+    },
     goBackToIndex() {
       this.$router.push("/");
     },
@@ -248,11 +363,14 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
-    async created() {
-      this.isLoading = true;
+  },
+  async created() {
+    this.isLoading = true;
+    if (this.$store.state.token) {
       await this.getGoodsNum();
-      this.isLoading = false;
-    },
+    }
+    //await this.getAllCategory();
+    this.isLoading = false;
   },
 };
 </script>
@@ -280,5 +398,52 @@ export default {
   width: 150px;
   height: 150px;
   border-radius: 50%;
+}
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.shopping {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+.hasNoRole {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  margin-left: 50px;
+}
+.pageperson {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+.logo {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+.searchButton {
+  display: inline-block;
+  background-color: rgb(205, 92, 92);
+  color: white;
+}
+.search1 {
+  margin: 60px 0 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.search2 {
+  margin: 60px 0px 60px 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
