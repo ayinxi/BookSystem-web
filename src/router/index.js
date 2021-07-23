@@ -134,6 +134,12 @@ const routes = [
     component: () => import('../views/refund.vue')
   },
   {
+    path: '/service/:bookId/:serviceId',
+    name: 'service',
+    meta: { userAuth: true },//登录鉴权
+    component: () => import('../views/service.vue')
+  },
+  {
     path: '/remark/:orderId',
     name: 'remark',
     meta: { userAuth: true },//登录鉴权
