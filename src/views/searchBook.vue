@@ -22,7 +22,7 @@
                 <el-button
                   slot="append"
                   icon="el-icon-search"
-                  @click.native="goToSearch"
+                  @click.native="searchBook()"
                   style="
                     display: block;
                     background-color: rgb(205, 92, 92);
@@ -96,7 +96,7 @@
     <div>
       <div>
         <el-container style="margin: 0% 5%">
-          <el-header style="padding: 0">
+          <el-header style="padding: 0; height: 100%">
             <el-row class="rowStyle1">
               <el-col class="colStyle3" @click.native="goToIndex"
                 >全部商品分类</el-col
@@ -108,38 +108,63 @@
                   mode="horizontal"
                 >
                   <el-menu-item
-                    index="1"
-                    @click.native="NetworkFilter"
+                    v-for="item in categoryList"
+                    :key="item.main_id"
                     style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >网络文学</el-menu-item
-                  >
-                  <el-menu-item
-                    index="2"
-                    @click.native="EducationFilter"
-                    style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >教育</el-menu-item
-                  >
-                  <el-menu-item
-                    index="3"
-                    @click.native="NovelFilter"
-                    style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >小说</el-menu-item
-                  >
-                  <el-menu-item
-                    index="4"
-                    @click.native="LandAFilter"
-                    style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >文艺</el-menu-item
-                  >
-                  <el-menu-item
-                    index="5"
-                    @click.native="YandCFilter"
-                    style="color: rgb(250, 128, 114); font-weight: 1000"
-                    >青春/动漫</el-menu-item
+                    :index="item.main_id"
+                    @click.native="getMainClassBook(item.main_id)"
+                    >{{ item.main_name }}</el-menu-item
                   >
                 </el-menu>
               </el-col>
-            </el-row> </el-header
+            </el-row>
+            <el-row style="margin: 3% 0%">
+              <el-col :span="3">
+                <el-button
+                  type="text"
+                  @click.native="handleClick(1)"
+                  :class="{ btn_active: flag === 1 }"
+                  id="Button1"
+                  >全部相关图书</el-button
+                >
+              </el-col>
+              <el-col :span="3">
+                <el-button
+                  type="text"
+                  @click.native="handleClick(2)"
+                  :class="{ btn_active: flag === 2 }"
+                  id="Button2"
+                  >书名相关图书</el-button
+                >
+              </el-col>
+              <el-col :span="3">
+                <el-button
+                  type="text"
+                  @click.native="handleClick(3)"
+                  :class="{ btn_active: flag === 3 }"
+                  id="Button3"
+                  >作者相关图书</el-button
+                >
+              </el-col>
+              <el-col :span="3">
+                <el-button
+                  type="text"
+                  @click.native="handleClick(4)"
+                  :class="{ btn_active: flag === 4 }"
+                  id="Button4"
+                  >出版社相关图书</el-button
+                >
+              </el-col>
+              <el-col :span="3">
+                <el-button
+                  type="text"
+                  @click.native="handleClick(5)"
+                  :class="{ btn_active: flag === 5 }"
+                  id="Button5"
+                  >图书简介相关图书</el-button
+                >
+              </el-col>
+            </el-row></el-header
           ><el-main v-if="this.displayList.length == 0"
             ><el-row>
               <p>未找到相关的书籍</p>
@@ -147,14 +172,7 @@
           >
           <el-main v-if="this.displayList.length != 0">
             <el-row class="rowStyle3" type="flex">
-              <el-col
-                :span="6"
-                v-for="book in displayList.slice(
-                  (currentPage - 1) * pageSize,
-                  currentPage * pageSize
-                )"
-                :key="book.Name"
-              >
+              <el-col :span="6" v-for="book in displayList" :key="book.id">
                 <el-card style="width: 90%; margin: 5%">
                   <el-container>
                     <el-header
@@ -167,7 +185,7 @@
                     >
                       <el-image
                         class="imgStyle3"
-                        :src="book.Img"
+                        :src="book.image_b"
                         @click.native="goToBookInfo"
                       >
                       </el-image>
@@ -184,13 +202,13 @@
                         :underline="false"
                         class="book-name"
                         @click="goToBookInfo"
-                        >{{ book.Name }}</el-link
+                        >{{ book.book_name }}</el-link
                       >
                       <p style="color: rgb(128, 192, 192); margin: 0%">
-                        {{ book.Author }}
+                        {{ book.author }}
                       </p>
                       <p style="color: red; font-weight: 1000; margin: 0%">
-                        ￥{{ book.Price }}
+                        ￥{{ book.price }}
                       </p>
                       <el-button type="text">加入购物车 </el-button>
                     </el-main>
@@ -200,10 +218,8 @@
             </el-row>
             <el-pagination
               :current-page="currentPage"
-              :page-size="pageSize"
               @current-change="handleCurrentChange"
               layout="prev, pager, next"
-              :total="this.displayList.length"
             >
             </el-pagination>
           </el-main>
@@ -215,14 +231,17 @@
 
 <script>
 import axios from "axios";
+import { Message } from "element-ui";
 export default {
   data() {
     return {
       activeIndex1: "",
+      goodsNum: "",
       currentPage: 1,
-      pageSize: 12,
+      flag: 1,
       isLoading: false,
       input: this.$store.state.gobalSearchText,
+      categoryList: [],
       Lists: [
         {
           Img: require("../assets/youbenshi.jpg"),
@@ -416,6 +435,13 @@ export default {
     YandCFilter() {
       this.$router.push({ path: "/classSort", query: { activeIndex2: "5" } });
     },
+    getMainClassBook(id) {
+      this.$router.push({ path: "/classSort", query: { activeIndexMain: id } });
+    },
+    handleClick(val){
+      this.flag=val;
+      document.getElementById("Button"+val).blur();
+    },
     getGoodsNum() {
       axios({
         url: this.$store.state.yuming + "/cartitem/getNum",
@@ -431,6 +457,119 @@ export default {
         })
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //图书模糊查询全部相关图书
+    searchBook() {
+      this.$store.commit("gobalSearchText", this.input);
+      axios({
+        url: this.$store.state.yuming + "/book/fuzzyQuery",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 5,
+          style: 1,
+          queryWhat: 1,
+          content: this.input,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList += data;
+          } else {
+            this.$message.error("获取图书失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      axios({
+        url: this.$store.state.yuming + "/book/fuzzyQuery",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 5,
+          style: 1,
+          queryWhat: 2,
+          content: this.input,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList += data;
+          } else {
+            this.$message.error("获取图书失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      axios({
+        url: this.$store.state.yuming + "/book/fuzzyQuery",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 5,
+          style: 1,
+          queryWhat: 3,
+          content: this.input,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList += data;
+          } else {
+            this.$message.error("获取图书失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      axios({
+        url: this.$store.state.yuming + "/book/fuzzyQuery",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 5,
+          style: 1,
+          queryWhat: 4,
+          content: this.input,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList += data;
+          } else {
+            this.$message.error("获取图书失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //获取所有目录
+    getAllCategory() {
+      axios({
+        url: this.$store.state.yuming + "/category/getAll",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.categoryList = data;
+            this.activeIndex1 = data[0].main_id;
+            this.getClassOneBook(this.activeIndex1);
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
         });
     },
   },
@@ -531,5 +670,12 @@ export default {
 }
 .el-card__body {
   padding: 20px !important;
+}
+.el-menu-item.is-active {
+  background-color: rgb(231, 241, 252) !important;
+}
+.btn_active {
+  background: #409eff ;
+  color: #fff;
 }
 </style>
