@@ -3,7 +3,7 @@
     <div class="content">
       <div class="header">
         <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
-        <div class="title">管理平台</div>
+        <div class="title">后台管理</div>
       </div>
       <div style="margin: 10px 0"><el-page-header @back="gotoAdmin" content="商家管理"></el-page-header></div>
        <div>
@@ -20,7 +20,7 @@
       </div>
       <div>
         <el-card class="box-card1">
-          <el-row>
+          <el-row v-loading="dataLoading">
             <el-col :span="8" style="text-align:center">
               <el-row><h2>{{nonCheckShopNum}}</h2></el-row><el-row><span>待审核</span></el-row>
             </el-col>
@@ -35,7 +35,7 @@
       </div>
       <div class="box2">
         <el-card class="box-card1">
-           <el-tabs v-model="activeName">
+           <el-tabs v-model="activeName" v-loading="dataLoading">
     <el-tab-pane label="待审核申请" name="first">
       <el-table :data="checkList" style="width: 100%"
       :default-sort = "{prop: 'create_time', order: 'descending'}">
@@ -224,7 +224,7 @@
                 <el-button type="primary" @click="updateShop">确 定</el-button>
               </div>
             </el-dialog>
-            <el-button size="mini" type="text" @click="logoutShop(scope.row.username)">注销</el-button>
+            <el-button size="mini" type="text" style="margin-left:10px" @click="logoutShop(scope.row.username)">注销</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -246,8 +246,12 @@ export default {
   },
   data() {
     return {
+      //loading
       isLoading: false,
+      dataLoading: false,
+      //选择table
       activeName: 'first',
+      //待审核
       checkList: [
         {
           create_time: "2021-07-14 18:31:30",//申请时间
@@ -498,6 +502,16 @@ export default {
           });
         });
     },
+    reloadData() {
+      this.dataLoading = true;
+      this.getNonCheckShopNum();
+      this.getCheckShopNum();
+      this.getPassShopNum();
+      this.getNonCheckShop();
+      this.getCheckShop();
+      this.getPassShop();
+      this.dataLoading = false;
+    },
     //审核店铺
     checkShop(name, status, opinion) {
       axios({
@@ -512,6 +526,7 @@ export default {
         .then((res) => {
           const { code } = res.data;
           if (code == "200") {
+            this.reloadData();
             this.$message({
               type: "success",
               message: "处理成功",
@@ -542,6 +557,7 @@ export default {
       })
         .then((res) => {
           if (res.data.code == 200) {
+            this.reloadData();
             this.$message({
               type: "success",
               message: "编辑成功",
@@ -571,6 +587,7 @@ export default {
         .then((res) => {
           const { code } = res.data;
           if (code == "200") {
+            this.reloadData();
             this.$message({
               type: "success",
               message: "注销成功",
@@ -639,11 +656,6 @@ export default {
 .box-card1 {
   width: 900px;
   margin: 20px;
-}
-
-.box3{
-  display: flex;
-  justify-content: space-between;
 }
 
 .verticalBar2 {

@@ -3,7 +3,7 @@
     <div class="content">
       <div class="header">
         <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
-        <div class="title">管理平台</div>
+        <div class="title">后台管理</div>
       </div>
       <div style="margin: 10px 0"><el-page-header @back="gotoAdmin" content="用户管理"></el-page-header></div>
        <div>
@@ -27,8 +27,8 @@
             <el-table-column type="expand">
                <template slot-scope="scope">
                   <el-form label-position="left" inline class="demo-table-expand">
-                    <el-form-item label="用户昵称"><span>{{scope.row.userNickname}}</span></el-form-item>
                     <el-form-item label="用户头像"><img :src="scope.row.userImg"></el-form-item>
+                    <el-form-item label="用户昵称"><span>{{scope.row.userNickname}}</span></el-form-item>
                     <el-form-item label="店铺名称">
                       <el-link :href="'http://localhost:8081/'+scope.row.shopAddr">{{scope.row.shopName}}</el-link>
                     </el-form-item>

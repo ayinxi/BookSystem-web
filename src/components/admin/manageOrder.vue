@@ -3,7 +3,7 @@
     <div class="content">
       <div class="header">
         <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
-        <div class="title">管理平台</div>
+        <div class="title">后台管理</div>
       </div>
       <div style="margin: 10px 0"><el-page-header @back="gotoAdmin" content="订单管理"></el-page-header></div>
        <div>

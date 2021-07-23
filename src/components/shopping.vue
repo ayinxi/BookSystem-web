@@ -392,7 +392,7 @@
           <p>商家正在尽快安排发货...</p>
         </el-row>
         <el-row class="orderFinish">
-          <el-button size="medium" :round="true">查看订单</el-button>
+          <el-button size="medium" :round="true" @click="gotoOrder">查看订单</el-button>
           <el-button size="medium" :round="true" @click="gotoHome" >回到主页</el-button>
         </el-row>
         </el-card>
@@ -413,13 +413,15 @@ export default {
   components: {},
   data() {
     return {
+      //当前页面
       page: 0,
-      visible: false,
+      //loading
       isLoading: false,
       //收货地址loading
       addressLoading: false,
       //选择的地址id
       radio: "",
+      //购物车图书
       bookList: [
         {
           merchant_id: 1,
@@ -538,7 +540,6 @@ export default {
           { max: 50, message: "地址不得超过五十个字", trigger: "blur" },
         ],
       },
-      formLabelWidth: "120px",
     };
   },
   computed: {
@@ -571,6 +572,10 @@ export default {
     //回到主页
     gotoHome() {
       this.$router.push("/");
+    },
+    //跳转全部订单页面
+    gotoOrder() {
+      this.$router.push("/userOrder/0");
     },
     //选择所有的购物车商品
     check_all() {
