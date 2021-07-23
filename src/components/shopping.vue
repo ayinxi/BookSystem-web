@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <!--
     <div class="bbb"></div>
     -->
@@ -37,23 +37,23 @@
       <el-card class="header-card">
       <el-row>
         <el-col :span="1" class="table-header-item">
-          <el-checkbox v-model="checkAll" class="myRedCheckBox" @click="check_all"></el-checkbox>
+          <el-checkbox v-model="checkAll" class="myRedCheckBox" @change="check_all"></el-checkbox>
         </el-col>
         <el-col :span="1" class="table-header-item">全选</el-col>
         <el-col :span="10" class="table-header-item">商品信息</el-col>
-        <el-col :span="4" class="table-header-item">价格(元)</el-col>
+        <el-col :span="4" class="table-header-item">价格</el-col>
         <el-col :span="4" class="table-header-item">数量</el-col>
-        <el-col :span="3" class="table-header-item">小计(元)</el-col>
+        <el-col :span="3" class="table-header-item">小计</el-col>
         <el-col :span="1" class="table-header-item">操作</el-col>
       </el-row>
       </el-card>
     </header>
-    <container class="table-container">
+    <div class="table-container">
       <div v-for="(item,index) in bookList" :key="index">
         <el-card style="margin: 20px 0">
         <el-row style="margin:10px">
           <el-col :span="1">
-            <el-checkbox v-model="item.this_all" class="myRedCheckBox"></el-checkbox>
+            <el-checkbox v-model="item.this_all" class="myRedCheckBox" @change="check_shop(item)"></el-checkbox>
           </el-col>
           <el-col :span="23" class="shop-name"><i class="el-icon-goods"></i> {{item.book_merchant}}</el-col>
         </el-row>
@@ -97,12 +97,12 @@
         </div>
         </el-card>
       </div>
-    </container>
+    </div>
     <footer>
       <el-card>
       <el-row>
         <el-col :span="1" style="margin-left:10px" class="table-footer-item">
-          <el-checkbox v-model="checkAll" class="myRedCheckBox" @click="check_all"></el-checkbox>
+          <el-checkbox v-model="checkAll" class="myRedCheckBox" @change="check_all"></el-checkbox>
         </el-col>
         <el-col :span="1" class="table-footer-item">全选</el-col>
         <el-col :span="10" class="table-footer-item" style="margin:12px">
@@ -111,7 +111,7 @@
         <el-col :span="6" class="table-footer-item">已选<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
         <el-col :span="3" class="table-footer-item" style="margin-top:14px">合计：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
         <el-col :span="2" class="table-footer-item" style="margin-top:9px">
-          <el-button size="max" type="danger" round="true" @click="page = 1">结算</el-button>
+          <el-button size="max" type="danger" :round="true" @click="settlement">结算</el-button>
         </el-col>
       </el-row>
       </el-card>
@@ -126,49 +126,82 @@
           <el-row>
             <h3>收货人信息</h3>
           </el-row>
-          <el-row>
-            <el-radio-group v-model="radio">
+          <el-row v-loading="addressLoading">
+            <el-radio-group v-model="radio" size="mini">
               <el-radio-button
-                :label="item.value"
-                :key="item.value"
-                v-for="item in consigneeInfoList"
+                :label="item.id"
+                :key="item.id"
+                v-for="item in myAddressList"
                 >{{ item.label }}
-                <el-card class="box-card" shadow="never">
-                  <div slot="header" class="clearfix">
-                    <span>{{ item.c_name }}</span>
-                    <el-button
-                      style="float: right; padding: 3px 3px"
-                      type="text"
-                      >删除</el-button
-                    >
-                    <el-button
-                      style="float: right; padding: 3px 3px"
-                      type="text"
-                      @click="editInfoVisible = true"
-                      >编辑</el-button
-                    >
-                    <el-button
-                      style="float: right; padding: 3px 3px"
-                      type="text"
-                      v-if="defaultAddr != item.value"
-                      @click="defaultAddr = item.value"
-                      >设为默认地址</el-button
-                    >
-                    <el-button
-                      style="float: right; padding: 3px 3px"
-                      type="text"
-                      v-if="defaultAddr == item.value"
-                      disabled
-                      >默认地址</el-button
-                    >
-                  </div>
-                  <div class="text item">
-                    {{ item.c_phoneNumber }}
-                  </div>
-                  <div class="text item">
-                    {{ item.c_address }}
-                  </div>
-                </el-card>
+                <el-card style="
+                width: 300px;
+                height: 250px;">
+                    <el-form ref="item" :v-model="item" label-width="80px">
+                      <el-form-item label="姓名" prop="name">
+                        <div style="display: flex; justify-content: flex-start">
+                          {{ item.name }}
+                        </div>
+                      </el-form-item>
+                      <el-form-item label="电话号码" prop="phone">
+                        <div style="display: flex; justify-content: flex-start">
+                          {{ item.phone }}
+                        </div>
+                      </el-form-item>
+                      <el-form-item label="详细地址" prop="address">
+                        <div
+                          style="
+                            display: flex;
+                            justify-content: flex-start;
+                            flex-wrap: wrap;
+                            word-break: break-all;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 1;
+                          "
+                          :title="item.address"
+                        >
+                          {{ item.address }}
+                        </div>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-row
+                          style="display: flex; justify-content: flex-start"
+                        >
+                          <el-col>
+                            <el-button
+                              type="text"
+                              style="margin: 0 5px"
+                              v-if="item.status == 0"
+                              @click="setDefaultAddress(item)"
+                              >设为默认地址
+                            </el-button>
+                            <el-button
+                              type="text"
+                              style="margin: 0 5px"
+                              v-else
+                              disabled
+                              >默认地址
+                            </el-button>
+                          </el-col>
+                          <el-col>
+                            <el-button
+                              type="text"
+                              style="margin: 0 5px"
+                              @click="eidtAddress(item)"
+                              >编辑
+                            </el-button>
+                            <el-button
+                              type="text"
+                              style="margin: 0 5px"
+                              @click="editDelAddress(item)"
+                              >删除
+                            </el-button></el-col
+                          >
+                        </el-row>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
               </el-radio-button>
             </el-radio-group>
           </el-row>
@@ -177,68 +210,109 @@
               size="min"
               icon="el-icon-setting"
               type="text"
-              @click="addInfoVisible = true"
+              @click="clearNewAddress"
               >添加收货人信息</el-button
             ></el-row
           >
+          <!--删除收货人信息-->
+              <el-dialog
+                title="提示"
+                :visible.sync="delAddressVisible"
+                width="30%"
+              >
+                <span>确认删除收货地址</span>
+                <span slot="footer" class="dialog-footer">
+                  <el-button @click="delAddressVisible = false"
+                    >取 消</el-button
+                  >
+                  <el-button type="primary" @click="confirmDelAddress"
+                    >确 定</el-button
+                  >
+                </span>
+              </el-dialog>
           <!--编辑收货人信息-->
           <el-dialog title="编辑收货人信息" :visible.sync="editInfoVisible">
-            <el-form :model="consigneeInfo">
-              <el-form-item label="姓名" :label-width="formLabelWidth">
-                <el-input
-                  v-model="consigneeInfo.c_name"
-                  autocomplete="off"
-                ></el-input>
-              </el-form-item>
-              <el-form-item label="电话号码" :label-width="formLabelWidth">
-                <el-input
-                  v-model="consigneeInfo.c_phoneNumber"
-                  autocomplete="off"
-                ></el-input>
-              </el-form-item>
-              <el-form-item label="详细地址" :label-width="formLabelWidth">
-                <el-input
-                  v-model="consigneeInfo.c_address"
-                  autocomplete="off"
-                ></el-input>
-              </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="editInfoVisible = false">取消</el-button>
-              <el-button type="danger" @click="editInfoVisible = false"
-                >确认收货人信息</el-button
-              >
-            </div>
-          </el-dialog>
+                <el-form
+                  :model="editMyAddress"
+                  label-width="120px"
+                  :rules="newAddressRules"
+                >
+                  <el-form-item label="姓名" prop="name">
+                    <el-input
+                      type="text"
+                      style="width: 200px"
+                      v-model="editMyAddress.name"
+                      clearable
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item label="电话号码" prop="phone">
+                    <el-input
+                      type="text"
+                      style="width: 200px"
+                      v-model="editMyAddress.phone"
+                      clearable
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item label="详细地址" prop="address">
+                    <el-input
+                      type="textarea"
+                      maxlength="50"
+                      show-word-limit
+                      clearable
+                      style="width: 500px"
+                      rows="5"
+                      v-model="editMyAddress.address"
+                    ></el-input>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="editInfoVisible = false">取消</el-button>
+                  <el-button type="primary" @click="confirmChangeAddress"
+                    >确认编辑</el-button
+                  >
+                </div>
+              </el-dialog>
           <!--添加收货人信息-->
           <el-dialog title="添加收货人信息" :visible.sync="addInfoVisible">
-            <el-form :model="consigneeInfo">
-              <el-form-item label="姓名" :label-width="formLabelWidth">
-                <el-input
-                  v-model="consigneeInfo.c_name"
-                  autocomplete="off"
-                ></el-input>
-              </el-form-item>
-              <el-form-item label="电话号码" :label-width="formLabelWidth">
-                <el-input
-                  v-model="consigneeInfo.c_phoneNumber"
-                  autocomplete="off"
-                ></el-input>
-              </el-form-item>
-              <el-form-item label="详细地址" :label-width="formLabelWidth">
-                <el-input
-                  v-model="consigneeInfo.c_address"
-                  autocomplete="off"
-                ></el-input>
-              </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="addInfoVisible = false">取消</el-button>
-              <el-button type="danger" @click="addInfoVisible = false"
-                >确认新增收货人信息</el-button
-              >
-            </div>
-          </el-dialog>
+                <el-form
+                  ref="newAddress"
+                  :model="newAddress"
+                  label-width="120px"
+                  :rules="newAddressRules"
+                >
+                  <el-form-item label="姓名" prop="name">
+                    <el-input
+                      type="text"
+                      v-model="newAddress.name"
+                      style="width: 200px"
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item label="电话号码" prop="phone">
+                    <el-input
+                      type="text"
+                      v-model="newAddress.phone"
+                      style="width: 200px"
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item label="详细地址" prop="address">
+                    <el-input
+                      type="textarea"
+                      maxlength="50"
+                      show-word-limit
+                      clearable
+                      style="width: 500px"
+                      rows="5"
+                      v-model="newAddress.address"
+                    ></el-input>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="addInfoVisible = false">取消</el-button>
+                  <el-button type="primary" @click="addNewAddress"
+                    >确认新增</el-button
+                  >
+                </div>
+              </el-dialog>
         </div>
         <el-divider></el-divider>
         <div style="margin: 20px 0">
@@ -249,20 +323,20 @@
       <el-card class="header-card">
       <el-row>
         <el-col :span="14" class="table-header-item">商品信息</el-col>
-        <el-col :span="4" class="table-header-item">价格(元)</el-col>
+        <el-col :span="4" class="table-header-item">价格</el-col>
         <el-col :span="4" class="table-header-item">数量</el-col>
-        <el-col :span="2" class="table-header-item">小计(元)</el-col>
+        <el-col :span="2" class="table-header-item">小计</el-col>
       </el-row>
       </el-card>
     </header>
-    <container class="table-container">
+    <div class="table-container">
       <div v-for="(item,index) in bookList" :key="index">
-        <el-card style="margin: 20px 0">
+        <el-card style="margin: 20px 0" v-if="vifShopName(item)">
         <el-row style="margin:10px">
           <el-col class="shop-name"><i class="el-icon-goods"></i> {{item.book_merchant}}</el-col>
         </el-row>
-        <div class="books">
-          <el-row v-for="(books,idx) in item.children" :key="idx" style="margin:10px">
+        <div class="books" v-for="(books,idx) in item.children" :key="idx">
+          <el-row style="margin:10px" v-if="books.check_one">
             <!--<el-divider v-if="idx!=0"></el-divider>-->
             <el-col :span="2">
               <img :src="books.book_img" style="height:70px" />
@@ -285,77 +359,19 @@
         </div>
         </el-card>
       </div>
-    </container>
+    </div>
     <footer>
       <el-card>
       <el-row>
         <el-col :span="18" :offset="1" class="table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
         <el-col :span="3" class="table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
         <el-col :span="2" class="table-footer-item" style="margin-top:9px">
-          <el-button size="max" type="danger" round="true" @click="page = 2">提交订单</el-button>
+          <el-button size="max" type="danger" :round="true" @click="page = 2">提交订单</el-button>
         </el-col>
       </el-row>
       </el-card>
     </footer>
       </div>
-      <!--
-          <el-row>
-            <el-table :data="selectList" style="width: 100%">
-              <el-table-column label="书籍图片">
-                <template slot-scope="scope">
-                  <el-popover placement="top-start" trigger="hover">
-                    <img
-                      :src="scope.row.book_img"
-                      style="width: 150px; height: 150px"
-                    />
-                    <img
-                      slot="reference"
-                      :src="scope.row.book_img"
-                      style="width: 30px; height: 30px"
-                    />
-                  </el-popover>
-                </template>
-              </el-table-column>
-              <el-table-column label="书籍名称">
-                <template slot-scope="scope">
-                  <el-button size="medium" type="text">{{
-                    scope.row.book_name
-                  }}</el-button>
-                </template>
-              </el-table-column>
-              <el-table-column label="商家">
-                <template slot-scope="scope">
-                  <el-button size="medium" type="text">{{
-                    scope.row.book_merchant
-                  }}</el-button>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="单价（元）"
-                prop="book_unitPrice"
-              ></el-table-column>
-              <el-table-column
-                label="数量"
-                prop="book_num"
-                width="200"
-              ></el-table-column>
-              <el-table-column label="金额（元）">
-                <template slot-scope="scope">
-                  <div>{{ scope.row.book_unitPrice * scope.row.book_num }}</div>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-row>
-          <el-row style="margin: 20px 0">
-            <el-col :span="11">已选择 {{ totalNumber }} 件商品</el-col>
-            <el-col :span="10">实付：¥{{ totalPrice }}</el-col>
-            <el-col :span="3"
-              ><el-button size="medium" type="danger" @click="page = 2"
-                >提交订单</el-button
-              ></el-col
-            >
-          </el-row>
-          -->
         </div>
       </div>
 
@@ -363,17 +379,24 @@
 
 
       <!--完成订单-->
-      <div v-if="page == 2">
+      <div v-if="page == 2" style="completeOrder">
+        <el-row><el-col :span="8" :offset="8">
+        <el-card>
         <el-row class="orderFinish">
-          <img src="../assets/kuku.png" />
+          <img src="../assets/avatar.jpg" height="200px"/>
         </el-row>
         <el-row class="orderFinish">
           <p>恭喜您完成订单！</p>
         </el-row>
         <el-row class="orderFinish">
-          <el-button size="medium" type="danger">查看订单</el-button>
-          <el-button size="medium" type="danger">回到主页</el-button>
+          <p>商家正在尽快安排发货...</p>
         </el-row>
+        <el-row class="orderFinish">
+          <el-button size="medium" :round="true">查看订单</el-button>
+          <el-button size="medium" :round="true" @click="gotoHome" >回到主页</el-button>
+        </el-row>
+        </el-card>
+        </el-col></el-row>
       </div>
     </div>
   <!--</div>-->
@@ -384,16 +407,19 @@
 
 
 <script>
+import axios from "axios";
+import { Message } from "element-ui";
 export default {
   components: {},
   data() {
     return {
       page: 0,
       visible: false,
-      editInfoVisible: false,
-      addInfoVisible: false,
-      radio: 0,
-      multipleSelection: [],
+      isLoading: false,
+      //收货地址loading
+      addressLoading: false,
+      //选择的地址id
+      radio: "",
       bookList: [
         {
           merchant_id: 1,
@@ -458,33 +484,59 @@ export default {
       ],
       checkAll: false,
       cpmylist: [],
-      goodsArr: [],
-      defaultAddr: 0,
-      consigneeInfoList:[
+      //收货地址
+      //我的收货地址
+      editInfoVisible: false,
+      addInfoVisible: false,
+      delAddressVisible: false,
+      delAddressId: "",
+      newAddress: {
+        id: "",
+        name: "",
+        phone: "",
+        address: "",
+        status: "",
+      },
+      editMyAddress: {
+        id: "",
+        name: "",
+        phone: "",
+        address: "",
+        status: "",
+      },
+      myAddressList: [
         {
-          value: 0,
-          c_name: "甲",
-          c_phoneNumber: "123456789",
-          c_address: "摩尔庄园",
-        },
-        {
-          value: 1,
-          c_name: "乙",
-          c_phoneNumber: "123456789",
-          c_address: "奥比岛",
-        },
-        {
-          value: 2,
-          c_name: "丙",
-          c_phoneNumber: "123456789",
-          c_address: "奥比岛",
+          id: "1",
+          name: "甲",
+          phone: "12345678910",
+          address: "摩尔庄园",
+          status: 0,
         },
       ],
-      consigneeInfo:{
-          value: "",
-          c_name: "",
-          c_phoneNumber: "",
-          c_address: "",
+      newAddressRules: {
+        phone: [
+          { required: true, message: "电话号码不得为空", trigger: "blur" },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error("请输入电话号码"));
+              } else if (!/^1\d{10}$/.test(value)) {
+                callback(new Error("请输入正确的11位手机号码"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "blur",
+          },
+        ],
+        name: [
+          { required: true, message: "姓名不得为空", trigger: "blur" },
+          { max: 10, message: "姓名不得超过十个字", trigger: "blur" },
+        ],
+        address: [
+          { required: true, message: "地址不得为空", trigger: "blur" },
+          { max: 50, message: "地址不得超过五十个字", trigger: "blur" },
+        ],
       },
       formLabelWidth: "120px",
     };
@@ -522,8 +574,197 @@ export default {
     },
     //选择所有的购物车商品
     check_all() {
-        this.bookList[0].this_all=true;
-    }
+      this.bookList.forEach(shop => {
+        shop.this_all = this.checkAll;
+        shop.children.forEach(book => {
+          book.check_one = this.checkAll;
+        });
+      });
+    },
+    //选择某商家所有商品
+    check_shop(shop) {
+      shop.children.forEach(book => {
+        book.check_one = shop.this_all;
+      });
+    },
+    //结算
+    settlement() {
+      this.bookList.forEach(shop => {
+        shop.children.forEach(book => {
+          if(book.check_one == true) {
+            this.cpmylist.push(book.book_id);
+          }
+        });
+      });
+      if(this.cpmylist.length==0){
+      alert("请选择商品哦！")
+      }else{
+        this.page=1;
+      }
+    },
+    //结算页面是否显示店铺名
+    vifShopName(shop) {
+      var len = 0;
+      shop.children.forEach(book => {
+        if(book.check_one == true) {
+          len=len+1;
+        }
+      })
+      if(len!=0) return true;
+      else return false;
+    },
+    //获取用户的收货地址
+    getUserAddress() {
+      axios({
+        url: this.$store.state.yuming + "/user/address/getAll",
+        method: "GET",
+        params: {
+          id: this.newAddress.id,
+          address: this.newAddress.address,
+          phone: this.newAddress.phone,
+          name: this.newAddress.name,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.myAddressList = res.data.data;
+        } else {
+          this.$message.error("获取收货地址，请重试");
+        }
+      });
+    },
+    //清空newAddress
+    clearNewAddress() {
+      this.newAddress.name = "";
+      this.newAddress.address = "";
+      this.newAddress.phone = "";
+      this.addInfoVisible = true;
+    },
+    //新增收货地址
+    addNewAddress() {
+      this.addInfoVisible = false;
+      axios({
+        url: this.$store.state.yuming + "/user/address/add",
+        method: "POST",
+        params: {
+          address: this.newAddress.address,
+          phone: this.newAddress.phone,
+          name: this.newAddress.name,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.addressLoading = true;
+          this.getUserAddress();
+          this.addressLoading = false;
+          this.$message({
+            message: "新增成功",
+            type: "success",
+          });
+        } else {
+          this.$message.error("新增失败，请重试");
+        }
+      });
+    },
+    //编辑收货地址
+    eidtAddress(e) {
+      this.editInfoVisible = true;
+      this.editMyAddress.id = e.id;
+      this.editMyAddress.name = e.name;
+      this.editMyAddress.phone = e.phone;
+      this.editMyAddress.address = e.address;
+    },
+    //确认编辑收货地址
+    confirmChangeAddress() {
+      this.editInfoVisible = false;
+      axios({
+        url: this.$store.state.yuming + "/user/address/update",
+        method: "POST",
+        params: {
+          addressId: this.editMyAddress.id,
+          address: this.editMyAddress.address,
+          name: this.editMyAddress.name,
+          phone: this.editMyAddress.phone,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.addressLoading = true;
+          this.getUserAddress();
+          this.addressLoading = false;
+          this.$message({
+            message: "编辑成功",
+            type: "success",
+          });
+        } else {
+          this.$message.error("编辑失败，请重试");
+        }
+      });
+    },
+    //预备删除地址
+    editDelAddress(e) {
+      this.delAddressId = e.id;
+      this.delAddressVisible = true;
+    },
+    //确认删除地址
+    confirmDelAddress() {
+      this.delAddressVisible = false;
+      axios({
+        url: this.$store.state.yuming + "/user/address/delete",
+        method: "DELETE",
+        params: {
+          addressId: this.delAddressId,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.addressLoading = true;
+            this.getUserAddress();
+            this.addressLoading = false;
+            this.$message({
+              message: "删除成功",
+              type: "success",
+            });
+          } else {
+            this.$message.error("删除失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //设置默认地址
+    setDefaultAddress(e) {
+      axios({
+        url: this.$store.state.yuming + "/user/address/setDefault",
+        method: "POST",
+        params: {
+          addressId: e.id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.addressLoading = true;
+            this.getUserAddress();
+            this.addressLoading = false;
+          } else {
+            this.$message.error("设置默认地址失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+  },
+    async created() {
+    this.isLoading = true;
+    await this.getUserAddress();
+    this.isLoading = false;
   },
 }
 
@@ -569,7 +810,7 @@ export default {
 .orderFinish {
   display: flex;
   justify-content: center;
-  margin: 30px 0;
+  margin: 20px 0;
 }
 .text {
   font-size: 14px;
@@ -688,5 +929,25 @@ export default {
 
 .header-card{
   height: 57px;
+}
+
+.el-button--goon.is-active,
+.el-button--goon:active {
+  background: #20B2AA;
+  border-color: #20B2AA;
+  color: #fff;
+}
+
+.el-button--goon:focus,
+.el-button--goon:hover {
+  background: #48D1CC;
+  border-color: #48D1CC;
+  color: #fff;
+}
+
+.el-button--goon {
+  color: #FFF;
+  background-color: #20B2AA;
+  border-color: #20B2AA;
 }
 </style>
