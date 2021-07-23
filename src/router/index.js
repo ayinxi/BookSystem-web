@@ -98,6 +98,12 @@ const routes = [
     component: () => import('../components/admin/manageOrder.vue')
   },
   {
+    path: '/dataVisual',
+    name: 'dataVisual',
+    meta: { adminAuth: true },//登录鉴权
+    component: () => import('../components/admin/dataVisual.vue')
+  },
+  {
     path: '/shopping',
     name: 'shopping',
     meta: { userAuth: true },//登录鉴权
