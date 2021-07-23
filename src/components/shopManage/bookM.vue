@@ -213,10 +213,10 @@
                   placeholder="请选择图书一级分类"
                 >
                   <el-option
-                    v-for="option in optionData.One"
-                    :key="option.value"
-                    :label="option.name"
-                    :value="option.value"
+                    v-for="option in categoryList"
+                    :key="option.main_id"
+                    :label="option.main_name"
+                    :value="option.main_id"
                   ></el-option>
                 </el-select>
               </el-form-item>
@@ -234,12 +234,13 @@
                 <el-select
                   v-model="lists1.classTwo"
                   placeholder="请选择图书二级分类"
+                  @change="change2"
                 >
                   <el-option
-                    v-for="option in optionData.Two[index2]"
-                    :key="option.value"
-                    :label="option.name"
-                    :value="option.value"
+                    v-for="option in categoryList[index2].second_category"
+                    :key="option.second_id"
+                    :label="option.second_name"
+                    :value="option.second_id"
                   >
                   </el-option>
                 </el-select>
@@ -354,10 +355,10 @@
                   placeholder="请选择图书一级分类"
                 >
                   <el-option
-                    v-for="option in optionData.One"
-                    :key="option.value"
-                    :label="option.name"
-                    :value="option.value"
+                    v-for="option in categoryList"
+                    :key="option.main_id"
+                    :label="option.main_name"
+                    :value="option.main_id"
                   ></el-option>
                 </el-select>
               </el-form-item>
@@ -374,12 +375,13 @@
                 <el-select
                   v-model="lists1.classTwo"
                   placeholder="请选择图书二级分类"
+                  @change="change2"
                 >
                   <el-option
-                    v-for="option in optionData.Two[index2]"
-                    :key="option.value"
-                    :label="option.name"
-                    :value="option.value"
+                    v-for="option in categoryList[index2].second_category"
+                    :key="option.second_id"
+                    :label="option.second_name"
+                    :value="option.second_id"
                   >
                   </el-option>
                 </el-select>
@@ -431,6 +433,15 @@ export default {
       index2: 0,
       shop_id: "",
       briefInfo: "",
+      value: [],
+      categoryList: [
+        {
+          book_num: 0,
+          main_name: "",
+          main_id: "",
+          second_category: [{ book_num: "", second_name: "", second_id: "" }],
+        },
+      ],
       optionData: {
         One: [
           { value: "网络文学", name: "网络文学" },
@@ -470,7 +481,9 @@ export default {
           bookname: "书本1号",
           bookauthor: "张三",
           classone: "小说",
+          classOne_id: "6ccf8604ff7bf563caffc87ea1fb5051",
           classtwo: "中国小说",
+          classTwo_id: "4",
           bookprice: "10.00",
           inventory: "100",
           bookPubTime: "2021-1-1",
@@ -484,7 +497,9 @@ export default {
           bookname: "书本2号",
           bookauthor: "李四",
           classone: "小说",
+          classOne_id: "6ccf8604ff7bf563caffc87ea1fb5051",
           classtwo: "外国小说",
+          classTwo_id: "5",
           bookprice: "11.00",
           inventory: "101",
           bookPubTime: "2020-2-2",
@@ -499,7 +514,9 @@ export default {
         bookName: "",
         bookAuthor: "",
         classOne: "",
+        classOne_id: "",
         classTwo: "",
+        classTwo_id: "",
         bookPrice: "",
         Inventory: "",
         bookPubTime: "",
@@ -591,22 +608,24 @@ export default {
     },
   },
   methods: {
-    change1() {
-      if (this.lists1.classOne == "网络文学") {
-        this.index2 = 0;
-      } else if (this.lists1.classOne == "教育") {
-        this.index2 = 1;
-      } else if (this.lists1.classOne == "小说") {
-        this.index2 = 2;
-      } else if (this.lists1.classOne == "文艺") {
-        this.index2 = 3;
-      } else if (this.lists1.classOne == "青春/动漫") {
-        this.index2 = 4;
+    //回调一级分类的值
+    change1(val) {
+      this.lists1.classOne_id = val;
+      for (let i = 0; i < this.categoryList.length; i++) {
+        if (this.categoryList[i].main_id == val) {
+          this.index2 = i;
+        }
       }
     },
+    //回调二级分类的值
+    change2(val) {
+      this.lists1.classTwo_id = val;
+    },
+    //前往店铺管理页
     goToManage() {
       this.$router.push("/shopManage");
     },
+    //修改图书信息时，获取这一行的初始信息
     handleChange(index) {
       this.lists1.bookImg = this.tableData[index].bookimg;
       this.lists1.bookName = this.tableData[index].bookname;
@@ -620,12 +639,27 @@ export default {
       this.index = index;
       this.dialogChangeVisible = true;
     },
+    //修改图书简介时，获取图书简介，之后修改
     handleChangeBriefInfo(index) {
       this.briefInfo = this.tableData[index].briefInfo;
       this.briefdata.append("book_id", this.tableData[index].bookid);
+      axios({
+        url: this.$store.state.yuming + "/book/getDetail",
+        method: "GET",
+        params: {
+          book_id: this.tableData[index].bookid,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.briefInfo = res.data.detail;
+        } else {
+          this.$message.error("获取图书详情失败，请重试");
+        }
+      });
       this.index = index;
       this.dialogBriefVisible = true;
     },
+    //修改图书简介
     changeBriefInfo() {
       this.briefdata.append("detail", this.briefInfo);
       axios({
@@ -647,13 +681,16 @@ export default {
         }
       });
     },
+    //修改图书信息
     changeBook() {
       this.tableData[this.index].bookid = this.lists1.bookid;
       this.tableData[this.index].bookimg = this.lists1.bookImg;
       this.tableData[this.index].bookname = this.lists1.bookName;
       this.tableData[this.index].bookauthor = this.lists1.bookAuthor;
       this.tableData[this.index].classone = this.lists1.classOne;
+      this.tableData[this.index].classOne_id = this.lists1.classOne_id;
       this.tableData[this.index].classtwo = this.lists1.classTwo;
+      this.tableData[this.index].classTwo_id = this.lists1.classTwo_id;
       this.tableData[this.index].bookprice = this.lists1.bookPrice;
       this.tableData[this.index].inventory = this.lists1.Inventory;
       this.tableData[this.index].bookPubTime = this.lists1.bookPubTime;
@@ -665,8 +702,8 @@ export default {
       this.formdata.append("repertory", this.lists1.Inventory);
       this.formdata.append("press", this.lists1.press);
       this.formdata.append("print_time", this.lists1.bookPubTime);
-      this.formdata.append("main_category_id", this.lists1.classOne);
-      this.formdata.append("second_category_id", this.lists1.classTwo);
+      this.formdata.append("main_category_id", this.lists1.classOne_id);
+      this.formdata.append("second_category_id", this.lists1.classTwo_id);
       this.formdata.append("shop_id", this.shop_id);
       this.formdata.append("edition", null);
       axios({
@@ -688,6 +725,7 @@ export default {
         }
       });
     },
+    //添加图书
     addBook(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -745,19 +783,9 @@ export default {
         }
       });
     },
+    //取消修改图书时，进行清空
     cancel1() {
-      this.lists1.bookImg = "";
-      this.lists1.bookName = "";
-      this.lists1.bookAuthor = "";
-      this.lists1.classOne = "";
-      this.lists1.classTwo = "";
-      this.lists1.bookPrice = "";
-      this.lists1.Inventory = "";
-      this.lists1.bookPubTime = "";
-      this.lists1.press = "";
       this.dialogChangeVisible = false;
-    },
-    cancel2() {
       this.lists1.bookImg = "";
       this.lists1.bookName = "";
       this.lists1.bookAuthor = "";
@@ -767,12 +795,29 @@ export default {
       this.lists1.Inventory = "";
       this.lists1.bookPubTime = "";
       this.lists1.press = "";
+      this.formdata = new FormData();
+    },
+    //取消添加图书时，进行清空
+    cancel2() {
       this.dialogAddVisible = false;
+      this.lists1.bookImg = "";
+      this.lists1.bookName = "";
+      this.lists1.bookAuthor = "";
+      this.lists1.classOne = "";
+      this.lists1.classTwo = "";
+      this.lists1.bookPrice = "";
+      this.lists1.Inventory = "";
+      this.lists1.bookPubTime = "";
+      this.lists1.press = "";
+      this.formdata = new FormData();
     },
+    //取消修改简介时，进行清空
     cancel3() {
-      this.briefInfo = "";
       this.dialogBriefVisible = false;
+      this.briefInfo = "";
+      this.formdata = new FormData();
     },
+    //下架所选图书
     deleteBook() {
       this.$confirm("是否下架所选图书?", "提示", {
         confirmButtonText: "确定",
@@ -839,6 +884,7 @@ export default {
           });
         });*/
     },
+    //点击x号或对话框外部的关闭
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(() => {
@@ -855,6 +901,7 @@ export default {
         })
         .catch(() => {});
     },
+    //回调多选中的图书的值
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
@@ -868,6 +915,7 @@ export default {
     upAgain() {
       this.$refs["upload"].$refs["upload-inner"].handleClick();
     },
+    //更改或者添加图书图片
     getFile(file) {
       if (this.dialogChangeVisible == true) {
         this.imgdata.append("img", file);
@@ -944,10 +992,30 @@ export default {
           });
         });
     },
+    //获取所有目录信息
+    getAllCategory() {
+      axios({
+        url: this.$store.state.yuming + "/category/getAll",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.categoryList = data;
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
   },
   async created() {
     this.isLoading = true;
     await this.getShopInfo();
+    await this.getAllCategory();
     this.isLoading = false;
   },
 };
