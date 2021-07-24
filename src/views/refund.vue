@@ -85,28 +85,32 @@
                 </el-col>
                 <el-col :span="18">
                   <div class="title">我要换货</div>
-                  <div class="description">
-                    已收到货，需要更换收到的货物
-                  </div>
+                  <div class="description">已收到货，需要更换收到的货物</div>
                 </el-col>
               </el-row>
             </el-card>
           </el-col>
           <el-col :span="12">
-            <el-card class="chooseCard" @click.native="fouthService">
-              <el-row style="margin: 20px 0">
-                <el-col :span="6">
-                  <i
-                    class="iconfont-jiabao"
-                    style="font-size: 50px; margin-left: 10px"
-                  />
-                </el-col>
-                <el-col :span="18">
-                  <div class="title">价保</div>
-                  <div class="description">买贵了申请价保退差额</div>
-                </el-col>
-              </el-row>
-            </el-card>
+            <el-tooltip
+              content="目前不提供商品价保服务"
+              placement="bottom"
+              effect="light"
+            >
+              <el-card class="chooseCard">
+                <el-row style="margin: 20px 0">
+                  <el-col :span="6">
+                    <i
+                      class="iconfont-jiabao"
+                      style="font-size: 50px; margin-left: 10px"
+                    />
+                  </el-col>
+                  <el-col :span="18">
+                    <div class="title">价保</div>
+                    <div class="description">买贵了申请价保退差额</div>
+                  </el-col>
+                </el-row>
+              </el-card>
+            </el-tooltip>
           </el-col>
         </el-row>
       </el-card>
@@ -120,7 +124,7 @@ export default {
     return {
       id: "",
       bookId: this.$route.params.bookId,
-      serviceId:"",
+      serviceId: "",
       bookList: {
         orderId: 2,
         merchant_id: 2,
@@ -144,29 +148,21 @@ export default {
       this.id = 1;
       this.$router.push("/userOrder/" + this.id);
     },
-    firstService(){
-      this.serviceId=1;
-      this.$router.push(
-        `/service/${this.bookId}/${this.serviceId}`
-      );
+    firstService() {
+      this.serviceId = 1;
+      this.$router.push(`/service/${this.bookId}/${this.serviceId}`);
     },
-    secondService(){
-      this.serviceId=2;
-      this.$router.push(
-        `/service/${this.bookId}/${this.serviceId}`
-      );
+    secondService() {
+      this.serviceId = 2;
+      this.$router.push(`/service/${this.bookId}/${this.serviceId}`);
     },
-    thirdService(){
-      this.serviceId=3;
-      this.$router.push(
-        `/service/${this.bookId}/${this.serviceId}`
-      );
+    thirdService() {
+      this.serviceId = 3;
+      this.$router.push(`/service/${this.bookId}/${this.serviceId}`);
     },
-    fouthService(){
-      this.serviceId=4;
-      this.$router.push(
-        `/service/${this.bookId}/${this.serviceId}`
-      );
+    fouthService() {
+      this.serviceId = 4;
+      this.$router.push(`/service/${this.bookId}/${this.serviceId}`);
     },
   },
 };

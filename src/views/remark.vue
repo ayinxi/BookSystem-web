@@ -6,107 +6,70 @@
       </div>
       <el-page-header
         @back="gotoOrder"
-        content="订单详情"
+        content="评价"
         style="display: flex; justify-content: center; align-items: center"
       ></el-page-header>
     </div>
-    <el-row>
-      <el-col :offset="3">
-        <el-steps :space="300" :active="1" finish-status="success" align-center>
-          <el-step title="拍下商品" description="2021-07-23 9:50:00"></el-step>
-          <el-step title="卖家已发货"></el-step>
-          <el-step title="确认收货"></el-step>
-          <el-step title="评价"></el-step>
-        </el-steps>
-      </el-col>
-    </el-row>
     <el-row style="margin: 20px 15%">
-      <el-card style="margin-bottom: 10px">
-        <el-row>
-          <el-col :span="4">
-            <h3>订单信息</h3>
-          </el-col>
-          <el-col :span="20" style="margin: 20px 0">
-            订单编号：{{ orderDetailList.orderId }}
-          </el-col>
-        </el-row>
-        <el-divider></el-divider>
-        <el-row>
-          <el-col :span="2">收货地址： </el-col>
-          <el-col :span="22">{{ orderDetailList.address }}</el-col>
-        </el-row>
-      </el-card>
       <el-card>
-        <el-row style="margin-bottom: 20px">
-          <el-col :span="10" :offset="1" class="table-header-item"
-            >商品信息</el-col
-          >
-          <el-col :span="2" class="table-header-item">单价</el-col>
-          <el-col :span="3" class="table-header-item">数量</el-col>
-          <el-col :span="3" class="table-header-item">实付款</el-col>
-          <el-col
-            :span="4"
-            class="table-header-item"
-            style="display: flex; justify-content: center"
-            >交易状态</el-col
-          >
-        </el-row>
         <div>
           <div class="books">
             <el-row>
-              <el-col :span="19">
+              <el-col :span="24">
                 <el-row
                   v-for="(books, idx) in orderDetailList.children"
                   :key="idx"
                   style="margin: 10px"
                 >
-                  <el-col :span="2">
-                    <img :src="books.book_img" style="height: 70px" />
+                  <el-col :span="4">
+                    <img :src="books.book_img" style="height: 150px" />
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="20">
                     <div style="margin-right: 30px" class="book-name">
                       {{ books.book_name }}
                     </div>
-                    <div class="book-detail">作者：{{ books.book_writer }}</div>
+                    <div class="book-detail" style="margin-top: 15px">
+                      作者：{{ books.book_writer }}
+                    </div>
                     <div class="book-detail">
                       出版社：{{ books.book_publish }}
                     </div>
-                  </el-col>
-                  <el-col :span="3">
-                    <div style="margin: 25px 0">
-                      ¥{{ books.book_unitPrice }}
-                    </div>
-                  </el-col>
-                  <el-col :span="3">
-                    <div style="margin: 25px 0">
-                      {{ books.book_num }}
-                    </div>
-                  </el-col>
-                  <el-col :span="3">
-                    <div style="margin: 25px 10px">
+                    <div style="margin: 20px 10px" class="book-total">
                       ￥{{ books.book_total }}
                     </div>
                   </el-col>
                 </el-row>
               </el-col>
-              <el-col :span="4">
-                <el-row style="margin-top: 35px">
-                  <el-col
-                    class="status-name"
-                    v-if="orderDetailList.status == 1"
-                    style="display: flex; justify-content: center"
-                    >交易成功</el-col
-                  >
-                  <el-col
-                    class="status-name"
-                    v-if="orderDetailList.status == 2"
-                    style="display: flex; justify-content: center"
-                    >卖家已发货</el-col
-                  >
-                </el-row>
-              </el-col>
             </el-row>
           </div>
+          <el-divider></el-divider>
+          <el-form
+            ref="remarkList"
+            :model="remarkList"
+            label-width="100px"
+            :rules="remarkRules"
+          >
+            <el-form-item label="总体评分：" prop="rate">
+              <div style="margin-top: 10px">
+                <el-rate v-model="remarkList.rate" :colors="colors" show-text>
+                </el-rate>
+              </div>
+            </el-form-item>
+            <el-form-item label="详细评价：">
+              <el-input
+                type="textarea"
+                maxlength="100"
+                show-word-limit
+                clearable
+                style="width: 500px"
+                rows="5"
+                v-model="remarkList.description"
+              ></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button>提交</el-button>
+            </el-form-item>
+          </el-form>
         </div>
       </el-card>
     </el-row>
@@ -119,9 +82,13 @@ export default {
     return {
       id: "",
       orderId: this.$route.params.orderId,
+      colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
+      remarkRules: {
+        rate: [
+          { required: true, message: "请对此次订单评分", trigger: "blur" },
+        ],
+      },
       orderDetailList: {
-        address:
-          "李心玥,86-15576199089,江苏省 南京市 江宁区 秣陵街道 江宁区东南大学九龙湖校区梅园 ,000000",
         orderId: 2,
         merchant_id: 2,
         book_merchant: "新华书店网上商城自营图书",
@@ -152,6 +119,10 @@ export default {
           },
         ],
       },
+      remarkList: {
+        rate: "",
+        description: "",
+      },
     };
   },
   methods: {
@@ -181,18 +152,10 @@ export default {
   font-weight: 600;
 }
 .book-name {
-  font-size: 13px;
-}
-.status-name {
-  font-size: 16px;
-  color: rgb(221, 98, 98);
-  font-weight: 400;
-}
-.action-name {
-  font-size: 15px;
+  font-size: 18px;
 }
 .book-detail {
-  font-size: 13px;
+  font-size: 15px;
   color: grey;
 }
 .books {
@@ -200,20 +163,7 @@ export default {
   color: #303133;
   /*border:1px solid rgb(201, 201, 201);*/
 }
-.header-card {
-  height: 60px;
-  margin-bottom: 10px;
-}
-.table-header-item {
-  display: flex;
-  align-items: center;
-  font-size: 15px;
-}
-.el-divider--horizontal {
-  display: block;
-  height: 1px;
-  width: 100%;
-  margin-bottom:15px;
-  margin-top:0px
+.book-total {
+  color: rgb(221, 98, 98);
 }
 </style>

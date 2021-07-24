@@ -833,11 +833,6 @@ export default {
       axios({
         url: this.$store.state.yuming + "/user/address/getAll",
         method: "GET",
-        params: {
-          address: this.newAddress.address,
-          phone: this.newAddress.phone,
-          name: this.newAddress.name,
-        },
       }).then((res) => {
         if (res.data.code == 200) {
           this.myAddressList = res.data.data;

@@ -131,16 +131,10 @@
                     <el-row style="margin-top: 30px">
                       <el-col :span="18">
                         <div style="margin-bottom: 5px">
-                          <div
-                            class="status-name"
-                            v-if="item.status == 1"
-                          >
+                          <div class="status-name" v-if="item.status == 1">
                             交易成功
                           </div>
-                          <div
-                            class="status-name"
-                            v-if="item.status == 2"
-                          >
+                          <div class="status-name" v-if="item.status == 2">
                             卖家已发货
                           </div>
                           <el-button
