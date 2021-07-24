@@ -3,7 +3,7 @@
     <div class="content">
       <div class="header">
         <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
-        <div class="title">管理平台</div>
+        <div class="title">后台管理</div>
       </div>
       <div>
         <el-card class="box-card1">
@@ -12,7 +12,7 @@
             <el-main>
               <div class="box3">
             <h2>欢迎您，管理员</h2>
-            <el-button type="text">退出登录</el-button>
+            <el-button type="text" @click.native="loginOut">退出登录</el-button>
           </div>
           <div class="item" style="font-size: 15px">
             在此处，您可以选择使用 分类管理、商家管理、用户管理、订单管理功能。
@@ -76,6 +76,15 @@
         </el-card>
         </el-button>
       </div>
+      <div><el-button type="text" @click="gotoDataVisual">
+        <el-card class="box-card1" style="background-color: #3d678a">
+          <el-row style="color: white">
+            <el-col style="text-align:center">
+              <el-row style="font-size: 20px;">数据可视化</el-row>
+            </el-col>
+          </el-row>
+        </el-card></el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -88,6 +97,9 @@ export default {
   },
   computed: {},
   methods:{
+    gotoHome() {
+      this.$router.push("/");
+    },
     gotoClass() {
       this.$router.push("/manageClass");
     },
@@ -99,6 +111,16 @@ export default {
     },
     gotoOrder() {
       this.$router.push("/manageOrder");
+    },
+    gotoDataVisual() {
+      this.$router.push("/dataVisual");
+    },
+    loginOut() {
+      this.isLoading = true;
+      this.$store.commit("clearCache");
+      sessionStorage.removeItem("token");
+      this.isLoading = false;
+      this.gotoHome();
     },
   },
 };

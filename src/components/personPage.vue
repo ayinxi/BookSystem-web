@@ -112,6 +112,7 @@
                     <i
                       class="iconfont-dingdan"
                       style="font-size: 50px; margin: 50px"
+                      @click="gotoAllOrder"
                     />
                     <el-button
                       type="text"
@@ -124,6 +125,7 @@
                     <i
                       class="iconfont-daifahuo"
                       style="font-size: 50px; margin: 50px"
+                      @click="gotoDaifahuo"
                     />
                     <el-button
                       type="text"
@@ -136,6 +138,7 @@
                     <i
                       class="iconfont-daishouhuo"
                       style="font-size: 50px; margin: 50px"
+                      @click="gotoDaishouhuo"
                     />
                     <el-button
                       type="text"
@@ -148,6 +151,7 @@
                     <i
                       class="iconfont-fankui"
                       style="font-size: 50px; margin: 50px"
+                      @click="gotoDaipingjia"
                     />
                     <el-button
                       type="text"
@@ -160,6 +164,7 @@
                     <i
                       class="iconfont-shouhou"
                       style="font-size: 50px; margin: 50px"
+                      @click="gotoTuikuan"
                     />
                     <el-button
                       type="text"
@@ -181,7 +186,7 @@
                 <el-col :key="item.id" v-for="item in myAddressList" :span="6">
                   <el-card class="addressCard">
                     <el-form ref="item" :v-model="item" label-width="80px">
-                      <el-form-item label="姓名：" prop="name">
+                      <el-form-item label="姓名" prop="name">
                         <div style="display: flex; justify-content: flex-start">
                           {{ item.name }}
                         </div>
@@ -665,7 +670,7 @@ export default {
   data() {
     return {
       imgUrl: require("../assets/avatar.jpg"),
-      orderId: "",
+      id: "",
       isLoading: false,
       //收货地址loading
       addressLoading: false,
@@ -730,6 +735,7 @@ export default {
           name: "",
           phone: "",
           address: "",
+          status: "",
         },
       ],
       //评分
@@ -799,28 +805,28 @@ export default {
     },
     //跳转全部页面
     gotoAllOrder() {
-      this.orderId = 0;
-      this.$router.push("/userOrder/" + this.orderId);
+      this.id = 1;
+      this.$router.push("/userOrder/" + this.id);
     },
     //跳转待发货
     gotoDaifahuo() {
-      this.orderId = 1;
-      this.$router.push("/userOrder/" + this.orderId);
+      this.id = 2;
+      this.$router.push("/userOrder/" + this.id);
     },
     //跳转待收货页面
     gotoDaishouhuo() {
-      this.orderId = 2;
-      this.$router.push("/userOrder/" + this.orderId);
+      this.id = 3;
+      this.$router.push("/userOrder/" + this.id);
     },
     //跳转全部页面
     gotoDaipingjia() {
-      this.orderId = 3;
-      this.$router.push("/userOrder/" + this.orderId);
+      this.id = 4;
+      this.$router.push("/userOrder/" + this.id);
     },
     //跳转退款页面
     gotoTuikuan() {
-      this.orderId = 4;
-      this.$router.push("/userOrder/" + this.orderId);
+      this.id = 5;
+      this.$router.push("/userOrder/" + this.id);
     },
     //获取用户的收货地址
     getUserAddress() {

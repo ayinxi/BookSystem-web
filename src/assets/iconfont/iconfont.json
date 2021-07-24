@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "201102",
+      "name": "3.1退款退货",
+      "font_class": "tuikuan",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "5315865",
+      "name": "退货退款",
+      "font_class": "tuihuo",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "6008027",
+      "name": "换",
+      "font_class": "huanhuo",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    },
+    {
+      "icon_id": "20657654",
+      "name": "低价保证",
+      "font_class": "jiabao",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
       "icon_id": "19490722",
       "name": "待发货",
       "font_class": "daifahuo1",

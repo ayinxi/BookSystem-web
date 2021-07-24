@@ -98,6 +98,12 @@ const routes = [
     component: () => import('../components/admin/manageOrder.vue')
   },
   {
+    path: '/dataVisual',
+    name: 'dataVisual',
+    meta: { adminAuth: true },//登录鉴权
+    component: () => import('../components/admin/dataVisual.vue')
+  },
+  {
     path: '/shopping',
     name: 'shopping',
     meta: { userAuth: true },//登录鉴权
@@ -116,10 +122,34 @@ const routes = [
     component: () => import('../components/shopManage/refundInfo.vue')
   },
   {
-    path: '/userorder/:orderId',
+    path: '/userorder/:id',
     name: 'userorder',
     meta: { userAuth: true },//登录鉴权
     component: () => import('../views/userOrder.vue')
+  },
+  {
+    path: '/orderDetail/:orderId',
+    name: 'orderDetail',
+    meta: { userAuth: true },//登录鉴权
+    component: () => import('../views/orderDetail.vue')
+  },
+  {
+    path: '/refund/:bookId',
+    name: 'refund',
+    meta: { userAuth: true },//登录鉴权
+    component: () => import('../views/refund.vue')
+  },
+  {
+    path: '/service/:bookId/:serviceId',
+    name: 'service',
+    meta: { userAuth: true },//登录鉴权
+    component: () => import('../views/service.vue')
+  },
+  {
+    path: '/remark/:orderId',
+    name: 'remark',
+    meta: { userAuth: true },//登录鉴权
+    component: () => import('../views/remark.vue')
   },
   {
     path: '/classSort',
@@ -140,7 +170,6 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
   routes
 })
 
