@@ -122,10 +122,19 @@
               <el-col :span="3">
                 <el-button
                   type="text"
+                  @click.native="handleClick(0)"
+                  :class="{ btn_active: flag === 0 }"
+                  id="Button0"
+                  >全部相关图书</el-button
+                >
+              </el-col>
+              <el-col :span="3">
+                <el-button
+                  type="text"
                   @click.native="handleClick(1)"
                   :class="{ btn_active: flag === 1 }"
                   id="Button1"
-                  >全部相关图书</el-button
+                  >书名相关图书</el-button
                 >
               </el-col>
               <el-col :span="3">
@@ -134,7 +143,7 @@
                   @click.native="handleClick(2)"
                   :class="{ btn_active: flag === 2 }"
                   id="Button2"
-                  >书名相关图书</el-button
+                  >作者相关图书</el-button
                 >
               </el-col>
               <el-col :span="3">
@@ -143,7 +152,7 @@
                   @click.native="handleClick(3)"
                   :class="{ btn_active: flag === 3 }"
                   id="Button3"
-                  >作者相关图书</el-button
+                  >出版社相关图书</el-button
                 >
               </el-col>
               <el-col :span="3">
@@ -152,15 +161,6 @@
                   @click.native="handleClick(4)"
                   :class="{ btn_active: flag === 4 }"
                   id="Button4"
-                  >出版社相关图书</el-button
-                >
-              </el-col>
-              <el-col :span="3">
-                <el-button
-                  type="text"
-                  @click.native="handleClick(5)"
-                  :class="{ btn_active: flag === 5 }"
-                  id="Button5"
                   >图书简介相关图书</el-button
                 >
               </el-col>
@@ -438,9 +438,32 @@ export default {
     getMainClassBook(id) {
       this.$router.push({ path: "/classSort", query: { activeIndexMain: id } });
     },
-    handleClick(val){
-      this.flag=val;
-      document.getElementById("Button"+val).blur();
+    //点击实现本页面的不同搜索方式
+    handleClick(val) {
+      this.flag = val;
+      document.getElementById("Button" + val).blur();
+      axios({
+        url: this.$store.state.yuming + "/book/fuzzyQuery",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 20,
+          style: 1,
+          queryWhat: val,
+          content: this.input,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList = data;
+          } else {
+            this.$message.error("获取图书失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     getGoodsNum() {
       axios({
@@ -462,80 +485,15 @@ export default {
     //图书模糊查询全部相关图书
     searchBook() {
       this.$store.commit("gobalSearchText", this.input);
+      this.flag = 0;
       axios({
         url: this.$store.state.yuming + "/book/fuzzyQuery",
         method: "GET",
         params: {
           page_num: this.currentPage,
-          book_num: 5,
+          book_num: 20,
           style: 1,
-          queryWhat: 1,
-          content: this.input,
-        },
-      })
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == "200") {
-            this.displayList += data;
-          } else {
-            this.$message.error("获取图书失败,请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
-      axios({
-        url: this.$store.state.yuming + "/book/fuzzyQuery",
-        method: "GET",
-        params: {
-          page_num: this.currentPage,
-          book_num: 5,
-          style: 1,
-          queryWhat: 2,
-          content: this.input,
-        },
-      })
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == "200") {
-            this.displayList += data;
-          } else {
-            this.$message.error("获取图书失败,请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
-      axios({
-        url: this.$store.state.yuming + "/book/fuzzyQuery",
-        method: "GET",
-        params: {
-          page_num: this.currentPage,
-          book_num: 5,
-          style: 1,
-          queryWhat: 3,
-          content: this.input,
-        },
-      })
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == "200") {
-            this.displayList += data;
-          } else {
-            this.$message.error("获取图书失败,请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
-      axios({
-        url: this.$store.state.yuming + "/book/fuzzyQuery",
-        method: "GET",
-        params: {
-          page_num: this.currentPage,
-          book_num: 5,
-          style: 1,
-          queryWhat: 4,
+          queryWhat: 0,
           content: this.input,
         },
       })
@@ -551,6 +509,8 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
+    //按书名相关查询图书
+
     //获取所有目录
     getAllCategory() {
       axios({
@@ -675,7 +635,7 @@ export default {
   background-color: rgb(231, 241, 252) !important;
 }
 .btn_active {
-  background: #409eff ;
+  background: #409eff;
   color: #fff;
 }
 </style>
