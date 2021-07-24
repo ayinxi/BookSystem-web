@@ -663,7 +663,7 @@ export default {
     changeBriefInfo() {
       this.briefdata.append("detail", this.briefInfo);
       axios({
-        url: this.$store.state.yuming + "/book/updateDetail",
+        url: this.$store.state.yuming + "/shop/book/updateDetail",
         method: "POST",
         data: this.briefdata,
       }).then((res) => {
@@ -707,7 +707,7 @@ export default {
       this.formdata.append("shop_id", this.shop_id);
       this.formdata.append("edition", null);
       axios({
-        url: this.$store.state.yuming + "/book/updateBook",
+        url: this.$store.state.yuming + "/shop/book/updateBook",
         method: "POST",
         data: this.formdata,
       }).then((res) => {
@@ -761,7 +761,7 @@ export default {
           this.formdata.append("shop_id", this.shop_id);
           this.formdata.append("edition", null);
           axios({
-            url: this.$store.state.yuming + "/book/addBook",
+            url: this.$store.state.yuming + "/shop/book/addBook",
             method: "POST",
             data: this.formdata,
           }).then((res) => {
@@ -829,7 +829,7 @@ export default {
         }
         window.console.log(this.book_id);*/
         axios({
-          url: this.$store.state.yuming + "/book/multiDelete",
+          url: this.$store.state.yuming + "/shop/book/multiDelete",
           method: "DELETE",
           params: {
             book_id: ["01ac472660008cb1199aa2ff90bc9848"],
@@ -921,7 +921,7 @@ export default {
         this.imgdata.append("img", file);
         this.imgdata.append("book_id", "01ac472660008cb1199aa2ff90bc9848");
         axios({
-          url: this.$store.state.yuming + "/book/updateImg",
+          url: this.$store.state.yuming + "/shop/book/updateImg",
           method: "POST",
           data: this.imgdata,
         }).then((res) => {
