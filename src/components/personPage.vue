@@ -670,7 +670,7 @@ export default {
   data() {
     return {
       imgUrl: require("../assets/avatar.jpg"),
-      id: "",
+      orderId: "",
       isLoading: false,
       //收货地址loading
       addressLoading: false,
@@ -805,7 +805,7 @@ export default {
     },
     //跳转全部页面
     gotoAllOrder() {
-      this.id = 1;
+      this.id =1;
       this.$router.push("/userOrder/" + this.id);
     },
     //跳转待发货
