@@ -13,11 +13,11 @@
             </div>
           </el-col>
           <el-col :span="12">
-            <div class="hasRole ? search1 : search2 ">
+            <div class="hasRole ? search1 : search2">
               <el-input
                 placeholder="给孩子的第一本编程书籍"
                 v-model="input"
-                style="width:500px"
+                style="width: 500px"
               >
                 <el-button
                   slot="append"
@@ -107,35 +107,13 @@
                 mode="horizontal"
               >
                 <el-menu-item
-                  index="1"
-                  @click.native="NetworkFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >网络文学</el-menu-item
-                >
-                <el-menu-item
-                  index="2"
-                  @click.native="EducationFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >教育</el-menu-item
-                >
-                <el-menu-item
-                  index="3"
-                  @click.native="NovelFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >小说</el-menu-item
-                >
-                <el-menu-item
-                  index="4"
-                  @click.native="LandAFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >文艺</el-menu-item
-                >
-                <el-menu-item
-                  index="5"
-                  @click.native="YandCFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >青春/动漫</el-menu-item
-                >
+                v-for="item in categoryList"
+                :key="item.main_id"
+                style="color: rgb(250, 128, 114); font-weight: 1000"
+                :index="item.main_id"
+                @click.native="getMainClassBook(item.main_id)"
+                >{{ item.main_name }}</el-menu-item
+              >
               </el-menu>
             </el-col>
           </el-row>
@@ -147,37 +125,41 @@
                 >首页</el-breadcrumb-item
               >
               <el-breadcrumb-item
-                @click.native="NetworkFilter"
+                @click.native="getMainClassBook(book.main_category_id)"
                 style="cursor: pointer"
-                >{{ this.Lists.ClassOne }}</el-breadcrumb-item
+                >{{ book.main_category }}</el-breadcrumb-item
               >
               <el-breadcrumb-item
-                @click.native="test"
+                @click.native="getSecondClassBook(book.second_category_id)"
                 style="cursor: pointer"
-                >{{ this.Lists.ClassTwo }}</el-breadcrumb-item
+                >{{ book.second_category }}</el-breadcrumb-item
               >
-              <el-breadcrumb-item>图书名称</el-breadcrumb-item>
+              <el-breadcrumb-item>{{book.book_name}}</el-breadcrumb-item>
             </el-breadcrumb>
           </el-row>
         </el-header>
         <el-container style="margin-top: 3%">
           <el-aside width="25%">
-            <img class="imgStyle3" :src="this.Lists.Img" />
+            <img class="imgStyle3" :src="book.image_b" />
           </el-aside>
           <el-main
             ><el-link :underline="false" @click.native="goToShopIndex">{{
-              this.Lists.shopName
+              book.shop_name
             }}</el-link>
-            <h2>{{ this.Lists.Name }}</h2>
+            <h2>{{ book.book_name }}</h2>
             <p style="color: gray; margin: 0%">
-              {{ this.Lists.Author }} {{ this.Lists.PubTime }}出版
-              {{ this.Lists.press }}
+              {{ book.author }}
+              {{ this.dateFormat(book.print_time) }}出版
+              {{ book.press }}
             </p>
             <p>
-              继《无所畏》后暌违三年，冯唐全新作品。44篇全新智慧之作+10幅金句书法+35幅私人摄影作品！你可以不屠龙，但不能不磨剑。一个人有本事才是靠得住的财富。随书附赠2张冯唐字画书签！
+              {{ book.detail }}
             </p>
             <p style="color: red; font-weight: 1000; margin: 0%">
-              ￥{{ this.Lists.Price }}
+              ￥{{ book.price }}
+            </p>
+            <p>
+              库存：{{ book.repertory }}
             </p>
             <el-row
               :gutter="20"
@@ -203,24 +185,28 @@
             </el-row>
           </el-main>
         </el-container>
-        <div style="font-size:25px"><el-divider content-position="left"><span style="font-size:25px">用户评价</span></el-divider></div>
+        <div style="font-size: 25px">
+          <el-divider content-position="left"
+            ><span style="font-size: 25px">用户评价</span></el-divider
+          >
+        </div>
         <el-footer>
           <div v-for="item in evaluationList" :key="item.userName">
-            <el-card style="margin:0 0 20px">
+            <el-card style="margin: 0 0 20px">
               <el-container>
-              <el-aside style="width:160px;text-align:center">
-                <el-image class="avatar" :src="item.userImg"></el-image>
-                <p>{{ item.userName }}</p>
-              </el-aside>
-              <el-main>
-                <el-rate
-                  v-model="item.rate"
-                  disabled
-                  score-template="{value}"
-                >
-                </el-rate>
-                <p>{{ item.evaluation }}</p>
-              </el-main>
+                <el-aside style="width: 160px; text-align: center">
+                  <el-image class="avatar" :src="item.userImg"></el-image>
+                  <p>{{ item.userName }}</p>
+                </el-aside>
+                <el-main>
+                  <el-rate
+                    v-model="item.rate"
+                    disabled
+                    score-template="{value}"
+                  >
+                  </el-rate>
+                  <p>{{ item.evaluation }}</p>
+                </el-main>
               </el-container>
             </el-card>
           </div>
@@ -231,23 +217,16 @@
 </template>
 <script>
 import axios from "axios";
+import moment from "moment";
+import { Message } from "element-ui";
 export default {
   data() {
     return {
-      isLoading:false,
+      input:"",
+      isLoading: false,
       activeIndex1: "",
       num: 1,
-      Lists: {
-        shopName: "这是一家好店",
-        Img: require("../assets/youbenshi.jpg"),
-        Name: "有本事",
-        Author: "冯唐",
-        ClassOne: "网络文学",
-        ClassTwo: "男频",
-        Price: "10.00",
-        PubTime: "2021-1-1",
-        press: "东南出版社",
-      },
+      page:1,
       evaluationList: [
         {
           userName: "芜湖",
@@ -262,6 +241,10 @@ export default {
           evaluation: "太烂了",
         },
       ],
+      goodsNum:"",
+      bookid: "",
+      book: {},
+      categoryList: [],
       formdata: new FormData(),
     };
   },
@@ -313,11 +296,14 @@ export default {
     goToShopIndex() {
       this.$router.push("/shopIndex");
     },
-    test() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "1-1" } });
+    //进行搜索
+    goToSearch() {
+      this.$store.commit("gobalSearchText", this.input);
+      this.$router.push("/searchBook");
     },
+    //加入购物车
     addShoppingTrolley() {
-      this.formdata.append("book_id", "1e285d4ef607f80871e946801839fc10");
+      this.formdata.append("book_id", this.bookid);
       this.formdata.append("sum", this.num);
       axios({
         url: this.$store.state.yuming + "/cartitem/addCartItem",
@@ -335,15 +321,20 @@ export default {
         }
       });
     },
+    //直接购买
     buy() {
       if (this.$store.state.token != "") {
-        this.$router.push("/shopping");
+        this.$router.push(`/shopping/${this.bookid}/${this.num}/${this.page}`);
       } else {
         this.$message({
           message: "请登录后再购买",
           type: "error",
         });
       }
+    },
+    //时间格式化
+    dateFormat(date) {
+      return moment(date).format("YYYY-MM-DD");
     },
     //获取购物车中商品数量
     getGoodsNum() {
@@ -363,13 +354,67 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
+    //点击导航栏或者面包屑，进入另一个页面并根据所选的一级分类来获取图书并分页展示
+    getMainClassBook(id) {
+      this.$router.push({ path: "/classSort", query: { activeIndexMain: id } });
+    },
+    //点击面包屑，进入另一个页面并根据所选的二级分类来获取图书并分页展示
+    getSecondClassBook(id) {
+      this.$router.push({
+        path: "/classSort",
+        query: { activeIndexMain: "", activeIndexSecond: id },
+      });
+    },
+    //获取这本书的详情
+    getBookDetail() {
+      axios({
+        url: this.$store.state.yuming + "/book/getDetail",
+        method: "GET",
+        params: { book_id: this.bookid },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.book = data;
+          } else {
+            this.$message.error("获取店铺状态失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //获取所有目录
+    getAllCategory() {
+      axios({
+        url: this.$store.state.yuming + "/category/getAll",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.categoryList = data;
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
   },
   async created() {
+    var query = this.$route.query;
+    if (query) {
+      this.bookid = query.book_id;
+    }
     this.isLoading = true;
     if (this.$store.state.token) {
       await this.getGoodsNum();
     }
-    //await this.getAllCategory();
+    this.getBookDetail();
+    this.getAllCategory();
     this.isLoading = false;
   },
 };

@@ -208,7 +208,7 @@
                     <el-image
                       class="tscStyle"
                       :src="todaySalesChampion.Img"
-                      @click.native="goToBookInfo"
+                      @click.native="goToBookInfo(todaySalesChampion.bookid)"
                     ></el-image>
                   </el-row>
                   <el-row style="text-align: center">
@@ -216,7 +216,7 @@
                       :underline="false"
                       class="book-name"
                       style="color: black; margin: 1%"
-                      @click="goToBookInfo"
+                      @click="goToBookInfo(todaySalesChampion.bookid)"
                       >{{ todaySalesChampion.Name }}</el-link
                     >
                     <p style="color: rgb(128, 192, 192); margin: 0%">
@@ -244,7 +244,7 @@
                       <el-image
                         class="imgStyle1"
                         :src="book.image_b"
-                        @click.native="goToBookInfo()"
+                        @click.native="goToBookInfo(book.id)"
                       >
                       </el-image>
                     </el-header>
@@ -259,7 +259,7 @@
                       <el-link
                         :underline="false"
                         class="book-name"
-                        @click="goToBookInfo()"
+                        @click="goToBookInfo(book.id)"
                         >{{ book.book_name }}</el-link
                       >
                       <p style="color: rgb(128, 192, 192); margin: 0%">
@@ -356,6 +356,7 @@ export default {
         Img: require("../assets/youbenshi.jpg"),
         Name: "有本事",
         Author: "冯唐",
+        bookid: "1",
       },
       categoryList: [],
       photoList: [
@@ -416,8 +417,8 @@ export default {
     handleSelect2() {
       this.activeIndex1 = " ";
     },
-    goToBookInfo() {
-      this.$router.push("/bookInfo");
+    goToBookInfo(id) {
+      this.$router.push({ path: "/bookInfo", query: { book_id: id } });
     },
     //获取最新上架的八本书（可能会改本数）
     getNewBook() {

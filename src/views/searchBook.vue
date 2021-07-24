@@ -238,7 +238,7 @@ export default {
       activeIndex1: "",
       goodsNum: "",
       currentPage: 1,
-      flag: 1,
+      flag: 0,
       isLoading: false,
       input: this.$store.state.gobalSearchText,
       categoryList: [],
@@ -521,8 +521,6 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.categoryList = data;
-            this.activeIndex1 = data[0].main_id;
-            this.getClassOneBook(this.activeIndex1);
           }
         })
         .catch(() => {
@@ -534,10 +532,6 @@ export default {
     },
   },
   async created() {
-    this.displayList = this.Lists.filter(
-      (item) =>
-        item.Name.includes(this.input) | item.Author.includes(this.input)
-    );
     this.isLoading = true;
     if (this.$store.state.token) {
       await this.getGoodsNum();
