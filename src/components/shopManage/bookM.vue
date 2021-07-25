@@ -644,7 +644,7 @@ export default {
 
     //修改图书信息时，获取这一行的初始信息
     handleChange(index) {
-      this.lists1.bookid=this.tableData[index].id;
+      this.lists1.bookid = this.tableData[index].id;
       this.lists1.bookImg = this.tableData[index].image_b;
       this.lists1.bookName = this.tableData[index].book_name;
       this.lists1.bookAuthor = this.tableData[index].author;
@@ -767,8 +767,8 @@ export default {
                 message: "新增图书成功",
                 type: "success",
               });
-              this.mounted();
               this.dialogAddVisible = false;
+              this.mounted();
               this.lists1 = "";
               this.formdata = new FormData();
             } else {
@@ -984,12 +984,6 @@ export default {
             message: "出现错误，请稍后再试",
           });
         });
-    },
-    mounted: function () {
-      if (location.href.indexOf("#reloaded") == -1) {
-        location.href = location.href + "#reloaded";
-        location.reload();
-      }
     },
   },
   async created() {

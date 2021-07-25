@@ -13,7 +13,10 @@
       <el-row style="margin: 0% 0% 5%">
         <el-card>
           <el-container>
-            <el-aside style="width:35px;padding-top: 10px; padding-bottom: 20px"><div class="verticalBar1"></div></el-aside>
+            <el-aside
+              style="width: 35px; padding-top: 10px; padding-bottom: 20px"
+              ><div class="verticalBar1"></div
+            ></el-aside>
             <el-main>
               <span style="font-weight: 1000">欢迎您，亲爱的店家 </span>
               <p style="font-weight: 1000">
@@ -124,6 +127,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import qs from "qs";
 export default {
   data() {
     return {
@@ -214,9 +219,8 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
-          row.state = "已发货";
+      }).then(() => {
+        /*row.state = "已发货";
           this.$message({
             type: "success",
             message: "确认成功!",
@@ -226,28 +230,65 @@ export default {
           this.$message({
             type: "info",
             message: "已取消确认",
+          });*/
+        axios({
+          url: this.$store.state.yuming + "/shop/sendOrder",
+          method: "POST",
+          params: {
+            order_id: "asdasasdf",
+          },
+        })
+          .then((res) => {
+            const { code, count } = res.data;
+            if (code == "200") {
+              this.$message.success("确认订单成功");
+            } else {
+              this.$message.error("确认订单失败，请刷新");
+            }
+          })
+          .catch(() => {
+            this.$message.error("出现错误，请稍后再试");
           });
-        });
+      });
     },
+    //取消订单
     handleRefuse(index) {
       this.$confirm("是否取消订单?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
-          this.tableData.splice(index, 1);
-          this.$message({
-            type: "success",
-            message: "取消成功!",
-          });
+      }).then(() => {
+        axios({
+          url: this.$store.state.yuming + "/order/cancel",
+          method: "POST",
+          params: {
+            order_id: "asdasasdf",
+          },
         })
-        .catch(() => {
+          .then((res) => {
+            const { code, count } = res.data;
+            if (code == "200") {
+              this.$message.success("取消订单成功");
+            } else {
+              this.$message.error("取消订单失败，请刷新");
+            }
+          })
+          .catch(() => {
+            this.$message.error("出现错误，请稍后再试");
+          });
+      });
+      /*this.tableData.splice(index, 1);
+      this.$message({
+        type: "success",
+        message: "取消成功!",
+      });*/
+
+      /* .catch(() => {
           this.$message({
             type: "info",
             message: "已放弃取消",
           });
-        });
+        });*/
     },
     filterDate(value, row, column) {
       const property = column["property"];
@@ -265,9 +306,30 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
-          let multData = this.multipleSelection;
+      }).then(() => {
+        axios({
+          url: this.$store.state.yuming + "/shop/batSendOrder",
+          method: "POST",
+          params: {
+            Order_Ids: ["asdasasdf", "afsafsdgf"],
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params, { indices: false });
+          },
+        })
+          .then((res) => {
+            const { code, count } = res.data;
+            if (code == "200") {
+              this.$message.success("批量确认订单成功");
+            } else {
+              this.$message.error("批量确认订单失败，请刷新");
+            }
+          })
+          .catch(() => {
+            this.$message.error("出现错误，请稍后再试");
+          });
+      });
+      /*let multData = this.multipleSelection;
           let tableData1 = this.tableData;
           let multDataLen = multData.length;
           let tableDataLen = tableData1.length;
@@ -294,16 +356,15 @@ export default {
             type: "info",
             message: "已放弃批量确认",
           });
-        });
+        });*/
     },
     batchRefuse() {
       this.$confirm("是否批量取消订单?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
-          let multData = this.multipleSelection;
+      }).then(() => {
+        /*let multData = this.multipleSelection;
           let tableData1 = this.tableData;
           let multDataLen = multData.length;
           let tableDataLen = tableData1.length;
@@ -326,8 +387,29 @@ export default {
           this.$message({
             type: "info",
             message: "已放弃批量取消",
+          });*/
+        axios({
+          url: this.$store.state.yuming + "/order/batCancel",
+          method: "POST",
+          params: {
+            Order_Ids: ["asdasasdf", "afsafsdgf"],
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params, { indices: false });
+          },
+        })
+          .then((res) => {
+            const { code, count } = res.data;
+            if (code == "200") {
+              this.$message.success("批量取消订单成功");
+            } else {
+              this.$message.error("批量取消订单失败，请刷新");
+            }
+          })
+          .catch(() => {
+            this.$message.error("出现错误，请稍后再试");
           });
-        });
+      });
     },
   },
 };
