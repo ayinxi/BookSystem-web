@@ -184,7 +184,7 @@
                       <el-image
                         class="imgStyle1"
                         :src="book.image_b"
-                        @click.native="goToBookInfo"
+                        @click.native="goToBookInfo(book.id)"
                       >
                       </el-image>
                     </el-header>
@@ -199,7 +199,7 @@
                       <el-link
                         :underline="false"
                         class="book-name"
-                        @click="goToBookInfo"
+                        @click="goToBookInfo(book.id)"
                         >{{ book.book_name }}</el-link
                       >
                       <p style="color: rgb(128, 192, 192); margin: 0%">
@@ -216,7 +216,9 @@
             <el-pagination
               :current-page="currentPage"
               @current-change="handleCurrentChange"
-              layout="prev, pager, next"
+              :total="bookcount"
+              :page-size="20"
+              layout="prev, pager, next, jumper"
             >
             </el-pagination>
           </el-main>
@@ -238,6 +240,7 @@ export default {
       input: "",
       categoryList: [],
       displayList: [],
+      bookcount:0,
     };
   },
   computed: {
@@ -277,8 +280,8 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
     },
-    goToBookInfo() {
-      this.$router.push("/bookInfo");
+    goToBookInfo(id) {
+      this.$router.push({ path: "/bookInfo", query: { book_id: id } });
     },
     getGoodsNum() {
       axios({
@@ -325,6 +328,30 @@ export default {
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
         });
+      //获取书的总数
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: id,
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     //通过index传来的参数进行二级分类筛选
     getSecondClassBook(id) {
@@ -349,6 +376,30 @@ export default {
             this.displayList = data;
           } else {
             this.$message.error("获取图书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+        //获取书的总数
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: "",
+          second_category_id: id,
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
           }
         })
         .catch(() => {
@@ -383,6 +434,30 @@ export default {
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
         });
+        //获取书的总数
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: "",
+          second_category_id: "",
+          year: year,
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     getYearBeforeBook(year) {
       axios({
@@ -406,6 +481,30 @@ export default {
             this.displayList = data;
           } else {
             this.$message.error("获取图书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+        //获取书的总数
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: "",
+          second_category_id: "",
+          year: "",
+          year_before: year,
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
           }
         })
         .catch(() => {
@@ -439,19 +538,17 @@ export default {
         var temp = query.activeIndexMain;
         this.activeIndex2 = temp;
         this.getMainClassBook(this.activeIndex2);
-      }
-      else if (query.activeIndexSecond != "") {
+      } else if (query.activeIndexSecond != "") {
         temp = query.activeIndexSecond;
         this.activeIndex2 = temp;
         this.getSecondClassBook(this.activeIndex2);
-      }
-      else if (query.year != "") {
+      } else if (query.year != "") {
         temp = query.year;
         this.activeIndex2 = temp;
         this.getYearBook(this.activeIndex2);
-      }else {
-        temp=query.year_before;
-        this.activeIndex2=temp;
+      } else {
+        temp = query.year_before;
+        this.activeIndex2 = temp;
         this.getYearBeforeBook(this.activeIndex2);
       }
     }

@@ -307,7 +307,7 @@
                     <el-image
                       class="imgStyle4"
                       :src="book.image_b"
-                      @click.native="goToBookInfo"
+                      @click.native="goToBookInfo(book.id)"
                     >
                     </el-image>
                   </el-header>
@@ -322,7 +322,7 @@
                     <el-link
                       :underline="false"
                       class="book-name"
-                      @click="goToBookInfo"
+                      @click="goToBookInfo(book.id)"
                       >{{ book.book_name }}</el-link
                     >
                     <p style="color: rgb(128, 192, 192); margin: 0%">
@@ -546,6 +546,12 @@ export default {
           });
         });
     },
+    mounted: function () {
+      if (location.href.indexOf("#reloaded") == -1) {
+        location.href = location.href + "#reloaded";
+        location.reload();
+      }
+    },
   },
   async created() {
     this.isLoading = true;
@@ -554,6 +560,7 @@ export default {
     }
     await this.getAllCategory();
     await this.getNewBook();
+    this.mounted();
     this.isLoading = false;
   },
 };

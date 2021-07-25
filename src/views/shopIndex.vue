@@ -105,37 +105,14 @@
                 :default-active="activeIndex1"
                 class="el-menu-demo"
                 mode="horizontal"
-                @select="handleSelect1"
               >
                 <el-menu-item
-                  index="1"
-                  @click.native="NetworkFilter"
+                  v-for="item in categoryList"
+                  :key="item.main_id"
                   style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >网络文学</el-menu-item
-                >
-                <el-menu-item
-                  index="2"
-                  @click.native="EducationFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >教育</el-menu-item
-                >
-                <el-menu-item
-                  index="3"
-                  @click.native="NovelFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >小说</el-menu-item
-                >
-                <el-menu-item
-                  index="4"
-                  @click.native="LandAFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >文艺</el-menu-item
-                >
-                <el-menu-item
-                  index="5"
-                  @click.native="YandCFilter"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  >青春/动漫</el-menu-item
+                  :index="item.main_id"
+                  @click.native="getMainClassBook(item.main_id)"
+                  >{{ item.main_name }}</el-menu-item
                 >
               </el-menu>
             </el-col>
@@ -143,10 +120,10 @@
         </el-header>
         <el-container>
           <el-aside width="18%" align="center">
-            <img class="imgStyle2" :src="this.shop.shopimg" />
-            <p>{{ this.shop.shopname }}</p>
+            <img class="avatar" :src="this.shop.avatar_b" />
+            <p>{{ this.shop.shop_name }}</p>
             <el-rate
-              v-model="this.shop.shoprate"
+              v-model="this.shop.rate"
               disabled
               show-score
               text-color="#ff9900"
@@ -156,15 +133,7 @@
           </el-aside>
           <el-main>
             <el-row class="rowStyle" type="flex">
-              <el-col
-                :span="6"
-                v-for="book in Lists.slice(
-                  (currentPage - 1) * pageSize,
-                  currentPage * pageSize
-                )"
-                :key="book.Name"
-                v-show="book.Show"
-              >
+              <el-col :span="6" v-for="book in displayList" :key="book.id">
                 <el-card style="width: 90%; margin: 5%">
                   <el-container>
                     <el-header
@@ -177,8 +146,8 @@
                     >
                       <el-image
                         class="imgStyle"
-                        :src="book.Img"
-                        @click.native="goToBookInfo"
+                        :src="book.image_b"
+                        @click.native="goToBookInfo(book.id)"
                       >
                       </el-image>
                     </el-header>
@@ -192,12 +161,12 @@
                       <el-link
                         :underline="false"
                         class="book-name"
-                        @click="goToBookInfo"
-                        >{{ book.Name }}</el-link
+                        @click="goToBookInfo(book.id)"
+                        >{{ book.book_name }}</el-link
                       >
-                      <p style="color: gray; margin: 0%">{{ book.Author }}</p>
+                      <p style="color: gray; margin: 0%">{{ book.author }}</p>
                       <p style="color: red; font-weight: 1000; margin: 0%">
-                        ￥{{ book.Price }}
+                        ￥{{ book.price }}
                       </p>
                     </el-main>
                   </el-container>
@@ -206,10 +175,10 @@
             </el-row>
             <el-pagination
               :current-page="currentPage"
-              :page-size="pageSize"
+              :page-size="16"
               @current-change="handleCurrentChange"
-              layout="prev, pager, next"
-              :total="this.Lists.length"
+              layout="prev, pager, next, jumper"
+              :total="bookcount"
             >
             </el-pagination>
           </el-main>
@@ -220,19 +189,25 @@
 </template>
 <script>
 import axios from "axios";
+import { Message } from "element-ui";
 export default {
   data() {
     return {
       isLoading: false,
       activeIndex1: "",
       activeIndex2: "",
+      goodsNum: "",
       currentPage: 1,
-      pageSize: 8,
+      bookcount: 1,
+      shop_id: this.$route.params.shop_id,
+      input: "",
+      categoryList: [],
       shop: {
         shopname: "这是一家好店",
         shopimg: require("../assets/kuku.png"),
         shoprate: 3.7,
       },
+      displayList: [],
       Lists: [
         {
           Img: require("../assets/kuku.png"),
@@ -394,10 +369,60 @@ export default {
       sessionStorage.removeItem("token");
       this.isLoading = false;
     },
+    //展示这家店的所有书
     showAll() {
       this.activeIndex1 = " ";
       this.activeIndex2 = " ";
-      for (let i = 0; i < this.Lists.length; i++) this.Lists[i].Show = true;
+      axios({
+        url: this.$store.state.yuming + "/book/getPage",
+        method: "GET",
+        params: {
+          page_num: 1,
+          book_num: 16,
+          style: 1,
+          main_category_id: "",
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: this.shop_id,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList = data;
+          } else {
+            this.$message.error("获取图书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: "",
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: this.shop_id,
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+            window.console.log(this.bookcount);
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     handleCurrentChange(val) {
       this.currentPage = val;
@@ -408,141 +433,35 @@ export default {
     handleSelect2() {
       this.activeIndex1 = " ";
     },
-    goToBookInfo() {
-      this.$router.push("/bookInfo");
+    //加入图书详情页
+    goToBookInfo(id) {
+      this.$router.push({ path: "/bookInfo", query: { book_id: id } });
     },
-    NanPinFilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "男频") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+    //进行搜索
+    goToSearch() {
+      this.$store.commit("gobalSearchText", this.input);
+      this.$router.push("/searchBook");
     },
-    NvPinFilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "女频") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    JiaoCaiFilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "教材") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    JiaoFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "教辅资料") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    ChinaFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "中国小说") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    ForeginFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "外国小说") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    LiteratureFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "文学") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    ArtFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "艺术") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    YouthFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "青春") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    CartoonFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassTwo == "动漫") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    TwoZeroTwoOneFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].PubTime == 2021) this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    TwoZeroTwoZeroFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].PubTime == 2020) this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    TwoZeroOneNineFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].PubTime == 2019) this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    TwoZeroOneEightFuilter() {
-      this.activeIndex1 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].PubTime <= 2018) this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    NetworkFilter() {
-      this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "网络文学") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    EducationFilter() {
-      this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "教育") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    NovelFilter() {
-      this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "小说") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    LandAFilter() {
-      this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "文艺") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
-    },
-    YandCFilter() {
-      this.activeIndex2 = "";
-      for (let i = 0; i < this.Lists.length; i++) {
-        if (this.Lists[i].ClassOne == "青春/动漫") this.Lists[i].Show = true;
-        else this.Lists[i].Show = false;
-      }
+    //获取店铺信息
+    getShopInfo() {
+      axios({
+        url: this.$store.state.yuming + "/shop/getShopById",
+        method: "GET",
+        params: {
+          shop_id: this.shop_id,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.shop = data;
+          } else {
+            this.$message.error("获取店铺信息失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     getGoodsNum() {
       axios({
@@ -554,30 +473,41 @@ export default {
           if (code == "200") {
             this.goodsNum = data;
           } else {
-            this.$message.error("获取店铺状态失败,请刷新");
+            this.$message.error("获取购物车失败,请刷新");
           }
         })
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
         });
     },
+    //获取所有目录
+    getAllCategory() {
+      axios({
+        url: this.$store.state.yuming + "/category/getAll",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.categoryList = data;
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
   },
   async created() {
-    var query = this.$route.query;
-    if (query) {
-      var temp = query.activeIndex1;
-      this.activeIndex1 = temp;
-      if (temp == "1") this.NetworkFilter();
-      if (temp == "2") this.EducationFilter();
-      if (temp == "3") this.NovelFilter();
-      if (temp == "4") this.LandAFilter();
-      if (temp == "5") this.YandCFilter();
-    }
     this.isLoading = true;
     if (this.$store.state.token) {
       await this.getGoodsNum();
     }
     await this.getAllCategory();
+    await this.getShopInfo();
+    await this.showAll();
     this.isLoading = false;
   },
 };
@@ -595,11 +525,6 @@ export default {
   width: 80%;
   height: 200px;
   cursor: pointer;
-}
-.imgStyle2 {
-  width: 80%;
-  height: 200px;
-  margin-top: 100px;
 }
 .rowStyle {
   display: flex;
@@ -667,5 +592,14 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  border-radius: 50%;
+  margin-top: 100px;
+}
+.el-menu-item.is-active {
+  background-color: rgb(231, 241, 252) !important;
 }
 </style>

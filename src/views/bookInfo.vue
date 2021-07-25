@@ -107,13 +107,13 @@
                 mode="horizontal"
               >
                 <el-menu-item
-                v-for="item in categoryList"
-                :key="item.main_id"
-                style="color: rgb(250, 128, 114); font-weight: 1000"
-                :index="item.main_id"
-                @click.native="getMainClassBook(item.main_id)"
-                >{{ item.main_name }}</el-menu-item
-              >
+                  v-for="item in categoryList"
+                  :key="item.main_id"
+                  style="color: rgb(250, 128, 114); font-weight: 1000"
+                  :index="item.main_id"
+                  @click.native="getMainClassBook(item.main_id)"
+                  >{{ item.main_name }}</el-menu-item
+                >
               </el-menu>
             </el-col>
           </el-row>
@@ -134,7 +134,7 @@
                 style="cursor: pointer"
                 >{{ book.second_category }}</el-breadcrumb-item
               >
-              <el-breadcrumb-item>{{book.book_name}}</el-breadcrumb-item>
+              <el-breadcrumb-item>{{ book.book_name }}</el-breadcrumb-item>
             </el-breadcrumb>
           </el-row>
         </el-header>
@@ -143,9 +143,11 @@
             <img class="imgStyle3" :src="book.image_b" />
           </el-aside>
           <el-main
-            ><el-link :underline="false" @click.native="goToShopIndex">{{
-              book.shop_name
-            }}</el-link>
+            ><el-link
+              :underline="false"
+              @click.native="goToShopIndex(book.shop_id)"
+              >{{ book.shop_name }}</el-link
+            >
             <h2>{{ book.book_name }}</h2>
             <p style="color: gray; margin: 0%">
               {{ book.author }}
@@ -158,9 +160,7 @@
             <p style="color: red; font-weight: 1000; margin: 0%">
               ￥{{ book.price }}
             </p>
-            <p>
-              库存：{{ book.repertory }}
-            </p>
+            <p>库存：{{ book.repertory }}</p>
             <el-row
               :gutter="20"
               type="flex"
@@ -222,11 +222,11 @@ import { Message } from "element-ui";
 export default {
   data() {
     return {
-      input:"",
+      input: "",
       isLoading: false,
       activeIndex1: "",
       num: 1,
-      page:1,
+      page: 1,
       evaluationList: [
         {
           userName: "芜湖",
@@ -241,7 +241,7 @@ export default {
           evaluation: "太烂了",
         },
       ],
-      goodsNum:"",
+      goodsNum: "",
       bookid: "",
       book: {},
       categoryList: [],
@@ -278,23 +278,8 @@ export default {
     goBackToIndex() {
       this.$router.push("/");
     },
-    NetworkFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "1" } });
-    },
-    EducationFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "2" } });
-    },
-    NovelFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "3" } });
-    },
-    LandAFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "4" } });
-    },
-    YandCFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "5" } });
-    },
-    goToShopIndex() {
-      this.$router.push("/shopIndex");
+    goToShopIndex(e) {
+      this.$router.push(`/shopIndex/${e}`);
     },
     //进行搜索
     goToSearch() {
@@ -323,11 +308,11 @@ export default {
     },
     //直接购买
     buy() {
-      if (this.$store.state.token != "") {
+      if (this.$store.state.token != "" && this.num <= this.book.repertory) {
         this.$router.push(`/shopping/${this.bookid}/${this.num}/${this.page}`);
       } else {
         this.$message({
-          message: "请登录后再购买",
+          message: "请登录后再购买/库存不足",
           type: "error",
         });
       }

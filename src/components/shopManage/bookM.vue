@@ -41,7 +41,7 @@
           ref="multipleTable"
           :data="
             tableData.filter((x) => {
-              return x.bookname.includes(searchText);
+              return x.book_name.includes(searchText);
             })
           "
           tooltip-effect="dark"
@@ -51,32 +51,40 @@
           <el-table-column type="selection" width="55"> </el-table-column>
           <el-table-column label="图片" width="130">
             <template slot-scope="scope"
-              ><img :src="scope.row.bookimg" class="imgStyle"
+              ><img :src="scope.row.image_b" class="imgStyle"
             /></template>
           </el-table-column>
           <el-table-column label="名称" width="120">
-            <template slot-scope="scope">{{ scope.row.bookname }}</template>
+            <template slot-scope="scope">{{ scope.row.book_name }}</template>
           </el-table-column>
           <el-table-column label="作者" width="100">
-            <template slot-scope="scope">{{ scope.row.bookauthor }}</template>
+            <template slot-scope="scope">{{ scope.row.author }}</template>
           </el-table-column>
-          <el-table-column label="出版时间" width="100">
-            <template slot-scope="scope">{{ scope.row.bookPubTime }}</template>
+          <el-table-column
+            label="出版时间"
+            width="100"
+            :formatter="dateFormat"
+            prop="print_time"
+          >
           </el-table-column>
           <el-table-column label="出版社" width="120">
             <template slot-scope="scope">{{ scope.row.press }}</template>
           </el-table-column>
           <el-table-column label="一级分类" width="100">
-            <template slot-scope="scope">{{ scope.row.classone }}</template>
+            <template slot-scope="scope">{{
+              scope.row.main_category
+            }}</template>
           </el-table-column>
           <el-table-column label="二级分类" width="100">
-            <template slot-scope="scope">{{ scope.row.classtwo }}</template>
+            <template slot-scope="scope">{{
+              scope.row.second_category
+            }}</template>
           </el-table-column>
           <el-table-column label="单价" width="100">
-            <template slot-scope="scope">{{ scope.row.bookprice }}</template>
+            <template slot-scope="scope">{{ scope.row.price }}</template>
           </el-table-column>
           <el-table-column label="库存" width="100">
-            <template slot-scope="scope">{{ scope.row.inventory }}</template>
+            <template slot-scope="scope">{{ scope.row.repertory }}</template>
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope"
@@ -99,6 +107,15 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-row style="text-align: center">
+          <el-pagination
+            :current-page="currentPage"
+            @current-change="handleCurrentChange"
+            :total="bookcount"
+            layout="prev, pager, next, jumper"
+          >
+          </el-pagination>
+        </el-row>
       </el-card>
     </div>
     <div style="margin: 1.5% 10% 3%">
@@ -402,7 +419,7 @@
         width="60%"
         :before-close="handleClose"
         center
-        ><el-input type="textarea" autosize v-model="this.briefInfo"></el-input
+        ><el-input type="textarea" autosize v-model="briefInfo"></el-input
         ><span slot="footer" class="dialog-footer">
           <el-button @click="cancel3">取 消</el-button>
           <el-button type="primary" @click="changeBriefInfo">确 定</el-button>
@@ -415,6 +432,7 @@
 import MyCropper from "../cropper.vue";
 import axios from "axios";
 import { Message } from "element-ui";
+import moment from "moment";
 import qs from "qs";
 export default {
   components: {
@@ -433,6 +451,8 @@ export default {
       index2: 0,
       shop_id: "",
       briefInfo: "",
+      currentPage: 1,
+      bookcount: 0,
       value: [],
       categoryList: [
         {
@@ -442,72 +462,7 @@ export default {
           second_category: [{ book_num: "", second_name: "", second_id: "" }],
         },
       ],
-      optionData: {
-        One: [
-          { value: "网络文学", name: "网络文学" },
-          { value: "教育", name: "教育" },
-          { value: "小说", name: "小说" },
-          { value: "文艺", name: "文艺" },
-          { value: "青春/动漫", name: "青春/动漫" },
-        ],
-        Two: [
-          [
-            { value: "男频", name: "男频" },
-            { value: "女频", name: "女频" },
-          ],
-          [
-            { value: "教材", name: "教材" },
-            { value: "教辅资料", name: "教辅资料" },
-          ],
-
-          [
-            { value: "中国小说", name: "中国小说" },
-            { value: "外国小说", name: "外国小说" },
-          ],
-          [
-            { value: "文学", name: "文学" },
-            { value: "艺术", name: "艺术" },
-          ],
-          [
-            { value: "青春", name: "青春" },
-            { value: "动漫", name: "动漫" },
-          ],
-        ],
-      },
-      tableData: [
-        {
-          bookid: "1",
-          bookimg: require("../../assets/kuku.png"),
-          bookname: "书本1号",
-          bookauthor: "张三",
-          classone: "小说",
-          classOne_id: "6ccf8604ff7bf563caffc87ea1fb5051",
-          classtwo: "中国小说",
-          classTwo_id: "4",
-          bookprice: "10.00",
-          inventory: "100",
-          bookPubTime: "2021-1-1",
-          press: "某某出版社",
-          briefInfo:
-            "《嫌疑人X的献身》是日本推理小说作家东野圭吾创作的长篇推理小说，也是“伽利略系列”的第三本小说。 该作讲述一个数学天才为了帮助一对母女隐藏杀害前夫的罪行，和警方展开了一连串的斗智，制造整个骗局。 [1] 该作同时获得直木奖和本格推理小说大奖，同时摘得“这本小说了不起”、“本格推理小说Top 10”、“周刊文艺推理小说Top 10”三大推理小说排行榜年度总冠军",
-        },
-        {
-          bookid: "2",
-          bookimg: require("../../assets/kuku.png"),
-          bookname: "书本2号",
-          bookauthor: "李四",
-          classone: "小说",
-          classOne_id: "6ccf8604ff7bf563caffc87ea1fb5051",
-          classtwo: "外国小说",
-          classTwo_id: "5",
-          bookprice: "11.00",
-          inventory: "101",
-          bookPubTime: "2020-2-2",
-          press: "某某出版社",
-          briefInfo:
-            "《嫌疑人X的献身》是日本推理小说作家东野圭吾创作的长篇推理小说，也是“伽利略系列”的第三本小说。 该作讲述一个数学天才为了帮助一对母女隐藏杀害前夫的罪行，和警方展开了一连串的斗智，制造整个骗局。 [1] 该作同时获得直木奖和本格推理小说大奖，同时摘得“这本小说了不起”、“本格推理小说Top 10”、“周刊文艺推理小说Top 10”三大推理小说排行榜年度总冠军",
-        },
-      ],
+      tableData: [],
       lists1: {
         bookid: "",
         bookImg: "",
@@ -608,6 +563,14 @@ export default {
     },
   },
   methods: {
+    handleCurrentChange(val) {
+      this.currentPage = val;
+    },
+    //时间格式化
+    dateFormat(row, column) {
+      var date = row[column.property];
+      return moment(date).format("YYYY-MM-DD");
+    },
     //回调一级分类的值
     change1(val) {
       this.lists1.classOne_id = val;
@@ -625,35 +588,90 @@ export default {
     goToManage() {
       this.$router.push("/shopManage");
     },
+    //获取这家店铺里的书
+    getBook() {
+      axios({
+        url: this.$store.state.yuming + "/book/getPage",
+        method: "GET",
+        params: {
+          page_num: 1,
+          book_num: 10,
+          style: 2,
+          main_category_id: "",
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: this.shop_id,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.tableData = data;
+          } else {
+            this.$message.error("获取新书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取书的总数
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: "",
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: this.shop_id,
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+
     //修改图书信息时，获取这一行的初始信息
     handleChange(index) {
-      this.lists1.bookImg = this.tableData[index].bookimg;
-      this.lists1.bookName = this.tableData[index].bookname;
-      this.lists1.bookAuthor = this.tableData[index].bookauthor;
-      this.lists1.classOne = this.tableData[index].classone;
-      this.lists1.classTwo = this.tableData[index].classtwo;
-      this.lists1.bookPrice = this.tableData[index].bookprice;
-      this.lists1.Inventory = this.tableData[index].inventory;
-      this.lists1.bookPubTime = this.tableData[index].bookPubTime;
+      this.lists1.bookid=this.tableData[index].id;
+      this.lists1.bookImg = this.tableData[index].image_b;
+      this.lists1.bookName = this.tableData[index].book_name;
+      this.lists1.bookAuthor = this.tableData[index].author;
+      this.lists1.classOne = this.tableData[index].main_category;
+      this.lists1.classTwo = this.tableData[index].second_category;
+      this.lists1.bookPrice = this.tableData[index].price;
+      this.lists1.Inventory = this.tableData[index].repertory;
+      this.lists1.bookPubTime = this.tableData[index].print_time;
       this.lists1.press = this.tableData[index].press;
       this.index = index;
       this.dialogChangeVisible = true;
     },
     //修改图书简介时，获取图书简介，之后修改
     handleChangeBriefInfo(index) {
-      this.briefInfo = this.tableData[index].briefInfo;
-      this.briefdata.append("book_id", this.tableData[index].bookid);
+      this.briefInfo = this.tableData[index].detail;
+      this.briefdata.append("book_id", this.tableData[index].id);
       axios({
         url: this.$store.state.yuming + "/book/getDetail",
         method: "GET",
         params: {
-          book_id: this.tableData[index].bookid,
+          book_id: this.tableData[index].id,
         },
       }).then((res) => {
         if (res.data.code == 200) {
-          this.briefInfo = res.data.detail;
+          this.$message.success("获取图书简介成功");
         } else {
-          this.$message.error("获取图书详情失败，请重试");
+          this.$message.error("获取图书简介失败，请重试");
         }
       });
       this.index = index;
@@ -683,17 +701,16 @@ export default {
     },
     //修改图书信息
     changeBook() {
-      this.tableData[this.index].bookid = this.lists1.bookid;
-      this.tableData[this.index].bookimg = this.lists1.bookImg;
-      this.tableData[this.index].bookname = this.lists1.bookName;
-      this.tableData[this.index].bookauthor = this.lists1.bookAuthor;
-      this.tableData[this.index].classone = this.lists1.classOne;
-      this.tableData[this.index].classOne_id = this.lists1.classOne_id;
-      this.tableData[this.index].classtwo = this.lists1.classTwo;
-      this.tableData[this.index].classTwo_id = this.lists1.classTwo_id;
-      this.tableData[this.index].bookprice = this.lists1.bookPrice;
-      this.tableData[this.index].inventory = this.lists1.Inventory;
-      this.tableData[this.index].bookPubTime = this.lists1.bookPubTime;
+      this.tableData[this.index].id = this.lists1.bookid;
+      this.tableData[this.index].book_name = this.lists1.bookName;
+      this.tableData[this.index].author = this.lists1.bookAuthor;
+      this.tableData[this.index].main_category = this.lists1.classOne;
+      this.tableData[this.index].main_category_id = this.lists1.classOne_id;
+      this.tableData[this.index].second_category = this.lists1.classTwo;
+      this.tableData[this.index].second_category_id = this.lists1.classTwo_id;
+      this.tableData[this.index].price = this.lists1.bookPrice;
+      this.tableData[this.index].repertory = this.lists1.Inventory;
+      this.tableData[this.index].print_time = this.lists1.bookPubTime;
       this.tableData[this.index].press = this.lists1.press;
       this.formdata.append("book_id", this.lists1.bookid);
       this.formdata.append("book_name", this.lists1.bookName);
@@ -716,6 +733,7 @@ export default {
             message: "修改图书成功",
             type: "success",
           });
+          this.mounted();
           this.dialogChangeVisible = false;
           this.lists1 = "";
           this.formdata = new FormData();
@@ -729,35 +747,14 @@ export default {
     addBook(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          /*var temp = {
-            bookImg: "",
-            bookName: "",
-            bookAuthor: "",
-            classOne: "",
-            classTwo: "",
-            bookPrice: "",
-            Inventory: "",
-            bookPubTime: "",
-            press: "",
-          };
-          temp.bookImg = this.lists1.bookImg;
-          temp.bookName = this.lists1.bookName;
-          temp.bookAuthor = this.lists1.bookAuthor;
-          temp.classOne = this.lists1.classOne;
-          temp.classTwo = this.lists1.classTwo;
-          temp.bookPrice = this.lists1.bookPrice;
-          temp.Inventory = this.lists1.Inventory;
-          temp.bookPubTime = this.lists1.bookPubTime;
-          temp.press = this.lists1.press;*/
-          //this.tableData.unshift(this.lists1);
           this.formdata.append("book_name", this.lists1.bookName);
           this.formdata.append("author", this.lists1.bookAuthor);
           this.formdata.append("price", this.lists1.bookPrice);
           this.formdata.append("repertory", this.lists1.Inventory);
           this.formdata.append("press", this.lists1.press);
           this.formdata.append("print_time", this.lists1.bookPubTime);
-          this.formdata.append("main_category_id", this.lists1.classOne);
-          this.formdata.append("second_category_id", this.lists1.classTwo);
+          this.formdata.append("main_category_id", this.lists1.classOne_id);
+          this.formdata.append("second_category_id", this.lists1.classTwo_id);
           this.formdata.append("shop_id", this.shop_id);
           this.formdata.append("edition", null);
           axios({
@@ -770,6 +767,7 @@ export default {
                 message: "新增图书成功",
                 type: "success",
               });
+              this.mounted();
               this.dialogAddVisible = false;
               this.lists1 = "";
               this.formdata = new FormData();
@@ -824,15 +822,14 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
-        /*for (let i = 0; i < this.multipleSelection.length; i++) {
-          this.book_id.push(this.multipleSelection[i].bookid);
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+          this.book_id.push(this.multipleSelection[i].id);
         }
-        window.console.log(this.book_id);*/
         axios({
           url: this.$store.state.yuming + "/shop/book/multiDelete",
           method: "DELETE",
           params: {
-            book_id: ["01ac472660008cb1199aa2ff90bc9848"],
+            book_id: this.book_id,
           },
           paramsSerializer: (params) => {
             return qs.stringify(params, { indices: false });
@@ -846,6 +843,7 @@ export default {
                 message: "下架所选图书成功",
               });
               this.book_id = [];
+              this.mounted();
             } else {
               this.$message.error("下架所选图书失败");
               this.book_id = [];
@@ -858,31 +856,6 @@ export default {
             });
           });
       });
-      /*.then(() => {
-          let multData = this.multipleSelection;
-          let tableData1 = this.tableData;
-          let multDataLen = multData.length;
-          let tableDataLen = tableData1.length;
-          for (let i = 0; i < multDataLen; i++) {
-            for (let y = 0; y < tableDataLen; y++) {
-              if (
-                JSON.stringify(tableData1[y]) == JSON.stringify(multData[i])
-              ) {
-                this.tableData.splice(y, 1);
-              }
-            }
-          }
-          this.$message({
-            type: "success",
-            message: "下架所选图书成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已放弃下架所选图书",
-          });
-        });*/
     },
     //点击x号或对话框外部的关闭
     handleClose(done) {
@@ -919,7 +892,7 @@ export default {
     getFile(file) {
       if (this.dialogChangeVisible == true) {
         this.imgdata.append("img", file);
-        this.imgdata.append("book_id", "01ac472660008cb1199aa2ff90bc9848");
+        this.imgdata.append("book_id", this.lists1.bookid);
         axios({
           url: this.$store.state.yuming + "/shop/book/updateImg",
           method: "POST",
@@ -982,7 +955,8 @@ export default {
         .then((res) => {
           const { code, data } = res.data;
           if (code == "200") {
-            this.shop_id = data;
+            this.shop_id = data.id;
+            this.getBook();
           }
         })
         .catch(() => {
@@ -1010,6 +984,12 @@ export default {
             message: "出现错误，请稍后再试",
           });
         });
+    },
+    mounted: function () {
+      if (location.href.indexOf("#reloaded") == -1) {
+        location.href = location.href + "#reloaded";
+        location.reload();
+      }
     },
   },
   async created() {
