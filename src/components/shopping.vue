@@ -32,7 +32,7 @@
     <!--<div class="divider"></div>-->
     <!--content-->
     <div style="margin:0 10%">
-      <div v-if="page == 0">
+      <div v-if="page == 0" v-loading="shoppingLoading">
     <header>
       <el-card class="header-card">
       <el-row>
@@ -72,7 +72,7 @@
               <div class="book-detail">出版社：{{books.press}}</div>
             </el-col>
             <el-col :span="3">
-              <div style="margin:25px 0" class="table-unitprice">¥{{books.price}}</div>
+              <div style="margin:25px 0" class="table-unitprice">¥{{books.price.toFixed(1)}}</div>
             </el-col>
             <el-col :span="5">
               <div style="margin:20px 0">
@@ -84,14 +84,24 @@
                       size="small"
                       :precision="0"
                       :step="1"
+                      @change="(currentValue) => updateCartItem(currentValue, books.book_id)"
                     ></el-input-number>
               </div>
             </el-col>
             <el-col :span="3">
-              <div style="margin:25px 0" class="table-price">¥{{books.price*books.sum}}</div>
+              <div style="margin:25px 0" class="table-price">¥{{(books.price*books.sum).toFixed(1)}}</div>
             </el-col>
             <el-col :span="1">
-              <div style="margin:15px 0"><el-button type="text" class="table-button">删除</el-button></div>
+                <el-popconfirm
+                confirm-button-text='确认'
+                cancel-button-text='取消'
+                icon="el-icon-info"
+                icon-color="rgb(221, 68, 65)"
+                @confirm="delBook(books.cartItem_id)"
+                title="您确认要删除该商品吗？">
+                  <el-button slot="reference" type="text" class="table-button" style="margin:15px 0">删除</el-button>
+                </el-popconfirm>
+              <!--<div style="margin:15px 0"><el-button type="text" class="table-button">删除</el-button></div>-->
             </el-col>
           </el-row>
         </div>
@@ -106,10 +116,10 @@
         </el-col>
         <el-col :span="1" class="table-footer-item">全选</el-col>
         <el-col :span="10" class="table-footer-item" style="margin:12px">
-           <el-button size="medium" type="text" class="table-button">批量删除</el-button>
+           <el-button size="medium" type="text" class="table-button" @click="multiDelBook">批量删除</el-button>
         </el-col>
         <el-col :span="6" class="table-footer-item">已选<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
-        <el-col :span="3" class="table-footer-item" style="margin-top:14px">合计：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
+        <el-col :span="3" class="table-footer-item" style="margin-top:14px">合计：<span class="table-totalprice">¥{{totalPrice.toFixed(1)}}</span></el-col>
         <el-col :span="2" class="table-footer-item" style="margin-top:9px">
           <el-button size="max" type="danger" :round="true" @click="settlement">结算</el-button>
         </el-col>
@@ -188,7 +198,7 @@
                             <el-button
                               type="text"
                               style="margin: 0 5px"
-                              @click="eidtAddress(item)"
+                              @click="editAddress(item)"
                               >编辑
                             </el-button>
                             <el-button
@@ -398,6 +408,7 @@
         </el-card>
         </el-col></el-row>
       </div>
+
     </div>
   <!--</div>-->
 </template>
@@ -417,61 +428,37 @@ export default {
       page: 0,
       //loading
       isLoading: false,
-      //收货地址loading
       addressLoading: false,
+      shoppingLoading: false,
       //选择的地址id
       radio: "",
+      //从图书详情页直接购买
+      temp_page: this.$route.params.page,
+      book: {
+        //店铺
+        shop_id: "1",
+        shop_name: "横溢图书专营店",
+        //图书
+        book_id: this.$route.params.bookid,
+        cartItem_id: "123",
+        image_b: require("../assets/youbenshi.jpg"),
+        book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
+        author: "冯唐",
+        press: "东南大学出版社",
+        price: 50,
+        sum: this.$route.params.num,
+        repertory: 19,
+      },
       //购物车图书
       bookList: [
         {
-          shop_id: 1,
+          shop_id: "1",
           shop_name: "横溢图书专营店",
           this_all: false,
           books:[
             {
-              book_id: 11,
-              image_b: require("../assets/youbenshi.jpg"),
-              book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-              author: "冯唐",
-              press: "东南大学出版社",
-              price: 50,
-              sum: 2,
-              repertory: 19,
-              bookAddr: "login",
-              check_one: false,
-            },
-            {
-              book_id: 12,
-              image_b: require("../assets/youbenshi.jpg"),
-              book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-              author: "冯唐",
-              press: "东南大学出版社",
-              price: 50,
-              sum: 2,
-              repertory: 19,
-              bookAddr: "login",
-              check_one: false,
-            },
-          ]
-        },
-        {
-          shop_id: 2,
-          shop_name: "新华书店网上商城自营图书",
-          this_all: false,
-          books:[
-            {
-              book_id: 21,
-              image_b: require("../assets/youbenshi.jpg"),
-              book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-              author: "冯唐",
-              press: "东南大学出版社",
-              price: 50,
-              sum: 2,
-              repertory: 19,
-              check_one: false,
-            },
-            {
-              book_id: 22,
+              book_id: "11",
+              cartItem_id: "123",
               image_b: require("../assets/youbenshi.jpg"),
               book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
               author: "冯唐",
@@ -670,7 +657,7 @@ export default {
       });
     },
     //编辑收货地址
-    eidtAddress(e) {
+    editAddress(e) {
       this.editInfoVisible = true;
       this.editMyAddress.id = e.id;
       this.editMyAddress.name = e.name;
@@ -778,6 +765,101 @@ export default {
             this.bookList = data;
           } else {
             this.$message.error("获取购物车信息失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //更新购物车中图书信息（仅可修改数量
+    updateCartItem(currentValue, id) {
+      axios({
+        url: this.$store.state.yuming + "/cartitem/updateCartItem",
+        method: "POST",
+        params: {
+          book_id: id,
+          sum: currentValue,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            /*this.shoppingLoading = true;
+            this.getAll();
+            this.shoppingLoading = false;*/
+          } else {
+            this.$message.error("更新图书数量失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //单次删除购物车
+    delBook(id) {
+      axios({
+        url: this.$store.state.yuming + "/cartitem/delete",
+        method: "DELETE",
+        params: {
+          cartItem_id: id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.shoppingLoading = true;
+            this.getAll();
+            this.shoppingLoading = false;
+            this.$message({
+              message: "删除成功",
+              type: "success",
+            });
+          } else {
+            this.$message.error("删除失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //批量删除购物车
+    multiDelBook() {
+      var multiDelBookId = [];
+      this.bookList.forEach(shop => {
+        shop.books.forEach(book => {
+          if(book.check_one == true) {
+            multiDelBookId.push(book.cartItem_id);
+          }
+        });
+      });
+      axios({
+        url: this.$store.state.yuming + "/cartitem/multiDelete",
+        method: "DELETE",
+        params: {
+          CartItem_Ids: multiDelBookId,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.shoppingLoading = true;
+            this.getAll();
+            this.shoppingLoading = false;
+            this.$message({
+              message: "删除成功",
+              type: "success",
+            });
+          } else {
+            this.$message.error("删除失败,请重试");
           }
         })
         .catch(() => {

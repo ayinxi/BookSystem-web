@@ -20,8 +20,16 @@
       </div>
       <div class="box2">
         <el-card class="box-card1">
+          <el-form label-width="120px">
+            <el-form-item label="买家邮箱搜索：">
+              <el-input
+              v-model="searchText"
+              placeholder="输入买家邮箱模糊搜索"
+              ></el-input>
+            </el-form-item>
+          </el-form>
           <el-table
-          :data="OrderList.filter(data => !search || data.userName.toLowerCase().includes(search.toLowerCase()))"
+          :data="OrderList.filter((data) => {return data.userName.includes(searchText);})"
           style="width: 100%"
           :default-sort = "{prop: 'buyTime', order: 'descending'}">
             <el-table-column type="expand">
@@ -41,11 +49,17 @@
                 <el-link :href="'http://localhost:8081/'+scope.row.shopAddr">{{scope.row.shopName}}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="state" label="订单状态"></el-table-column>
-            <el-table-column label="操作" align="right">
-              <template slot="header">
-                <el-input v-model="search" size="mini" placeholder="输入买家搜索"/>
-              </template>
+            <el-table-column prop="state" label="订单状态"
+             :filters="[
+              { text: '未发货', value: '未发货' },
+              { text: '已发货', value: '已发货' },
+              { text: '正在申请退款', value: '正在申请退款' },
+              { text: '已退款', value: '已退款' },
+              { text: '已拒绝退款', value: '已拒绝退款' },
+              { text: '已收货', value: '已收货' },
+            ]"
+            :filter-method="filterState"></el-table-column>
+            <el-table-column label="操作">
               <template>
                 <el-button size="mini" type="text">编辑</el-button>
                 <el-button size="mini" type="text">删除</el-button>
@@ -63,6 +77,8 @@ export default {
   components: {},
   data() {
     return {
+      //模糊搜索
+      searchText: "",
       OrderList:[
         {
           buyTime: "2021-07-15 18:31:30",//购买时间
@@ -91,8 +107,14 @@ export default {
   computed: {
   },
   methods:{
+    //回到管理员主页
     gotoAdmin() {
       this.$router.push("/adminManage");
+    },
+    //筛选订单状态
+    filterState(value, row, column) {
+      const property = column["property"];
+      return row[property] === value;
     },
     getSummaries(param) {
         const { columns, data } = param;

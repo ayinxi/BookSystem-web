@@ -21,20 +21,14 @@
           </el-container>
         </el-card>
       </div>
-      <div>
+            <div><el-button type="text" @click="gotoDataVisual">
         <el-card class="box-card1" style="background-color: #3d678a">
           <el-row style="color: white">
-            <el-col :span="8" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>在线用户</span></el-row>
-            </el-col>
-            <el-col :span="8" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>今日订单</span></el-row>
-            </el-col>
-            <el-col :span="8" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>待处理申请</span></el-row>
+            <el-col style="text-align:center">
+              <el-row style="font-size: 20px;">数据可视化</el-row>
             </el-col>
           </el-row>
-        </el-card>
+        </el-card></el-button>
       </div>
       <div class="box2">
         <el-button type="text" @click="gotoClass">
@@ -75,15 +69,6 @@
           <i style="color: #909399">查看、查找、编辑、删除订单。</i>
         </el-card>
         </el-button>
-      </div>
-      <div><el-button type="text" @click="gotoDataVisual">
-        <el-card class="box-card1" style="background-color: #3d678a">
-          <el-row style="color: white">
-            <el-col style="text-align:center">
-              <el-row style="font-size: 20px;">数据可视化</el-row>
-            </el-col>
-          </el-row>
-        </el-card></el-button>
       </div>
     </div>
   </div>
@@ -165,7 +150,7 @@ export default {
 
 .box-card1 {
   width: 900px;
-  margin: 20px;
+  margin: 5px 20px;
 }
 
 .box-card2 {
