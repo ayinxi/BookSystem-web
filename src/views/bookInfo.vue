@@ -226,7 +226,6 @@ export default {
       isLoading: false,
       activeIndex1: "",
       num: 1,
-      page: 1,
       evaluationList: [
         {
           userName: "芜湖",
@@ -267,7 +266,7 @@ export default {
       this.$router.push("/person");
     },
     gotoShopCar() {
-      this.$router.push("/shopping");
+      this.$router.push("/shopping/0/0");
     },
     loginOut() {
       this.isLoading = true;
@@ -309,7 +308,7 @@ export default {
     //直接购买
     buy() {
       if (this.$store.state.token != "" && this.num <= this.book.repertory) {
-        this.$router.push(`/shopping/${this.bookid}/${this.num}/${this.page}`);
+        this.$router.push(`/shopping/${this.bookid}/${this.num}`);
       } else {
         this.$message({
           message: "请登录后再购买/库存不足",
