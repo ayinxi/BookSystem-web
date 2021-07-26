@@ -392,7 +392,7 @@ export default {
       this.$router.push("/person");
     },
     gotoShopCar() {
-      this.$router.push("/shopping");
+      this.$router.push("/shopping/0/0");
     },
     loginOut() {
       this.isLoading = true;

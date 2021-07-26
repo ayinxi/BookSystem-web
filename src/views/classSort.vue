@@ -263,7 +263,7 @@ export default {
       this.$router.push("/login");
     },
     gotoShopCar() {
-      this.$router.push("/shopping");
+      this.$router.push("/shopping/0/0");
     },
     gotoPersonPage() {
       this.$router.push("/person");
