@@ -55,31 +55,31 @@
           <el-col :span="1">
             <el-checkbox v-model="item.this_all" class="myRedCheckBox" @change="check_shop(item)"></el-checkbox>
           </el-col>
-          <el-col :span="23" class="shop-name"><i class="el-icon-goods"></i> {{item.book_merchant}}</el-col>
+          <el-col :span="23" class="shop-name"><i class="el-icon-goods"></i> {{item.shop_name}}</el-col>
         </el-row>
         <div class="books">
-          <el-row v-for="(books,idx) in item.children" :key="idx" style="margin:10px">
+          <el-row v-for="(books,idx) in item.books" :key="idx" style="margin:10px">
             <!--<el-divider v-if="idx!=0"></el-divider>-->
             <el-col :span="1">
               <el-checkbox style="margin:25px 0" v-model="books.check_one" class="myRedCheckBox"></el-checkbox>
             </el-col>
             <el-col :span="2">
-              <img :src="books.book_img" style="height:70px" />
+              <img :src="books.image_b" style="height:70px" />
             </el-col>
             <el-col :span="9">
               <div style="margin-right:30px" class="book-name">{{books.book_name}}</div>
-              <div class="book-detail">作者：{{books.book_writer}}</div>
-              <div class="book-detail">出版社：{{books.book_publish}}</div>
+              <div class="book-detail">作者：{{books.author}}</div>
+              <div class="book-detail">出版社：{{books.press}}</div>
             </el-col>
             <el-col :span="3">
-              <div style="margin:25px 0" class="table-unitprice">¥{{books.book_unitPrice}}</div>
+              <div style="margin:25px 0" class="table-unitprice">¥{{books.price}}</div>
             </el-col>
             <el-col :span="5">
               <div style="margin:20px 0">
                 <el-input-number
-                      v-model="books.book_num"
+                      v-model="books.sum"
                       :min="1"
-                      :max="books.book_inventory"
+                      :max="books.repertory"
                       label="数量"
                       size="small"
                       :precision="0"
@@ -88,7 +88,7 @@
               </div>
             </el-col>
             <el-col :span="3">
-              <div style="margin:25px 0" class="table-price">¥{{books.book_unitPrice*books.book_num}}</div>
+              <div style="margin:25px 0" class="table-price">¥{{books.price*books.sum}}</div>
             </el-col>
             <el-col :span="1">
               <div style="margin:15px 0"><el-button type="text" class="table-button">删除</el-button></div>
@@ -333,27 +333,27 @@
       <div v-for="(item,index) in bookList" :key="index">
         <el-card style="margin: 20px 0" v-if="vifShopName(item)">
         <el-row style="margin:10px">
-          <el-col class="shop-name"><i class="el-icon-goods"></i> {{item.book_merchant}}</el-col>
+          <el-col class="shop-name"><i class="el-icon-goods"></i> {{item.shop_name}}</el-col>
         </el-row>
-        <div class="books" v-for="(books,idx) in item.children" :key="idx">
+        <div class="books" v-for="(books,idx) in item.books" :key="idx">
           <el-row style="margin:10px" v-if="books.check_one">
             <!--<el-divider v-if="idx!=0"></el-divider>-->
             <el-col :span="2">
-              <img :src="books.book_img" style="height:70px" />
+              <img :src="books.image_b" style="height:70px" />
             </el-col>
             <el-col :span="9">
               <div style="margin-right:30px" class="book-name">{{books.book_name}}</div>
-              <div class="book-detail">作者：{{books.book_writer}}</div>
-              <div class="book-detail">出版社：{{books.book_publish}}</div>
+              <div class="book-detail">作者：{{books.author}}</div>
+              <div class="book-detail">出版社：{{books.press}}</div>
             </el-col>
             <el-col :span="4" :offset="3">
-              <div style="margin:25px 0" class="table-unitprice">¥{{books.book_unitPrice}}</div>
+              <div style="margin:25px 0" class="table-unitprice">¥{{books.price}}</div>
             </el-col>
             <el-col :span="2">
-              <div style="margin:20px 0">{{books.book_num}}</div>
+              <div style="margin:20px 0">{{books.sum}}</div>
             </el-col>
             <el-col :span="2" :offset="2">
-              <div style="margin:25px 0" class="table-price">¥{{books.book_unitPrice*books.book_num}}</div>
+              <div style="margin:25px 0" class="table-price">¥{{books.price*books.sum}}</div>
             </el-col>
           </el-row>
         </div>
@@ -424,61 +424,61 @@ export default {
       //购物车图书
       bookList: [
         {
-          merchant_id: 1,
-          book_merchant: "横溢图书专营店",
+          shop_id: 1,
+          shop_name: "横溢图书专营店",
           this_all: false,
-          children:[
+          books:[
             {
               book_id: 11,
-              book_img: require("../assets/youbenshi.jpg"),
+              image_b: require("../assets/youbenshi.jpg"),
               book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-              book_writer: "冯唐",
-              book_publish: "东南大学出版社",
-              book_unitPrice: 50,
-              book_num: 2,
-              book_inventory: 19,
+              author: "冯唐",
+              press: "东南大学出版社",
+              price: 50,
+              sum: 2,
+              repertory: 19,
               bookAddr: "login",
               check_one: false,
             },
             {
               book_id: 12,
-              book_img: require("../assets/youbenshi.jpg"),
+              image_b: require("../assets/youbenshi.jpg"),
               book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-              book_writer: "冯唐",
-              book_publish: "东南大学出版社",
-              book_unitPrice: 50,
-              book_num: 2,
-              book_inventory: 19,
+              author: "冯唐",
+              press: "东南大学出版社",
+              price: 50,
+              sum: 2,
+              repertory: 19,
               bookAddr: "login",
               check_one: false,
             },
           ]
         },
         {
-          merchant_id: 2,
-          book_merchant: "新华书店网上商城自营图书",
+          shop_id: 2,
+          shop_name: "新华书店网上商城自营图书",
           this_all: false,
-          children:[
+          books:[
             {
               book_id: 21,
-              book_img: require("../assets/youbenshi.jpg"),
+              image_b: require("../assets/youbenshi.jpg"),
               book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-              book_writer: "冯唐",
-              book_publish: "东南大学出版社",
-              book_unitPrice: 50,
-              book_num: 2,
-              book_inventory: 19,
+              author: "冯唐",
+              press: "东南大学出版社",
+              price: 50,
+              sum: 2,
+              repertory: 19,
               check_one: false,
             },
             {
               book_id: 22,
-              book_img: require("../assets/youbenshi.jpg"),
+              image_b: require("../assets/youbenshi.jpg"),
               book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-              book_writer: "冯唐",
-              book_publish: "东南大学出版社",
-              book_unitPrice: 50,
-              book_num: 2,
-              book_inventory: 19,
+              author: "冯唐",
+              press: "东南大学出版社",
+              price: 50,
+              sum: 2,
+              repertory: 19,
               check_one: false,
             },
           ]
@@ -547,9 +547,9 @@ export default {
     totalNumber() {
       var number_total = 0;
       for (var i = 0; i < this.bookList.length; i++) {
-        for (var j = 0; j < this.bookList[i].children.length; j++) {
-          if (this.bookList[i].children[j].check_one == true) {
-            number_total += this.bookList[i].children[j].book_num;
+        for (var j = 0; j < this.bookList[i].books.length; j++) {
+          if (this.bookList[i].books[j].check_one == true) {
+            number_total += this.bookList[i].books[j].sum;
           }
         }
       }
@@ -559,9 +559,9 @@ export default {
     totalPrice() {
       var price_total = 0;
       for (var i = 0; i < this.bookList.length; i++) {
-        for (var j = 0; j < this.bookList[i].children.length; j++) {
-          if (this.bookList[i].children[j].check_one == true) {
-            price_total += this.bookList[i].children[j].book_unitPrice * this.bookList[i].children[j].book_num;
+        for (var j = 0; j < this.bookList[i].books.length; j++) {
+          if (this.bookList[i].books[j].check_one == true) {
+            price_total += this.bookList[i].books[j].price * this.bookList[i].books[j].sum;
           }
         }
       }
@@ -581,21 +581,21 @@ export default {
     check_all() {
       this.bookList.forEach(shop => {
         shop.this_all = this.checkAll;
-        shop.children.forEach(book => {
+        shop.books.forEach(book => {
           book.check_one = this.checkAll;
         });
       });
     },
     //选择某商家所有商品
     check_shop(shop) {
-      shop.children.forEach(book => {
+      shop.books.forEach(book => {
         book.check_one = shop.this_all;
       });
     },
     //结算
     settlement() {
       this.bookList.forEach(shop => {
-        shop.children.forEach(book => {
+        shop.books.forEach(book => {
           if(book.check_one == true) {
             this.cpmylist.push(book.book_id);
           }
@@ -610,7 +610,7 @@ export default {
     //结算页面是否显示店铺名
     vifShopName(shop) {
       var len = 0;
-      shop.children.forEach(book => {
+      shop.books.forEach(book => {
         if(book.check_one == true) {
           len=len+1;
         }
@@ -633,7 +633,7 @@ export default {
         if (res.data.code == 200) {
           this.myAddressList = res.data.data;
         } else {
-          this.$message.error("获取收货地址，请重试");
+          this.$message.error("获取收货地址失败，请重试");
         }
       });
     },
@@ -765,9 +765,32 @@ export default {
           });
         });
     },
+    //获取用户的购物车信息
+    getAll() {
+      axios({
+        url: this.$store.state.yuming+"/cartitem/getAll",
+        method: "GET",
+        params: {},
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.bookList = data;
+          } else {
+            this.$message.error("获取购物车信息失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
   },
-    async created() {
+  async created() {
     this.isLoading = true;
+    await this.getAll();
     await this.getUserAddress();
     this.isLoading = false;
   },

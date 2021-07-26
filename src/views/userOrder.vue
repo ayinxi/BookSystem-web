@@ -14,29 +14,29 @@
       <el-row style="margin-left: 5%">
         <el-col :span="3">
           <el-menu :default-active="orderNum" class="el-menu-vertical-demo">
-            <el-menu-item index="1">
+            <el-menu-item index="1" @click.native="allOrderMenu">
               <i class="iconfont-dingdan1"></i>
               <span slot="title" style="margin-left: 10px">全部订单</span>
             </el-menu-item>
-            <el-menu-item index="2">
+            <el-menu-item index="2" @click.native="daifahuoMenu">
               <i class="iconfont-daifahuo1"></i>
               <span slot="title" style="margin-left: 10px">待发货</span>
             </el-menu-item>
-            <el-menu-item index="3">
+            <el-menu-item index="3" @click.native="daishouhuoMenu">
               <i class="iconfont-daishouhuo1"></i>
               <span slot="title" style="margin-left: 10px">待收货</span>
             </el-menu-item>
-            <el-menu-item index="4">
+            <el-menu-item index="4" @click.native="daipingjiaMenu">
               <i class="iconfont-xiaoxi"></i>
               <span slot="title" style="margin-left: 10px">待评价</span>
             </el-menu-item>
-            <el-menu-item index="5">
+            <el-menu-item index="5" @click.native="tuikuanMenu">
               <i class="iconfont-shouhou1"></i>
               <span slot="title" style="margin-left: 10px">退款</span>
             </el-menu-item>
           </el-menu>
         </el-col>
-        <el-col :span="20" style="margin-left: 10px">
+        <el-col :span="20" style="margin-left: 10px" v-if="orderNum == 1">
           <el-card class="header-card">
             <el-row>
               <el-col :span="10" :offset="1" class="table-header-item"
@@ -50,7 +50,7 @@
               <el-col :span="2" class="table-header-item">操作</el-col>
             </el-row>
           </el-card>
-          <div v-for="(item, index) in orderList" :key="index">
+          <div v-for="(item, index) in allOrderList" :key="index">
             <el-card style="margin-bottom: 20px">
               <el-row style="margin-bottom: 30px">
                 <el-col class="shop-name" :span="10">
@@ -100,7 +100,7 @@
                       </el-col>
                       <el-col :span="1">
                         <div
-                          style="margin: 25px 10px"
+                          style="margin-top: 15px"
                           v-if="(books.refund_status = 1)"
                         >
                           <el-tooltip
@@ -117,12 +117,28 @@
                           </el-tooltip>
                         </div>
                         <div
-                          style="margin: 25px 10px"
+                          style="margin-top: 15px"
                           v-if="(books.refund_status = 0)"
                         >
                           <el-button type="text" disabled size="mini"
                             >退款/退换货</el-button
                           >
+                        </div>
+                        <div>
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="gotoRemark(books.book_id)"
+                            v-if="item.remark_status == 0"
+                            >评价
+                          </el-button>
+                          <el-button
+                            type="text"
+                            size="mini"
+                            disabled
+                            v-if="item.remark_status == 1"
+                            >已评价
+                          </el-button>
                         </div>
                       </el-col>
                     </el-row>
@@ -131,16 +147,10 @@
                     <el-row style="margin-top: 30px">
                       <el-col :span="18">
                         <div style="margin-bottom: 5px">
-                          <div
-                            class="status-name"
-                            v-if="item.status == 1"
-                          >
+                          <div class="status-name" v-if="item.status == 1">
                             交易成功
                           </div>
-                          <div
-                            class="status-name"
-                            v-if="item.status == 2"
-                          >
+                          <div class="status-name" v-if="item.status == 2">
                             卖家已发货
                           </div>
                           <el-button
@@ -161,11 +171,337 @@
                             >确认收货
                           </el-button>
                         </div>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-card>
+          </div>
+        </el-col>
+        <el-col :span="20" style="margin-left: 10px" v-if="orderNum == 2">
+          <el-card class="header-card">
+            <el-row>
+              <el-col :span="10" :offset="1" class="table-header-item"
+                >商品信息</el-col
+              >
+              <el-col :span="2" class="table-header-item">单价</el-col>
+              <el-col :span="2" class="table-header-item">数量</el-col>
+              <el-col :span="2" class="table-header-item">实付款</el-col>
+              <el-col :span="3" class="table-header-item">商品操作</el-col>
+              <el-col :span="2" class="table-header-item">交易状态</el-col>
+              <el-col :span="2" class="table-header-item">操作</el-col>
+            </el-row>
+          </el-card>
+          <div v-for="(item, index) in allOrderList" :key="index">
+            <el-card style="margin-bottom: 20px">
+              <el-row style="margin-bottom: 30px">
+                <el-col class="shop-name" :span="10">
+                  {{ item.create_time }}</el-col
+                >
+                <el-col class="shop-name" :span="10"
+                  ><i class="el-icon-goods"></i>
+                  {{ item.book_merchant }}</el-col
+                >
+              </el-row>
+              <div class="books">
+                <el-row>
+                  <el-col :span="19">
+                    <el-row
+                      v-for="(books, idx) in item.children"
+                      :key="idx"
+                      style="margin: 10px"
+                    >
+                      <el-col :span="2">
+                        <img :src="books.book_img" style="height: 70px" />
+                      </el-col>
+                      <el-col :span="12">
+                        <div style="margin-right: 30px" class="book-name">
+                          {{ books.book_name }}
+                        </div>
+                        <div class="book-detail">
+                          作者：{{ books.book_writer }}
+                        </div>
+                        <div class="book-detail">
+                          出版社：{{ books.book_publish }}
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 0">
+                          ¥{{ books.book_unitPrice }}
+                        </div>
+                      </el-col>
+                      <el-col :span="2">
+                        <div style="margin: 25px 0">
+                          {{ books.book_num }}
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 10px">
+                          ￥{{ books.book_total }}
+                        </div>
+                      </el-col>
+                      <el-col :span="1">
+                        <div
+                          style="margin-top: 15px"
+                          v-if="(books.refund_status = 1)"
+                        >
+                          <el-tooltip
+                            content="确认收货七天之内可申请退款"
+                            placement="bottom"
+                            effect="light"
+                          >
+                            <el-button
+                              type="text"
+                              size="mini"
+                              @click="gotoRefund(books.book_id)"
+                              >退款/退换货</el-button
+                            >
+                          </el-tooltip>
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                  <el-col :span="3" :offset="1">
+                    <el-row style="margin-top: 30px">
+                      <el-col :span="18">
                         <div style="margin-bottom: 5px">
+                          <div class="status-name">买家已付款</div>
                           <el-button
                             type="text"
                             size="mini"
-                            @click="gotoRemark(item.orderId)"
+                            @click="gotoOrderDetail(item.orderId)"
+                          >
+                            订单详情
+                          </el-button>
+                        </div>
+                      </el-col>
+                      <el-col :span="6">
+                        <div style="margin-bottom: 5px">
+                          <el-button type="text" size="mini"
+                            >提醒卖家发货
+                          </el-button>
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-card>
+          </div>
+        </el-col>
+        <el-col :span="20" style="margin-left: 10px" v-if="orderNum == 3">
+          <el-card class="header-card">
+            <el-row>
+              <el-col :span="10" :offset="1" class="table-header-item"
+                >商品信息</el-col
+              >
+              <el-col :span="2" class="table-header-item">单价</el-col>
+              <el-col :span="2" class="table-header-item">数量</el-col>
+              <el-col :span="2" class="table-header-item">实付款</el-col>
+              <el-col :span="3" class="table-header-item">商品操作</el-col>
+              <el-col :span="2" class="table-header-item">交易状态</el-col>
+              <el-col :span="2" class="table-header-item">操作</el-col>
+            </el-row>
+          </el-card>
+          <div v-for="(item, index) in allOrderList" :key="index">
+            <el-card style="margin-bottom: 20px">
+              <el-row style="margin-bottom: 30px">
+                <el-col class="shop-name" :span="10">
+                  {{ item.create_time }}</el-col
+                >
+                <el-col class="shop-name" :span="10"
+                  ><i class="el-icon-goods"></i>
+                  {{ item.book_merchant }}</el-col
+                >
+              </el-row>
+              <div class="books">
+                <el-row>
+                  <el-col :span="19">
+                    <el-row
+                      v-for="(books, idx) in item.children"
+                      :key="idx"
+                      style="margin: 10px"
+                    >
+                      <el-col :span="2">
+                        <img :src="books.book_img" style="height: 70px" />
+                      </el-col>
+                      <el-col :span="12">
+                        <div style="margin-right: 30px" class="book-name">
+                          {{ books.book_name }}
+                        </div>
+                        <div class="book-detail">
+                          作者：{{ books.book_writer }}
+                        </div>
+                        <div class="book-detail">
+                          出版社：{{ books.book_publish }}
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 0">
+                          ¥{{ books.book_unitPrice }}
+                        </div>
+                      </el-col>
+                      <el-col :span="2">
+                        <div style="margin: 25px 0">
+                          {{ books.book_num }}
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 10px">
+                          ￥{{ books.book_total }}
+                        </div>
+                      </el-col>
+                      <el-col :span="1">
+                        <div
+                          style="margin-top: 15px"
+                          v-if="(books.refund_status = 1)"
+                        >
+                          <el-tooltip
+                            content="确认收货七天之内可申请退款"
+                            placement="bottom"
+                            effect="light"
+                          >
+                            <el-button
+                              type="text"
+                              size="mini"
+                              @click="gotoRefund(books.book_id)"
+                              >退款/退换货</el-button
+                            >
+                          </el-tooltip>
+                        </div>
+                        <div
+                          style="margin-top: 15px"
+                          v-if="(books.refund_status = 0)"
+                        >
+                          <el-button type="text" disabled size="mini"
+                            >退款/退换货</el-button
+                          >
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                  <el-col :span="3" :offset="1">
+                    <el-row style="margin-top: 30px">
+                      <el-col :span="18">
+                        <div style="margin-bottom: 5px">
+                          <div class="status-name">卖家已发货</div>
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="gotoOrderDetail(item.orderId)"
+                          >
+                            订单详情
+                          </el-button>
+                        </div>
+                      </el-col>
+                      <el-col :span="6">
+                        <div style="margin-bottom: 5px">
+                          <el-button type="text" size="mini"
+                            >确认收货
+                          </el-button>
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-card>
+          </div>
+        </el-col>
+        <el-col :span="20" style="margin-left: 10px" v-if="orderNum == 4">
+          <el-card class="header-card">
+            <el-row>
+              <el-col :span="10" :offset="1" class="table-header-item"
+                >商品信息</el-col
+              >
+              <el-col :span="2" class="table-header-item">单价</el-col>
+              <el-col :span="2" class="table-header-item">数量</el-col>
+              <el-col :span="2" class="table-header-item">实付款</el-col>
+              <el-col :span="3" class="table-header-item">商品操作</el-col>
+              <el-col :span="2" class="table-header-item">交易状态</el-col>
+              <el-col :span="2" class="table-header-item">操作</el-col>
+            </el-row>
+          </el-card>
+          <div v-for="(item, index) in allOrderList" :key="index">
+            <el-card style="margin-bottom: 20px">
+              <el-row style="margin-bottom: 30px">
+                <el-col class="shop-name" :span="10">
+                  {{ item.create_time }}</el-col
+                >
+                <el-col class="shop-name" :span="10"
+                  ><i class="el-icon-goods"></i>
+                  {{ item.book_merchant }}</el-col
+                >
+              </el-row>
+              <div class="books">
+                <el-row>
+                  <el-col :span="19">
+                    <el-row
+                      v-for="(books, idx) in item.children"
+                      :key="idx"
+                      style="margin: 10px"
+                    >
+                      <el-col :span="2">
+                        <img :src="books.book_img" style="height: 70px" />
+                      </el-col>
+                      <el-col :span="12">
+                        <div style="margin-right: 30px" class="book-name">
+                          {{ books.book_name }}
+                        </div>
+                        <div class="book-detail">
+                          作者：{{ books.book_writer }}
+                        </div>
+                        <div class="book-detail">
+                          出版社：{{ books.book_publish }}
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 0">
+                          ¥{{ books.book_unitPrice }}
+                        </div>
+                      </el-col>
+                      <el-col :span="2">
+                        <div style="margin: 25px 0">
+                          {{ books.book_num }}
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 10px">
+                          ￥{{ books.book_total }}
+                        </div>
+                      </el-col>
+                      <el-col :span="1">
+                        <div
+                          style="margin-top: 15px"
+                          v-if="(books.refund_status = 1)"
+                        >
+                          <el-tooltip
+                            content="确认收货七天之内可申请退款"
+                            placement="bottom"
+                            effect="light"
+                          >
+                            <el-button
+                              type="text"
+                              size="mini"
+                              @click="gotoRefund(books.book_id)"
+                              >退款/退换货</el-button
+                            >
+                          </el-tooltip>
+                        </div>
+                        <div
+                          style="margin-top: 15px"
+                          v-if="(books.refund_status = 0)"
+                        >
+                          <el-button type="text" disabled size="mini"
+                            >退款/退换货</el-button
+                          >
+                        </div>
+                        <div>
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="gotoRemark(books.book_id)"
                             v-if="item.remark_status == 0"
                             >评价
                           </el-button>
@@ -175,6 +511,136 @@
                             disabled
                             v-if="item.remark_status == 1"
                             >已评价
+                          </el-button>
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                  <el-col :span="3" :offset="1">
+                    <el-row style="margin-top: 30px">
+                      <el-col :span="18">
+                        <div style="margin-bottom: 5px">
+                          <div class="status-name">交易成功</div>
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="gotoOrderDetail(item.orderId)"
+                          >
+                            订单详情
+                          </el-button>
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-card>
+          </div>
+        </el-col>
+        <el-col :span="20" style="margin-left: 10px" v-if="orderNum == 5">
+          <el-card class="header-card">
+            <el-row>
+              <el-col :span="10" :offset="1" class="table-header-item"
+                >商品信息</el-col
+              >
+              <el-col :span="2" class="table-header-item">单价</el-col>
+              <el-col :span="2" class="table-header-item">数量</el-col>
+              <el-col :span="2" class="table-header-item">实付款</el-col>
+              <el-col :span="3" class="table-header-item">商品操作</el-col>
+              <el-col :span="2" class="table-header-item">交易状态</el-col>
+              <el-col :span="2" class="table-header-item">操作</el-col>
+            </el-row>
+          </el-card>
+          <div v-for="(item, index) in allOrderList" :key="index">
+            <el-card style="margin-bottom: 20px">
+              <el-row style="margin-bottom: 30px">
+                <el-col class="shop-name" :span="10">
+                  {{ item.create_time }}</el-col
+                >
+                <el-col class="shop-name" :span="10"
+                  ><i class="el-icon-goods"></i>
+                  {{ item.book_merchant }}</el-col
+                >
+              </el-row>
+              <div class="books">
+                <el-row>
+                  <el-col :span="19">
+                    <el-row
+                      v-for="(books, idx) in item.children"
+                      :key="idx"
+                      style="margin: 10px"
+                    >
+                      <el-col :span="2">
+                        <img :src="books.book_img" style="height: 70px" />
+                      </el-col>
+                      <el-col :span="12">
+                        <div style="margin-right: 30px" class="book-name">
+                          {{ books.book_name }}
+                        </div>
+                        <div class="book-detail">
+                          作者：{{ books.book_writer }}
+                        </div>
+                        <div class="book-detail">
+                          出版社：{{ books.book_publish }}
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 0">
+                          ¥{{ books.book_unitPrice }}
+                        </div>
+                      </el-col>
+                      <el-col :span="2">
+                        <div style="margin: 25px 0">
+                          {{ books.book_num }}
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 10px">
+                          ￥{{ books.book_total }}
+                        </div>
+                      </el-col>
+                      <el-col :span="1">
+                        <div
+                          style="margin-top: 15px"
+                          v-if="(books.refund_status = 1)"
+                        >
+                          <el-tooltip
+                            content="确认收货七天之内可申请退款"
+                            placement="bottom"
+                            effect="light"
+                          >
+                            <el-button
+                              type="text"
+                              size="mini"
+                              @click="gotoRefund(books.book_id)"
+                              >退款/退换货</el-button
+                            >
+                          </el-tooltip>
+                        </div>
+                        <div
+                          style="margin-top: 15px"
+                          v-if="(books.refund_status = 0)"
+                        >
+                          <el-button type="text" disabled size="mini"
+                            >退款/退换货</el-button
+                          >
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                  <el-col :span="3" :offset="1">
+                    <el-row style="margin-top: 30px">
+                      <el-col :span="18">
+                        <div style="margin-bottom: 5px">
+                          <div class="status-name" v-if="item.status == 1">
+                            买家已付款
+                          </div>
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="gotoOrderDetail(item.orderId)"
+                          >
+                            订单详情
                           </el-button>
                         </div>
                       </el-col>
@@ -194,7 +660,7 @@ export default {
   data() {
     return {
       orderNum: this.$route.params.orderId,
-      orderList: [
+      allOrderList: [
         {
           orderId: 1,
           merchant_id: 1,
@@ -268,6 +734,21 @@ export default {
     },
     gotoRemark(e) {
       this.$router.push("/remark/" + e);
+    },
+    allOrderMenu() {
+      this.orderNum ="1";
+    },
+    daifahuoMenu() {
+      this.orderNum = "2";
+    },
+    daishouhuoMenu() {
+      this.orderNum = "3";
+    },
+    daipingjiaMenu() {
+      this.orderNum = "4";
+    },
+    tuikuanMenu() {
+      this.orderNum = "5";
     },
   },
 };

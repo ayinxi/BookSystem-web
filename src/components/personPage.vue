@@ -670,7 +670,7 @@ export default {
   data() {
     return {
       imgUrl: require("../assets/avatar.jpg"),
-      id: "",
+      orderId: "",
       isLoading: false,
       //收货地址loading
       addressLoading: false,
@@ -805,7 +805,7 @@ export default {
     },
     //跳转全部页面
     gotoAllOrder() {
-      this.id = 1;
+      this.id =1;
       this.$router.push("/userOrder/" + this.id);
     },
     //跳转待发货
@@ -833,11 +833,6 @@ export default {
       axios({
         url: this.$store.state.yuming + "/user/address/getAll",
         method: "GET",
-        params: {
-          address: this.newAddress.address,
-          phone: this.newAddress.phone,
-          name: this.newAddress.name,
-        },
       }).then((res) => {
         if (res.data.code == 200) {
           this.myAddressList = res.data.data;

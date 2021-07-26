@@ -311,24 +311,6 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.displayList = data;
-          } else {
-            this.$message.error("获取图书失败,请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
-      axios({
-        url: this.$store.state.yuming + "/book/fuzzyQueryCount",
-        method: "GET",
-        params: {
-          queryWhat: val,
-          content: this.input,
-        },
-      })
-        .then((res) => {
-          const { code, count } = res.data;
-          if (code == "200") {
             this.bookcount = count;
           } else {
             this.$message.error("获取图书数目失败，请刷新");
@@ -347,6 +329,7 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.goodsNum = data;
+            this.displayList = data;
           } else {
             this.$message.error("获取店铺状态失败,请刷新");
           }
@@ -360,32 +343,12 @@ export default {
       this.$store.commit("gobalSearchText", this.input);
       this.flag = 0;
       axios({
-        url: this.$store.state.yuming + "/book/fuzzyQuery",
+        url: this.$store.state.yuming + "/book/fuzzyQueryCount",
         method: "GET",
         params: {
           page_num: this.currentPage,
           book_num: 20,
           style: 1,
-          queryWhat: 0,
-          content: this.input,
-        },
-      })
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == "200") {
-            this.displayList = data;
-          } else {
-            this.$message.error("获取图书失败,请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
-      //获取书的总数
-      axios({
-        url: this.$store.state.yuming + "/book/fuzzyQueryCount",
-        method: "GET",
-        params: {
           queryWhat: 0,
           content: this.input,
         },
@@ -402,6 +365,8 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
+    //按书名相关查询图书
+
     //获取所有目录
     getAllCategory() {
       axios({
