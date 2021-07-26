@@ -22,7 +22,7 @@
                 <el-button
                   slot="append"
                   icon="el-icon-search"
-                  @click.native="searchBook()"
+                  @click.native="searchBook"
                   style="
                     display: block;
                     background-color: rgb(205, 92, 92);
@@ -166,10 +166,8 @@
               </el-col>
             </el-row></el-header
           ><el-main v-if="this.displayList.length == 0"
-            ><el-row>
-              <p>未找到相关的书籍</p>
-            </el-row></el-main
-          >
+            ><el-empty description="未找到相关的书籍"></el-empty>
+          </el-main>
           <el-main v-if="this.displayList.length != 0">
             <el-row class="rowStyle3" type="flex">
               <el-col :span="6" v-for="book in displayList" :key="book.id">
@@ -186,7 +184,7 @@
                       <el-image
                         class="imgStyle3"
                         :src="book.image_b"
-                        @click.native="goToBookInfo"
+                        @click.native="goToBookInfo(book.id)"
                       >
                       </el-image>
                     </el-header>
@@ -201,7 +199,7 @@
                       <el-link
                         :underline="false"
                         class="book-name"
-                        @click="goToBookInfo"
+                        @click="goToBookInfo(book.id)"
                         >{{ book.book_name }}</el-link
                       >
                       <p style="color: rgb(128, 192, 192); margin: 0%">
@@ -219,7 +217,9 @@
             <el-pagination
               :current-page="currentPage"
               @current-change="handleCurrentChange"
-              layout="prev, pager, next"
+              :total="this.bookcount"
+              :page-size="20"
+              layout="prev, pager, next, jumper"
             >
             </el-pagination>
           </el-main>
@@ -238,142 +238,11 @@ export default {
       activeIndex1: "",
       goodsNum: "",
       currentPage: 1,
-      flag: 1,
+      flag: 0,
+      bookcount: 0,
       isLoading: false,
       input: this.$store.state.gobalSearchText,
       categoryList: [],
-      Lists: [
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "有本事",
-          Author: "冯唐",
-          ClassOne: "网络文学",
-          ClassTwo: "男频",
-          Price: 10,
-          PubTime: 2021,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本2号",
-          Author: "李四",
-          ClassOne: "网络文学",
-          ClassTwo: "女频",
-          Price: 11,
-          PubTime: 2020,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本3号",
-          Author: "王五",
-          ClassOne: "小说",
-          ClassTwo: "中国小说",
-          Price: 12,
-          PubTime: 2019,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2018,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本5号",
-          Author: "赵六事",
-          ClassOne: "教育",
-          ClassTwo: "教材",
-          Price: 13,
-          PubTime: 2021,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本6号",
-          Author: "赵六",
-          ClassOne: "教育",
-          ClassTwo: "教辅资料",
-          Price: 13,
-          PubTime: 2020,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本7号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "文学",
-          Price: 13,
-          PubTime: 2019,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本8号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "艺术",
-          Price: 13,
-          PubTime: 2018,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本9号",
-          Author: "赵六",
-          ClassOne: "青春/动漫",
-          ClassTwo: "青春",
-          Price: 13,
-          PubTime: 2021,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本10号",
-          Author: "赵六",
-          ClassOne: "青春/动漫",
-          ClassTwo: "动漫",
-          Price: 13,
-          PubTime: 2020,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本11号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2019,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本12号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2018,
-          PubHouse: "东南出版社",
-        },
-        {
-          Img: require("../assets/youbenshi.jpg"),
-          Name: "书本13号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2021,
-          PubHouse: "东南出版社",
-        },
-      ],
       displayList: [],
     };
   },
@@ -389,8 +258,8 @@ export default {
     goToIndex() {
       this.$router.push("/");
     },
-    goToBookInfo() {
-      this.$router.push("/bookInfo");
+    goToBookInfo(id) {
+      this.$router.push({ path: "/bookInfo", query: { book_id: id } });
     },
     handleCurrentChange(val) {
       this.currentPage = val;
@@ -420,21 +289,6 @@ export default {
       sessionStorage.removeItem("token");
       this.isLoading = false;
     },
-    NetworkFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "1" } });
-    },
-    EducationFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "2" } });
-    },
-    NovelFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "3" } });
-    },
-    LandAFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "4" } });
-    },
-    YandCFilter() {
-      this.$router.push({ path: "/classSort", query: { activeIndex2: "5" } });
-    },
     getMainClassBook(id) {
       this.$router.push({ path: "/classSort", query: { activeIndexMain: id } });
     },
@@ -457,8 +311,9 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.displayList = data;
+            this.bookcount = count;
           } else {
-            this.$message.error("获取图书失败,请刷新");
+            this.$message.error("获取图书数目失败，请刷新");
           }
         })
         .catch(() => {
@@ -474,6 +329,7 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.goodsNum = data;
+            this.displayList = data;
           } else {
             this.$message.error("获取店铺状态失败,请刷新");
           }
@@ -487,7 +343,7 @@ export default {
       this.$store.commit("gobalSearchText", this.input);
       this.flag = 0;
       axios({
-        url: this.$store.state.yuming + "/book/fuzzyQuery",
+        url: this.$store.state.yuming + "/book/fuzzyQueryCount",
         method: "GET",
         params: {
           page_num: this.currentPage,
@@ -498,11 +354,11 @@ export default {
         },
       })
         .then((res) => {
-          const { code, data } = res.data;
+          const { code, count } = res.data;
           if (code == "200") {
-            this.displayList += data;
+            this.bookcount = count;
           } else {
-            this.$message.error("获取图书失败,请刷新");
+            this.$message.error("获取图书数目失败，请刷新");
           }
         })
         .catch(() => {
@@ -521,8 +377,6 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.categoryList = data;
-            this.activeIndex1 = data[0].main_id;
-            this.getClassOneBook(this.activeIndex1);
           }
         })
         .catch(() => {
@@ -534,15 +388,12 @@ export default {
     },
   },
   async created() {
-    this.displayList = this.Lists.filter(
-      (item) =>
-        item.Name.includes(this.input) | item.Author.includes(this.input)
-    );
     this.isLoading = true;
     if (this.$store.state.token) {
       await this.getGoodsNum();
     }
     await this.getAllCategory();
+    this.searchBook();
     this.isLoading = false;
   },
 };

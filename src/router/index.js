@@ -63,7 +63,7 @@ const routes = [
     component: () => import('../components/shopManage/orderInfo.vue')
   },
   {
-    path: '/shopIndex',
+    path: '/shopIndex/:shop_id',
     name: 'shopIndex',
     component: () => import('../views/shopIndex.vue')
   },

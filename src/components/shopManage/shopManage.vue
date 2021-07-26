@@ -363,10 +363,17 @@ export default {
           });
         });
     },
+    mounted: function () {
+      if (location.href.indexOf("#reloaded") == -1) {
+        location.href = location.href + "#reloaded";
+        location.reload();
+      }
+    },
   },
   async created() {
     this.isLoading = true;
     await this.getShopInfo();
+    this.mounted();
     this.isLoading = false;
   },
 };
