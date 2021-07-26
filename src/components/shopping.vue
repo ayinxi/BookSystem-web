@@ -31,7 +31,6 @@
     </div>
     <!--<div class="divider"></div>-->
     <!--content-->
-    <div>{{temp_page}}</div>
     <div style="margin:0 10%" v-if="bookList == ''">
       <el-row><el-col :offset="9"><img src="../assets/empty_grey.png" style="height:220px;margin:50px"></el-col></el-row>
       <el-row><el-col :offset="11"><p style="margin-left:0px;color:grey">购物车里空空如也</p></el-col></el-row>
@@ -447,7 +446,6 @@ export default {
       //选择的地址id
       radio: "",
       //从图书详情页直接购买
-      temp_page: this.$route.params.page,
       book: {
         //店铺
         shop_id: "1",
