@@ -951,7 +951,7 @@ export default {
   },
   async created() {
     this.isLoading = true;
-    //if(this.$route.params.page != '') this.page = this.$route.params.page;
+    if(this.$route.params.bookid != '') this.page = 1;
     await this.getAll();
     await this.getUserAddress();
     this.isLoading = false;

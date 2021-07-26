@@ -104,7 +104,7 @@ const routes = [
     component: () => import('../components/admin/dataVisual.vue')
   },
   {
-    path: '/shopping',
+    path: '/shopping/:bookid/:num',
     name: 'shopping',
     meta: { userAuth: true },//登录鉴权
     component: () => import('../components/shopping.vue')
