@@ -9,15 +9,20 @@
         <img height="70px" style="margin:20px 0" src="../assets/jwbc.png" />
       </div>
       <div class="title" style="margin-right:250px">
-        <el-page-header v-if="page == 0" @back="gotoHome" content="购物车"></el-page-header>
+        <el-page-header v-if="page == 0" @back="goback" content="购物车"></el-page-header>
         <el-page-header
-          v-if="page == 1"
+          v-if="page == 1 && isDirectBuy == false"
           @back="page = 0"
           content="填写订单"
         ></el-page-header>
         <el-page-header
+          v-if="page == 1 && isDirectBuy == true"
+          @back="goback"
+          content="填写订单"
+        ></el-page-header>
+        <el-page-header
           v-if="page == 2"
-          @back="page = 1"
+          @back="gotoHome"
           content="完成订单"
         ></el-page-header>
       </div>
@@ -31,13 +36,13 @@
     </div>
     <!--<div class="divider"></div>-->
     <!--content-->
-    <div style="margin:0 10%" v-if="bookList == ''">
+    <div style="margin:0 10%" v-if="page == 0 && isBookListEmpty == true">
       <el-row><el-col :offset="9"><img src="../assets/empty_grey.png" style="height:220px;margin:50px"></el-col></el-row>
       <el-row><el-col :offset="11"><p style="margin-left:0px;color:grey">购物车里空空如也</p></el-col></el-row>
       <el-row><el-col :offset="10"><span style="margin-left:35px;color:grey">您可以   </span><el-button @click="gotoHome">回首页逛逛</el-button></el-col></el-row>
     </div>
     <div style="margin:0 10%">
-      <div v-if="page == 0 && bookList != ''" v-loading="shoppingLoading">
+      <div v-if="page == 0 && isBookListEmpty == false" v-loading="shoppingLoading">
     <header>
       <el-card class="header-card">
       <el-row>
@@ -344,7 +349,8 @@
       </el-row>
       </el-card>
     </header>
-    <div class="table-container">
+    <!--从购物车生成订单-->
+    <div class="table-container" v-if="isDirectBuy == false">
       <div v-for="(item,index) in bookList" :key="index">
         <el-card style="margin: 20px 0" v-if="vifShopName(item)">
         <el-row style="margin:10px">
@@ -375,22 +381,53 @@
         </el-card>
       </div>
     </div>
+    <!--从图书详情页直接购买-->
+    <div class="table-container" v-if="isDirectBuy == true">
+      <div>
+        <el-card style="margin: 20px 0">
+        <el-row style="margin:10px">
+          <el-col class="shop-name"><i class="el-icon-goods"></i> {{book.shop_name}}</el-col>
+        </el-row>
+        <div class="books">
+          <el-row style="margin:10px">
+            <el-col :span="2"><img :src="book.image_b" style="height:70px" /></el-col>
+            <el-col :span="9">
+              <div style="margin-right:30px" class="book-name">{{book.book_name}}</div>
+              <div class="book-detail">作者：{{book.author}}</div>
+              <div class="book-detail">出版社：{{book.press}}</div>
+            </el-col>
+            <el-col :span="4" :offset="3">
+              <div style="margin:25px 0" class="table-unitprice">¥{{book.price}}</div>
+            </el-col>
+            <el-col :span="2">
+              <div style="margin:20px 0">{{directBuyNum}}</div>
+            </el-col>
+            <el-col :span="2" :offset="2">
+              <div style="margin:25px 0" class="table-price">¥{{book.price*directBuyNum}}</div>
+            </el-col>
+          </el-row>
+        </div>
+        </el-card>
+      </div>
+    </div>
     <footer>
       <el-card>
-      <el-row><!--v-if="temp_page == ''"从购物车生成订单-->
+      <!--从购物车生成订单-->
+      <el-row v-if="isDirectBuy == false">
         <el-col :span="18" :offset="1" class="table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
         <el-col :span="3" class="table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
         <el-col :span="2" class="table-footer-item" style="margin-top:9px">
           <el-button size="max" type="danger" :round="true" @click="addCartItem">提交订单</el-button>
         </el-col>
       </el-row>
-      <!--<el-row v-else> 从图书详情页直接购买
-        <el-col :span="18" :offset="1" class="table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{book.sum}} </span>件商品</el-col>
-        <el-col :span="3" class="table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{book.price*book.sum}}</span></el-col>
+      <!--从图书详情页直接购买-->
+      <el-row v-if="isDirectBuy == true">
+        <el-col :span="18" :offset="1" class="table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{directBuyNum}} </span>件商品</el-col>
+        <el-col :span="3" class="table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{book.price*directBuyNum}}</span></el-col>
         <el-col :span="2" class="table-footer-item" style="margin-top:9px">
-          <el-button size="max" type="danger" :round="true" @click="addCartItem">提交订单</el-button>
+          <el-button size="max" type="danger" :round="true" @click="addDirect">提交订单</el-button>
         </el-col>
-      </el-row>-->
+      </el-row>
       </el-card>
     </footer>
       </div>
@@ -446,24 +483,27 @@ export default {
       //选择的地址id
       radio: "",
       //从图书详情页直接购买
+      directBuyBookId: "",
+      directBuyNum: 0,
       book: {
         //店铺
-        shop_id: "1",
-        shop_name: "横溢图书专营店",
+        shop_id: "",
+        shop_name: "",
         //图书
-        book_id: this.$route.params.bookid,
-        cartItem_id: "123",
-        image_b: require("../assets/youbenshi.jpg"),
-        book_name: "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-        author: "冯唐",
-        press: "东南大学出版社",
-        price: 50,
-        sum: this.$route.params.num,
-        repertory: 19,
+        book_id: "",
+        cartItem_id: "",
+        image_b: "",
+        book_name: "",
+        author: "",
+        press: "",
+        price: 0,
+        sum: 0,
+        repertory: 0,
       },
       //购物车图书
+      isBookListEmpty: false,
+      isDirectBuy: false,
       bookList: [
-        /*
         {
           shop_id: "1",
           shop_name: "横溢图书专营店",
@@ -483,7 +523,6 @@ export default {
             },
           ]
         },
-        */
       ],
       checkAll: false,
       cpmylist: [],
@@ -546,25 +585,25 @@ export default {
     // 总数
     totalNumber() {
       var number_total = 0;
-      for (var i = 0; i < this.bookList.length; i++) {
-        for (var j = 0; j < this.bookList[i].books.length; j++) {
-          if (this.bookList[i].books[j].check_one == true) {
-            number_total += this.bookList[i].books[j].sum;
-          }
-        }
-      }
+      this.bookList.forEach(shop => {
+        shop.this_all = this.checkAll;
+        shop.books.forEach(book => {
+          if(book.check_one == true)
+            number_total += book.sum;
+        });
+      });
       return number_total;
     },
     // 总价
     totalPrice() {
       var price_total = 0;
-      for (var i = 0; i < this.bookList.length; i++) {
-        for (var j = 0; j < this.bookList[i].books.length; j++) {
-          if (this.bookList[i].books[j].check_one == true) {
-            price_total += this.bookList[i].books[j].price * this.bookList[i].books[j].sum;
-          }
-        }
-      }
+      this.bookList.forEach(shop => {
+        shop.this_all = this.checkAll;
+        shop.books.forEach(book => {
+          if(book.check_one == true)
+            price_total += book.sum * book.price;
+        });
+      });
       return price_total;
     },
   },
@@ -572,6 +611,10 @@ export default {
     //回到主页
     gotoHome() {
       this.$router.push("/");
+    },
+    //返回上一页
+    goback(){
+        this.$router.go(-1);
     },
     //跳转全部订单页面
     gotoOrder() {
@@ -779,6 +822,9 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.bookList = data;
+            if (data == null) {
+              this.isBookListEmpty = true;
+            }
           } else {
             this.$message.error("获取购物车信息失败");
           }
@@ -946,10 +992,88 @@ export default {
         this.page = 2;
       }
     },
+    //直接购买获取图书详情
+    getDetail() {
+      axios({
+        url: this.$store.state.yuming+"/book/getDetail",
+        method: "GET",
+        params: {
+          book_id: this.directBuyBookId,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.book = data;
+          } else {
+            this.$message.error("获取图书详情失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //直接购买
+    addDirect() {
+      //处理地址
+      if(this.radio == '') {
+        if(this.myAddressList == '') {//没有选择地址也没有地址的情况
+          this.$message.error("请添加收货人信息");
+        }
+        else if(this.myAddressList[0].status == 0) {//没有选择地址也没有默认地址的情况
+          this.$message.error("请选择收货人信息");
+        }
+        else {//没有选择地址但有默认地址的情况
+          this.radio = this.myAddressList[0].id;
+        }
+      }
+      if(this.radio != '') {
+      axios({
+        url: this.$store.state.yuming + "/order/addDirect",
+        method: "POST",
+        params: {
+          book_id: this.directBuyBookId,
+          sum: this.directBuyNum,
+          address_id: this.radio,
+          shop_id: this.book.shop_id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.shoppingLoading = true;
+            this.getAll();
+            this.shoppingLoading = false;
+            this.$message({
+              message: "提交订单成功",
+              type: "success",
+            });
+          } else {
+            this.$message.error("提交订单失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+        this.page = 2;
+      }
+    },
   },
   async created() {
     this.isLoading = true;
-    if(this.$route.params.bookid != '') this.page = 1;
+    if(this.$route.params.bookid != 0) {
+      this.isDirectBuy = true;
+      this.page = 1;
+      this.directBuyBookId = this.$route.params.bookid;
+      this.directBuyNum = this.$route.params.num;
+      await this.getDetail();
+    }
     await this.getAll();
     await this.getUserAddress();
     this.isLoading = false;
