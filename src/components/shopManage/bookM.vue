@@ -643,7 +643,6 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
-
     //修改图书信息时，获取这一行的初始信息
     handleChange(index) {
       this.lists1.bookid = this.tableData[index].id;
@@ -778,7 +777,18 @@ export default {
                 type: "success",
               });
               this.dialogAddVisible = false;
-              this.lists1 = "";
+              this.lists1.bookid = "";
+              this.lists1.bookImg = "";
+              this.lists1.bookName = "";
+              this.lists1.bookAuthor = "";
+              this.lists1.classOne = "";
+              this.lists1.classOne_id = "";
+              this.lists1.classTwo = "";
+              this.lists1.classTwo_id = "";
+              this.lists1.bookPrice = "";
+              this.lists1.Inventory = "";
+              this.lists1.bookPubTime = "";
+              this.lists1.press = "";
               this.formdata = new FormData();
             } else {
               this.$message.error("新增图书失败，请重试");
@@ -793,11 +803,14 @@ export default {
     //取消修改图书时，进行清空
     cancel1() {
       this.dialogChangeVisible = false;
+      this.lists1.bookid = "";
       this.lists1.bookImg = "";
       this.lists1.bookName = "";
       this.lists1.bookAuthor = "";
       this.lists1.classOne = "";
+      this.lists1.classOne_id = "";
       this.lists1.classTwo = "";
+      this.lists1.classTwo_id = "";
       this.lists1.bookPrice = "";
       this.lists1.Inventory = "";
       this.lists1.bookPubTime = "";
@@ -807,11 +820,14 @@ export default {
     //取消添加图书时，进行清空
     cancel2() {
       this.dialogAddVisible = false;
+      this.lists1.bookid = "";
       this.lists1.bookImg = "";
       this.lists1.bookName = "";
       this.lists1.bookAuthor = "";
       this.lists1.classOne = "";
+      this.lists1.classOne_id = "";
       this.lists1.classTwo = "";
+      this.lists1.classTwo_id = "";
       this.lists1.bookPrice = "";
       this.lists1.Inventory = "";
       this.lists1.bookPubTime = "";
@@ -873,11 +889,14 @@ export default {
       this.$confirm("确认关闭？")
         .then(() => {
           done();
+          this.lists1.bookid = "";
           this.lists1.bookImg = "";
           this.lists1.bookName = "";
           this.lists1.bookAuthor = "";
           this.lists1.classOne = "";
+          this.lists1.classOne_id = "";
           this.lists1.classTwo = "";
+          this.lists1.classTwo_id = "";
           this.lists1.bookPrice = "";
           this.lists1.Inventory = "";
           this.lists1.bookPubTime = "";

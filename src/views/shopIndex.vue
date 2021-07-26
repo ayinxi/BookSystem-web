@@ -111,7 +111,7 @@
                   :key="item.main_id"
                   style="color: rgb(250, 128, 114); font-weight: 1000"
                   :index="item.main_id"
-                  @click.native="getMainClassBook(item.main_id)"
+                  @click.native="getClassBook(item.main_id)"
                   >{{ item.main_name }}</el-menu-item
                 >
               </el-menu>
@@ -175,7 +175,7 @@
             </el-row>
             <el-pagination
               :current-page="currentPage"
-              :page-size="16"
+              :page-size="1"
               @current-change="handleCurrentChange"
               layout="prev, pager, next, jumper"
               :total="bookcount"
@@ -201,145 +201,20 @@ export default {
       bookcount: 1,
       shop_id: this.$route.params.shop_id,
       input: "",
-      categoryList: [],
-      shop: {
-        shopname: "这是一家好店",
-        shopimg: require("../assets/kuku.png"),
-        shoprate: 3.7,
-      },
-      displayList: [],
-      Lists: [
+      categoryList: [
         {
-          Img: require("../assets/kuku.png"),
-          Name: "书本1号",
-          Author: "张三",
-          ClassOne: "网络文学",
-          ClassTwo: "男频",
-          Price: 10,
-          PubTime: 2021,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本2号",
-          Author: "李四",
-          ClassOne: "网络文学",
-          ClassTwo: "女频",
-          Price: 11,
-          PubTime: 2020,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本3号",
-          Author: "王五",
-          ClassOne: "小说",
-          ClassTwo: "中国小说",
-          Price: 12,
-          PubTime: 2019,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2018,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "教育",
-          ClassTwo: "教材",
-          Price: 13,
-          PubTime: 2021,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "教育",
-          ClassTwo: "教辅资料",
-          Price: 13,
-          PubTime: 2020,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "文学",
-          Price: 13,
-          PubTime: 2019,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "文艺",
-          ClassTwo: "艺术",
-          Price: 13,
-          PubTime: 2018,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "青春/动漫",
-          ClassTwo: "青春",
-          Price: 13,
-          PubTime: 2021,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "青春/动漫",
-          ClassTwo: "动漫",
-          Price: 13,
-          PubTime: 2020,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2019,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2018,
-          Show: true,
-        },
-        {
-          Img: require("../assets/kuku.png"),
-          Name: "书本4号",
-          Author: "赵六",
-          ClassOne: "小说",
-          ClassTwo: "外国小说",
-          Price: 13,
-          PubTime: 2021,
-          Show: true,
+          book_num: 0,
+          main_name: "",
+          main_id: "",
+          second_category: [{ book_num: "", second_name: "", second_id: "" }],
         },
       ],
+      shop: {
+        avatar_b: "",
+        shop_name: "",
+        rate: 0,
+      },
+      displayList: [],
     };
   },
   computed: {
@@ -377,8 +252,8 @@ export default {
         url: this.$store.state.yuming + "/book/getPage",
         method: "GET",
         params: {
-          page_num: 1,
-          book_num: 16,
+          page_num: this.currentPage,
+          book_num: 1,
           style: 1,
           main_category_id: "",
           second_category_id: "",
@@ -415,7 +290,65 @@ export default {
           const { code, count } = res.data;
           if (code == "200") {
             this.bookcount = count;
-            window.console.log(this.bookcount);
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //每次点导航栏能够将当前页改为1
+    getClassBook(id){
+      this.currentPage=1;
+      this.getMainClassBook(id);
+    },
+    //根据类型显示这家店的书
+    getMainClassBook(id) {
+      this.activeIndex1 = id;
+      window.console.log(this.activeIndex1);
+      axios({
+        url: this.$store.state.yuming + "/book/getPage",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 1,
+          style: 1,
+          main_category_id: id,
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: this.shop_id,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList = data;
+          } else {
+            this.$message.error("获取图书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: id,
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: this.shop_id,
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
           } else {
             this.$message.error("获取图书数目失败，请刷新");
           }
@@ -426,6 +359,9 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
+      if (this.activeIndex1 == " ") {
+        this.showAll();
+      } else this.getMainClassBook(this.activeIndex1);
     },
     handleSelect1() {
       this.activeIndex2 = " ";
@@ -445,7 +381,7 @@ export default {
     //获取店铺信息
     getShopInfo() {
       axios({
-        url: this.$store.state.yuming + "/shop/getShopById",
+        url: this.$store.state.yuming + "/user/public/getShopById",
         method: "GET",
         params: {
           shop_id: this.shop_id,

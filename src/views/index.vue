@@ -358,7 +358,14 @@ export default {
         Author: "冯唐",
         bookid: "1",
       },
-      categoryList: [],
+      categoryList: [
+        {
+          book_num: 0,
+          main_name: "",
+          main_id: "",
+          second_category: [{ book_num: "", second_name: "", second_id: "" }],
+        },
+      ],
       photoList: [
         { Img: require("../assets/4.jpg") },
         { Img: require("../assets/photo1.jpg") },

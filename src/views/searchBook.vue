@@ -208,7 +208,11 @@
                       <p style="color: red; font-weight: 1000; margin: 0%">
                         ￥{{ book.price }}
                       </p>
-                      <el-button type="text" @click.native="addShoppingTrolley(book.id)">加入购物车 </el-button>
+                      <el-button
+                        type="text"
+                        @click.native="addShoppingTrolley(book.id)"
+                        >加入购物车
+                      </el-button>
                     </el-main>
                   </el-container>
                 </el-card>
@@ -242,9 +246,16 @@ export default {
       bookcount: 0,
       isLoading: false,
       input: this.$store.state.gobalSearchText,
-      categoryList: [],
+      categoryList: [
+        {
+          book_num: 0,
+          main_name: "",
+          main_id: "",
+          second_category: [{ book_num: "", second_name: "", second_id: "" }],
+        },
+      ],
       displayList: [],
-      formdata:new FormData(),
+      formdata: new FormData(),
     };
   },
   computed: {
