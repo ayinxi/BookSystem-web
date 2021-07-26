@@ -208,7 +208,7 @@
                       <p style="color: red; font-weight: 1000; margin: 0%">
                         ￥{{ book.price }}
                       </p>
-                      <el-button type="text">加入购物车 </el-button>
+                      <el-button type="text" @click.native="addShoppingTrolley(book.id)">加入购物车 </el-button>
                     </el-main>
                   </el-container>
                 </el-card>
@@ -244,6 +244,7 @@ export default {
       input: this.$store.state.gobalSearchText,
       categoryList: [],
       displayList: [],
+      formdata:new FormData(),
     };
   },
   computed: {
@@ -292,10 +293,30 @@ export default {
     getMainClassBook(id) {
       this.$router.push({ path: "/classSort", query: { activeIndexMain: id } });
     },
+    //加入购物车
+    addShoppingTrolley(id) {
+      this.formdata.append("book_id", id);
+      this.formdata.append("sum", 1);
+      axios({
+        url: this.$store.state.yuming + "/cartitem/addCartItem",
+        method: "POST",
+        data: this.formdata,
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.$message({
+            message: "加入购物车成功",
+            type: "success",
+          });
+        } else {
+          this.$message.error("加入购物车失败，请重试");
+        }
+      });
+    },
     //点击实现本页面的不同搜索方式
     handleClick(val) {
       this.flag = val;
       document.getElementById("Button" + val).blur();
+      //获取查到的书的数据
       axios({
         url: this.$store.state.yuming + "/book/fuzzyQuery",
         method: "GET",
@@ -311,6 +332,25 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.displayList = data;
+          } else {
+            this.$message.error("查询图书失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取这些书的数目
+      axios({
+        url: this.$store.state.yuming + "/book/fuzzyQueryCount",
+        method: "GET",
+        params: {
+          queryWhat: val,
+          content: this.input,
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
             this.bookcount = count;
           } else {
             this.$message.error("获取图书数目失败，请刷新");
@@ -329,7 +369,6 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.goodsNum = data;
-            this.displayList = data;
           } else {
             this.$message.error("获取店铺状态失败,请刷新");
           }
@@ -338,17 +377,37 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
-    //图书模糊查询全部相关图书
+    //图书模糊查询全部相关图书，即其他页面跳转进来的查询
     searchBook() {
       this.$store.commit("gobalSearchText", this.input);
       this.flag = 0;
       axios({
-        url: this.$store.state.yuming + "/book/fuzzyQueryCount",
+        url: this.$store.state.yuming + "/book/fuzzyQuery",
         method: "GET",
         params: {
           page_num: this.currentPage,
           book_num: 20,
           style: 1,
+          queryWhat: 0,
+          content: this.input,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList = data;
+          } else {
+            this.$message.error("查询图书失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取这些书的数目
+      axios({
+        url: this.$store.state.yuming + "/book/fuzzyQueryCount",
+        method: "GET",
+        params: {
           queryWhat: 0,
           content: this.input,
         },
@@ -365,8 +424,6 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
-    //按书名相关查询图书
-
     //获取所有目录
     getAllCategory() {
       axios({
