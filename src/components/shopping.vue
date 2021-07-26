@@ -31,8 +31,13 @@
     </div>
     <!--<div class="divider"></div>-->
     <!--content-->
+    <div style="margin:0 10%" v-if="bookList == ''">
+      <el-row><el-col :offset="9"><img src="../assets/empty_grey.png" style="height:220px;margin:50px"></el-col></el-row>
+      <el-row><el-col :offset="11"><p style="margin-left:0px;color:grey">购物车里空空如也</p></el-col></el-row>
+      <el-row><el-col :offset="10"><span style="margin-left:35px;color:grey">您可以   </span><el-button @click="gotoHome">回首页逛逛</el-button></el-col></el-row>
+    </div>
     <div style="margin:0 10%">
-      <div v-if="page == 0" v-loading="shoppingLoading">
+      <div v-if="page == 0 && bookList != ''" v-loading="shoppingLoading">
     <header>
       <el-card class="header-card">
       <el-row>
@@ -372,13 +377,20 @@
     </div>
     <footer>
       <el-card>
-      <el-row>
+      <el-row><!--v-if="temp_page == ''"从购物车生成订单-->
         <el-col :span="18" :offset="1" class="table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
         <el-col :span="3" class="table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
         <el-col :span="2" class="table-footer-item" style="margin-top:9px">
-          <el-button size="max" type="danger" :round="true" @click="page = 2">提交订单</el-button>
+          <el-button size="max" type="danger" :round="true" @click="addCartItem">提交订单</el-button>
         </el-col>
       </el-row>
+      <!--<el-row v-else> 从图书详情页直接购买
+        <el-col :span="18" :offset="1" class="table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{book.sum}} </span>件商品</el-col>
+        <el-col :span="3" class="table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{book.price*book.sum}}</span></el-col>
+        <el-col :span="2" class="table-footer-item" style="margin-top:9px">
+          <el-button size="max" type="danger" :round="true" @click="addCartItem">提交订单</el-button>
+        </el-col>
+      </el-row>-->
       </el-card>
     </footer>
       </div>
@@ -420,6 +432,7 @@
 <script>
 import axios from "axios";
 import { Message } from "element-ui";
+import qs from 'qs';
 export default {
   components: {},
   data() {
@@ -433,7 +446,6 @@ export default {
       //选择的地址id
       radio: "",
       //从图书详情页直接购买
-      temp_page: this.$route.params.page,
       book: {
         //店铺
         shop_id: "1",
@@ -451,6 +463,7 @@ export default {
       },
       //购物车图书
       bookList: [
+        /*
         {
           shop_id: "1",
           shop_name: "横溢图书专营店",
@@ -470,11 +483,11 @@ export default {
             },
           ]
         },
+        */
       ],
       checkAll: false,
       cpmylist: [],
       //收货地址
-      //我的收货地址
       editInfoVisible: false,
       addInfoVisible: false,
       delAddressVisible: false,
@@ -494,13 +507,13 @@ export default {
         status: "",
       },
       myAddressList: [
-        {
+        /*{
           id: "1",
           name: "甲",
           phone: "12345678910",
           address: "摩尔庄园",
           status: 0,
-        },
+        },*/
       ],
       newAddressRules: {
         phone: [
@@ -591,7 +604,7 @@ export default {
       if(this.cpmylist.length==0){
       alert("请选择商品哦！")
       }else{
-        this.page=1;
+        this.page = 1;
       }
     },
     //结算页面是否显示店铺名
@@ -711,6 +724,9 @@ export default {
             this.addressLoading = true;
             this.getUserAddress();
             this.addressLoading = false;
+            if(this.delAddressId == this.radio) {
+              this.radio = '';
+            }
             this.$message({
               message: "删除成功",
               type: "success",
@@ -847,6 +863,9 @@ export default {
         params: {
           CartItem_Ids: multiDelBookId,
         },
+        paramsSerializer: params => {
+          return qs.stringify(params, { indices: false })
+        },
       })
         .then((res) => {
           const { code } = res.data;
@@ -869,9 +888,68 @@ export default {
           });
         });
     },
+    //从购物车生成订单
+    addCartItem() {
+      var multiDelBookId = [];
+      //处理图书
+      this.bookList.forEach(shop => {
+        shop.books.forEach(book => {
+          if(book.check_one == true) {
+            multiDelBookId.push(book.cartItem_id);
+          }
+        });
+      });
+      //处理地址
+      if(this.radio == '') {
+        if(this.myAddressList == '') {//没有选择地址也没有地址的情况
+          this.$message.error("请添加收货人信息");
+        }
+        else if(this.myAddressList[0].status == 0) {//没有选择地址也没有默认地址的情况
+          this.$message.error("请选择收货人信息");
+        }
+        else {//没有选择地址但有默认地址的情况
+          this.radio = this.myAddressList[0].id;
+        }
+      }
+      if(this.radio != '') {
+      axios({
+        url: this.$store.state.yuming + "/order/addCatiItem",
+        method: "POST",
+        params: {
+          CartItem_Ids: multiDelBookId,
+          address_id: this.radio,
+        },
+        paramsSerializer: params => {
+          return qs.stringify(params, { indices: false })
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.shoppingLoading = true;
+            this.getAll();
+            this.shoppingLoading = false;
+            this.$message({
+              message: "提交订单成功",
+              type: "success",
+            });
+          } else {
+            this.$message.error("提交订单失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+        this.page = 2;
+      }
+    },
   },
   async created() {
     this.isLoading = true;
+    if(this.$route.params.bookid != '') this.page = 1;
     await this.getAll();
     await this.getUserAddress();
     this.isLoading = false;

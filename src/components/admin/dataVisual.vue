@@ -63,11 +63,14 @@
 
 <script>
 import echarts from "echarts";
+import axios from "axios";
+import { Message } from "element-ui";
 export default {
   components: {},
   data() {
     return {
-        
+        pie_class_data: [],
+        pie_order_data: [],
     };
   },
   mounted() {
@@ -80,6 +83,30 @@ export default {
     //回到管理员主页
     gotoAdmin() {
       this.$router.push("/adminManage");
+    },
+    //获取不同分类图书数量
+    getAll() {
+      axios({
+        url: this.$store.state.yuming+"/category/getAll",
+        method: "GET",
+        params: {},
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.pie_class_data = data;
+          } else if (code == "3") {
+            this.pie_class_data = "";
+          } else {
+            this.$message.error("获取分类失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
     },
     //近七天新增
     drawDomChart() {
