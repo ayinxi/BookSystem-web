@@ -47,6 +47,7 @@
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
+          v-loading="dataLoading"
         >
           <el-table-column type="selection" width="55"> </el-table-column>
           <el-table-column label="图片" width="130">
@@ -443,6 +444,7 @@ export default {
       book_id: [],
       searchText: "",
       isLoading: false,
+      dataLoading: false,
       dialogChangeVisible: false,
       dialogAddVisible: false,
       dialogBriefVisible: false,
@@ -686,6 +688,9 @@ export default {
         data: this.briefdata,
       }).then((res) => {
         if (res.data.code == 200) {
+          this.dataLoading = true;
+          this.getBook();
+          this.dataLoading = false;
           this.$message({
             message: "修改图书简介成功",
             type: "success",
@@ -729,11 +734,13 @@ export default {
         data: this.formdata,
       }).then((res) => {
         if (res.data.code == 200) {
+          this.dataLoading = true;
+          this.getBook();
+          this.dataLoading = false;
           this.$message({
             message: "修改图书成功",
             type: "success",
           });
-          this.mounted();
           this.dialogChangeVisible = false;
           this.lists1 = "";
           this.formdata = new FormData();
@@ -763,12 +770,14 @@ export default {
             data: this.formdata,
           }).then((res) => {
             if (res.data.code == 200) {
+              this.dataLoading = true;
+              this.getBook();
+              this.dataLoading = false;
               this.$message({
                 message: "新增图书成功",
                 type: "success",
               });
               this.dialogAddVisible = false;
-              this.mounted();
               this.lists1 = "";
               this.formdata = new FormData();
             } else {
@@ -838,12 +847,14 @@ export default {
           .then((res) => {
             const { code } = res.data;
             if (code == "200") {
+              this.dataLoading = true;
+              this.getBook();
+              this.dataLoading = false;
               this.$message({
                 type: "success",
                 message: "下架所选图书成功",
               });
               this.book_id = [];
-              this.mounted();
             } else {
               this.$message.error("下架所选图书失败");
               this.book_id = [];
