@@ -20,8 +20,16 @@
       </div>
       <div class="box2">
         <el-card class="box-card1">
+          <el-form label-width="120px">
+            <el-form-item label="绑定邮箱搜索：">
+              <el-input
+              v-model="searchText"
+              placeholder="输入绑定邮箱模糊搜索"
+              ></el-input>
+            </el-form-item>
+          </el-form>
           <el-table
-          :data="userList.filter(data => !search || data.userName.toLowerCase().includes(search.toLowerCase()))"
+          :data="userList.filter((data) => {return data.userName.includes(searchText);})"
           style="width: 100%"
           :default-sort = "{prop: 'signinTime', order: 'descending'}">
             <el-table-column type="expand">
@@ -38,11 +46,15 @@
             <el-table-column prop="signinTime" label="注册时间" sortable></el-table-column>
             <el-table-column prop="userName" label="用户名"></el-table-column>
             <el-table-column prop="userEmail" label="邮箱"></el-table-column>
-            <el-table-column prop="state" label="用户状态"></el-table-column>
-            <el-table-column label="操作" align="right">
-              <template slot="header">
-                <el-input v-model="search" size="mini" placeholder="输入用户名搜索"/>
-              </template>
+            <el-table-column prop="state" label="用户状态"
+            :filters="[
+              { text: '普通用户', value: '普通用户' },
+              { text: '商家', value: '商家' },
+              { text: '已注销', value: '已注销' },
+            ]"
+            :filter-method="filterState">
+            </el-table-column>
+            <el-table-column label="操作">
               <template>
                 <el-button size="mini" type="text">编辑</el-button>
                 <el-button size="mini" type="text">注销</el-button>
@@ -60,6 +72,8 @@ export default {
   components: {},
   data() {
     return {
+      //模糊搜索
+      searchText: "",
       userList:[//用户列表
         {
           signinTime: "2021-07-15 18:31:30",//注册时间
@@ -100,8 +114,14 @@ export default {
   },
   computed: {},
   methods:{
+    //回到管理员主页
     gotoAdmin() {
       this.$router.push("/adminManage");
+    },
+    //筛选用户状态
+    filterState(value, row, column) {
+      const property = column["property"];
+      return row[property] === value;
     },
   },
   async created() {

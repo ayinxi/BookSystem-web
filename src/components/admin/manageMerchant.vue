@@ -39,6 +39,10 @@
     <el-tab-pane label="待审核申请" name="first">
       <el-table :data="checkList" style="width: 100%"
       :default-sort = "{prop: 'create_time', order: 'descending'}">
+      <template slot="empty">
+        <img src="../../assets/empty_grey.png" style="height:100px;margin-top:30px">
+        <p style="margin-top:0px">暂无待审核申请</p>
+      </template>
       <el-table-column type="expand">
           <template slot-scope="scope">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -92,6 +96,10 @@
     <el-tab-pane label="审核历史" name="third">
       <el-table :data="checkedList" style="width: 100%"
       :default-sort = "{prop: 'create_time', order: 'descending'}">
+      <template slot="empty">
+        <img src="../../assets/empty_grey.png" style="height:100px;margin-top:30px">
+        <p style="margin-top:0px">暂无申请历史</p>
+      </template>
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -112,7 +120,13 @@
         </el-table-column>
         <el-table-column prop="create_time" label="审核时间" sortable></el-table-column>
         <el-table-column prop="shopper_name" label="申请人"></el-table-column>
-        <el-table-column prop="pass_status" label="审核结果">
+        <el-table-column prop="pass_status" label="审核结果"
+         :filters="[
+              { text: '无效', value: -1 },
+              { text: '通过', value: 1 },
+              { text: '拒绝', value: 2 },
+            ]"
+            :filter-method="filterState">
           <template slot-scope="scope">
             <span v-if="scope.row.pass_status==-1">无效</span>
             <span v-if="scope.row.pass_status==1">通过</span>
@@ -123,10 +137,22 @@
       </el-table>
     </el-tab-pane>
     <el-tab-pane label="现有商家" name="second">
+      <el-form label-width="120px">
+          <el-form-item label="店铺名称搜索：">
+            <el-input
+              v-model="searchText"
+              placeholder="输入店铺名称模糊搜索"
+            ></el-input>
+          </el-form-item>
+        </el-form>
       <el-table
-      :data="shopList.filter(data => !search || data.shop_name.toLowerCase().includes(search.toLowerCase()))"
+      :data="shopList.filter((data) => {return data.shop_name.includes(searchText);})"
       style="width: 100%"
       :default-sort = "{prop: 'update_time', order: 'descending'}">
+      <template slot="empty">
+        <img src="../../assets/empty_grey.png" style="height:100px;margin-top:30px">
+        <p style="margin-top:0px">暂无商家</p>
+      </template>
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -150,10 +176,7 @@
         </el-table-column>
         <el-table-column prop="shop_name" label="店铺名称">
         </el-table-column>
-        <el-table-column label="操作" align="right">
-          <template slot="header">
-            <el-input v-model="search" size="mini" maxlength="10" placeholder="输入店名搜索"/>
-          </template>
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="text"
             @click="editShop.username=scope.row.username;
@@ -249,11 +272,13 @@ export default {
       //loading
       isLoading: false,
       dataLoading: false,
+      //模糊搜索
+      searchText: "",
       //选择table
       activeName: 'first',
       //待审核
       checkList: [
-        {
+        /*{
           create_time: "2021-07-14 18:31:30",//申请时间
           username: "示例",//申请人
           avatar_s: require("../../assets/kuku.png"),//店铺封面
@@ -262,14 +287,14 @@ export default {
           shopper_name: "示例",//真实姓名
           apply_reason: "示例",//申请理由
           check_opinion: "",//审核意见
-        },
+        },*/
       ],
       refuseShop: {
         username: "示例",//申请人
         check_opinion: "",//审核意见
       },
       checkedList: [
-        {
+        /*{
           create_time: "2021-07-14 18:31:30",//审核时间
           username: "aaa",//申请人
           avatar_s: require("../../assets/kuku.png"),//店铺封面
@@ -279,10 +304,10 @@ export default {
           apply_reason: "ddd",//申请理由
           pass_status: "审核通过(已注销)",//店铺状态
           check_opinion: "",//审核意见
-        },
+        },*/
       ],
       shopList: [
-        {
+        /*{
           update_time: "2021-07-14 18:31:30",//过审开店时间
           create_time: "2021-07-14 18:31:30",//信息更新时间
           username: "aaa",//店主
@@ -290,7 +315,7 @@ export default {
           avatar_s: require("../../assets/kuku.png"),//店铺封面
           avatar_b: require("../../assets/kuku.png"),//店铺封面大图
           shop_name: "ccc",//店铺名称
-        },
+        },*/
       ],
       editShop:{
         username: "aaa",//店主
@@ -326,6 +351,11 @@ export default {
     //回到管理员主页
     gotoAdmin() {
       this.$router.push("/adminManage");
+    },
+    //筛选审核结果
+    filterState(value, row, column) {
+      const property = column["property"];
+      return row[property] === value;
     },
     //上传图片触发
     handleCrop(file) {
@@ -447,6 +477,8 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.checkList = data;
+          } else if (code == "3") {
+            this.checkList = "";
           } else {
             this.$message.error("获取未审核店铺失败");
           }
@@ -469,8 +501,10 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.checkedList = data;
+          } else if (code == "3") {
+            this.checkedList = "";
           } else {
-            this.$message.error("获取信息失败");
+            this.$message.error("获取审核历史失败");
           }
         })
         .catch(() => {
@@ -491,8 +525,10 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.shopList = data;
+          } else if (code == "3") {
+            this.shopList = "";
           } else {
-            this.$message.error("获取信息失败");
+            this.$message.error("获取现有商家失败");
           }
         })
         .catch(() => {

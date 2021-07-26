@@ -27,6 +27,10 @@
             <el-col :span="22">全部分类</el-col>
             <el-col :span="2"><el-button type="text" size="mini" @click="clearAddMain()">添加一级分类</el-button></el-col>
           </el-row>
+          <div v-if="classList==''">
+            <el-row><el-col :offset="11"><img src="../../assets/empty_grey.png" style="height:100px;margin-top:30px"></el-col></el-row>
+            <el-row><el-col :offset="11"><p style="margin-left:20px;color:grey">暂无分类</p></el-col></el-row>
+          </div>
           <el-row v-for="(main,id) in classList" :key="id" v-loading="classLoading">
             <el-col>
               <el-collapse accordion v-model="activeNames">
@@ -160,7 +164,7 @@ export default {
       newClassName: "",//新分类名
       //分类列表
       classList: [
-        {
+        /*{
           book_num: 2,
           main_name: "小说",
           main_id: "6ccf8604ff7bf563caffc87ea1fb5051",
@@ -171,7 +175,7 @@ export default {
               second_name: "悬疑",
             },
           ],
-        },
+        },*/
       ],
       rules: {
         class_name: [
@@ -198,6 +202,8 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.classList = data;
+          } else if (code == "3") {
+            this.classList = "";
           } else {
             this.$message.error("获取分类失败");
           }
