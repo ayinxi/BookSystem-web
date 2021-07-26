@@ -317,7 +317,7 @@ export default {
     //头像上传成功之后的方法,进行回调
     handleAvatarSuccess(res) {
       if (res.code === 0) {
-        this.lists1.bookImg = res.img;
+        this.shopInfo.avatar_b = res.img;
         // this.handleCrop(file);
       } else {
         this.$message.error("上传出错");

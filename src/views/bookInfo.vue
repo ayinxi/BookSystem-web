@@ -160,7 +160,8 @@
             <p style="color: red; font-weight: 1000; margin: 0%">
               ￥{{ book.price }}
             </p>
-            <p>库存：{{ book.repertory }}</p>
+            <p v-if="book.repertory>0">库存：{{ book.repertory }}</p>
+            <p v-if="book.repertory<=0">库存不足</p>
             <el-row
               :gutter="20"
               type="flex"
@@ -243,7 +244,14 @@ export default {
       goodsNum: "",
       bookid: "",
       book: {},
-      categoryList: [],
+      categoryList: [
+        {
+          book_num: 0,
+          main_name: "",
+          main_id: "",
+          second_category: [{ book_num: "", second_name: "", second_id: "" }],
+        },
+      ],
       formdata: new FormData(),
     };
   },

@@ -115,6 +115,15 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-row style="text-align: center">
+          <el-pagination
+            :current-page="currentPage"
+            @current-change="handleCurrentChange"
+            :total="ordercount"
+            layout="prev, pager, next, jumper"
+          >
+          </el-pagination>
+        </el-row>
       </el-card>
     </div>
     <div style="margin: 0% 10% 3%">
@@ -132,7 +141,10 @@ import qs from "qs";
 export default {
   data() {
     return {
+      currentPage: 1,
+      ordercount: 0,
       newOrder: 12345,
+      orderList: [],
       tableData: [
         {
           date: "2021-07-08",
@@ -214,6 +226,34 @@ export default {
     handleInfo() {
       this.$router.push("/orderInfo");
     },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+    },
+    //获取这个店铺的所有订单
+    getOrder() {
+      axios({
+        url:this.$store.state.yuming +"/getOrder",
+        method:"GET",
+        params:{
+          page_num:this.currentPage,
+          order_num:10,
+          status:1,
+          
+        }
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.$message.success("确认订单成功");
+          } else {
+            this.$message.error("确认订单失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //确认订单，相当于发货
     handleConfirm(index, row) {
       this.$confirm("是否确认订单?", "提示", {
         confirmButtonText: "确定",
@@ -301,6 +341,7 @@ export default {
       const property = column["property"];
       return row[property] === value;
     },
+    //批量确认订单
     batchConfirm() {
       this.$confirm("是否批量确认订单?", "提示", {
         confirmButtonText: "确定",
@@ -358,6 +399,7 @@ export default {
           });
         });*/
     },
+    //批量取消订单
     batchRefuse() {
       this.$confirm("是否批量取消订单?", "提示", {
         confirmButtonText: "确定",
