@@ -238,9 +238,16 @@ export default {
       currentPage: 1,
       isLoading: false,
       input: "",
-      categoryList: [],
+      categoryList: [
+        {
+          book_num: 0,
+          main_name: "",
+          main_id: "",
+          second_category: [{ book_num: "", second_name: "", second_id: "" }],
+        },
+      ],
       displayList: [],
-      bookcount:0,
+      bookcount: 0,
     };
   },
   computed: {
@@ -381,7 +388,7 @@ export default {
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
         });
-        //获取书的总数
+      //获取书的总数
       axios({
         url: this.$store.state.yuming + "/book/getPageCount",
         method: "GET",
@@ -434,7 +441,7 @@ export default {
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
         });
-        //获取书的总数
+      //获取书的总数
       axios({
         url: this.$store.state.yuming + "/book/getPageCount",
         method: "GET",
@@ -486,7 +493,7 @@ export default {
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
         });
-        //获取书的总数
+      //获取书的总数
       axios({
         url: this.$store.state.yuming + "/book/getPageCount",
         method: "GET",

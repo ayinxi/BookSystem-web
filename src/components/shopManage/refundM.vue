@@ -6,12 +6,17 @@
       </div>
       <div class="title">店铺管理</div>
     </div>
-    <div style="margin: 2% 10%"><el-page-header @back="goToManage" content="退款管理"></el-page-header></div>
+    <div style="margin: 2% 10%">
+      <el-page-header @back="goToManage" content="退款管理"></el-page-header>
+    </div>
     <div style="margin: 2% 10%">
       <el-row style="margin: 0% 0% 5%">
         <el-card>
           <el-container>
-            <el-aside style="width:35px;padding-top: 10px; padding-bottom: 20px"><div class="verticalBar1"></div></el-aside>
+            <el-aside
+              style="width: 35px; padding-top: 10px; padding-bottom: 20px"
+              ><div class="verticalBar1"></div
+            ></el-aside>
             <el-main>
               <span style="font-weight: 1000">欢迎您，亲爱的店家 </span>
               <p style="font-weight: 1000">
@@ -25,9 +30,19 @@
     <div style="margin: 3% 10% 0%">
       <el-row style="margin: 0% 0% 5%">
         <el-card>
-          <el-col :span="8" >
+          <el-col :span="8">
             <p style="text-align: center">今日新增退款订单数</p>
-            <p style="font-size: 40px;height:160px;line-height:160px;display:block;text-align: center;">{{ newRefundOrder }}</p>
+            <p
+              style="
+                font-size: 40px;
+                height: 160px;
+                line-height: 160px;
+                display: block;
+                text-align: center;
+              "
+            >
+              {{ newRefundOrder }}
+            </p>
           </el-col>
           <el-col :span="16" style="text-align: center">
             <p>各订单类型所占比例</p>
@@ -94,14 +109,14 @@
             <template slot-scope="scope"
               ><el-button
                 type="text"
-                style="font-size:15px"
+                style="font-size: 15px"
                 @click="handleInfo(scope.$index, scope.row)"
                 >查看详情</el-button
               >
               <el-divider direction="vertical"></el-divider>
               <el-button
                 type="text"
-                style="font-size:15px"
+                style="font-size: 15px"
                 @click="handleConfirm(scope.$index, scope.row)"
                 :disabled="
                   scope.row.state == '已退款' || scope.row.state == '已拒绝退款'
@@ -111,7 +126,7 @@
               <el-divider direction="vertical"></el-divider>
               <el-button
                 type="text"
-                style="font-size:15px"
+                style="font-size: 15px"
                 @click="handleRefuse(scope.$index, scope.row)"
                 :disabled="
                   scope.row.state == '已退款' || scope.row.state == '已拒绝退款'
@@ -133,6 +148,8 @@
 </template>
 <script>
 import echarts from "echarts";
+import axios from "axios";
+import qs from "qs";
 export default {
   data() {
     return {
@@ -175,25 +192,32 @@ export default {
     handleInfo() {
       this.$router.push("/refundInfo");
     },
+    //同意退款
     handleConfirm(index, row) {
       this.$confirm("是否同意退款?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
-          row.state = "已退款";
-          this.$message({
-            type: "success",
-            message: "退款成功!",
-          });
+      }).then(() => {
+        axios({
+          url: this.$store.state.yuming + "/shop/returnPass",
+          method: "POST",
+          params: {
+            order_book_id: "asdasasdf",
+          },
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消退款",
+          .then((res) => {
+            const { code, data } = res.data;
+            if (code == "200") {
+              this.$message.success("同意退款成功");
+            } else {
+              this.$message.error("同意退款失败，请刷新");
+            }
+          })
+          .catch(() => {
+            this.$message.error("出现错误，请稍后再试");
           });
-        });
+      });
     },
     handleRefuse(index, row) {
       this.$confirm("是否拒绝退款?", "提示", {
@@ -218,14 +242,36 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    //批量同意退款
     batchConfirm() {
       this.$confirm("是否批量同意退款?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
-          let multData = this.multipleSelection;
+      }).then(() => {
+        axios({
+          url: this.$store.state.yuming + "/shop/batReturnPass",
+          method: "POST",
+          params: {
+            Order_Book_Ids: ["asdasasdf", "afsafsdgf"],
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params, { indices: false });
+          },
+        })
+          .then((res) => {
+            const { code, count } = res.data;
+            if (code == "200") {
+              this.$message.success("批量同意退款成功");
+            } else {
+              this.$message.error("批量同意退款失败，请刷新");
+            }
+          })
+          .catch(() => {
+            this.$message.error("出现错误，请稍后再试");
+          });
+      });
+      /*let multData = this.multipleSelection;
           let tableData1 = this.tableData;
           let multDataLen = multData.length;
           let tableDataLen = tableData1.length;
@@ -250,7 +296,7 @@ export default {
             type: "info",
             message: "已放弃批量同意退款",
           });
-        });
+        });*/
     },
     batchRefuse() {
       this.$confirm("是否批量拒绝退款?", "提示", {
@@ -310,11 +356,7 @@ export default {
           formatter: "{b}: <br/>{c}({d}%)",
         },
         legend: {
-          data: [
-            "正在申请退款",
-            "已退款",
-            "已拒绝退款",
-          ],
+          data: ["正在申请退款", "已退款", "已拒绝退款"],
           right: 250,
           top: "center",
           itemGap: 5, //设置图例的间距
@@ -423,7 +465,7 @@ export default {
   width: 100%;
   height: 200px;
 }
-.title{
+.title {
   font-size: 35px;
   padding: 30px 10px;
   position: relative;
