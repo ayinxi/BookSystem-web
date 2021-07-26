@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header">
       <div class="logo">
         <img height="70px" style="margin: 20px 0" src="../assets/jwbc.png" />
@@ -39,7 +39,7 @@
                 <el-row>
                   <el-col :span="3">
                     <img
-                      :src="bookList.book_img"
+                      :src="bookList.book_img_b"
                       style="height: 100px; width: 100px"
                     />
                   </el-col>
@@ -48,7 +48,7 @@
                       {{ bookList.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ bookList.book_total }}
+                      ￥{{ bookList.book_total_book }}
                     </div>
                   </el-col>
                 </el-row>
@@ -133,7 +133,7 @@
                 ></my-cropper>
               </el-form-item>
               <el-form-item>
-                <el-button> 提交 </el-button>
+                <el-button @click="confirmRefund"> 提交 </el-button>
               </el-form-item>
             </el-form>
           </el-card>
@@ -171,7 +171,7 @@
                 <el-row>
                   <el-col :span="3">
                     <img
-                      :src="bookList.book_img"
+                      :src="bookList.book_img_b"
                       style="height: 100px; width: 100px"
                     />
                   </el-col>
@@ -180,7 +180,7 @@
                       {{ bookList.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ bookList.book_total }}
+                      ￥{{ bookList.book_total_book }}
                     </div>
                   </el-col>
                 </el-row>
@@ -198,7 +198,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="退款金额：" class="book-total">
-                ￥{{ bookList.book_total }}
+                ￥{{ bookList.book_total_book }}
               </el-form-item>
               <el-form-item label="退款说明：" prop="reason">
                 <el-input
@@ -242,14 +242,14 @@
                 ></my-cropper>
               </el-form-item>
               <el-form-item>
-                <el-button> 提交 </el-button>
+                <el-button @click="confirmReturnGoods"> 提交 </el-button>
               </el-form-item>
             </el-form>
           </el-card>
         </el-col>
       </el-row>
     </div>
-    <div v-if="this.serviceId == 3" v-loading="thirdLoading">
+    <div v-if="this.serviceId == 3">
       <el-row>
         <el-col :offset="3" :span="18">
           <el-steps
@@ -281,7 +281,7 @@
                 <el-row>
                   <el-col :span="3">
                     <img
-                      :src="bookList.book_img"
+                      :src="bookList.book_img_b"
                       style="height: 100px; width: 100px"
                     />
                   </el-col>
@@ -290,7 +290,7 @@
                       {{ bookList.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ bookList.book_total }}
+                      ￥{{ bookList.book_total_book }}
                     </div>
                   </el-col>
                 </el-row>
@@ -311,9 +311,10 @@
                 <el-table :data="myAddressList">
                   <el-table-column width="35">
                     <template slot-scope="scope">
-                      <el-radio :label="scope.row.id" v-model="refundInfo.addressId"
-                        ></el-radio
-                      >
+                      <el-radio
+                        :label="scope.row.id"
+                        v-model="refundInfo.addressId"
+                      ></el-radio>
                     </template>
                   </el-table-column>
                   <el-table-column prop="name" label="收货人" width="100">
@@ -366,7 +367,7 @@
                 ></my-cropper>
               </el-form-item>
               <el-form-item>
-                <el-button> 提交 </el-button>
+                <el-button @click="confirmExchangeGoods"> 提交 </el-button>
               </el-form-item>
             </el-form>
           </el-card>
@@ -387,119 +388,124 @@ export default {
     return {
       filelist: [],
       radio: 1,
-      radioId:1,
       bookId: this.$route.params.bookId,
       serviceId: this.$route.params.serviceId,
-      thirdLoading: false,
+      isLoading: false,
+      //图片formdata
+      imgForm: new FormData(),
+      //数据formdata
+      dataForm: new FormData(),
+      //是否上传凭证
+      hasProof: false,
       firstOptions: [
         {
-          value: "选项1",
+          value: "不喜欢/不想要",
           label: "不喜欢/不想要",
         },
         {
-          value: "选项2",
+          value: "空包裹",
           label: "空包裹",
         },
         {
-          value: "选项3",
+          value: "未按约定时间发货",
           label: "未按约定时间发货",
         },
         {
-          value: "选项4",
+          value: "快递/物流一直未送到",
           label: "快递/物流一直未送到",
         },
         {
-          value: "选项5",
+          value: "快递/物流无跟踪记录",
           label: "快递/物流无跟踪记录",
         },
         {
-          value: "选项6",
+          value: "货物破损已拒签",
           label: "货物破损已拒签",
         },
       ],
       secondOptions: [
         {
-          value: "选项1",
+          value: "退运费",
           label: "退运费",
         },
         {
-          value: "选项2",
+          value: "实际商品与描述不符",
           label: "实际商品与描述不符",
         },
         {
-          value: "选项3",
+          value: "做工粗糙/有瑕疵",
           label: "做工粗糙/有瑕疵",
         },
         {
-          value: "选项4",
+          value: "收到商品时有破损/污渍/变形",
           label: "收到商品时有破损/污渍/变形",
         },
         {
-          value: "选项5",
+          value: "未按约定时间发货",
           label: "未按约定时间发货",
         },
         {
-          value: "选项6",
+          value: "卖家发错货",
           label: "卖家发错货",
         },
       ],
       thirdOptions: [
         {
-          value: "选项1",
+          value: "七天无理由退换货",
           label: "七天无理由退换货",
         },
         {
-          value: "选项2",
+          value: "退运费",
           label: "退运费",
         },
         {
-          value: "选项3",
+          value: "实际商品与描述不符",
           label: "实际商品与描述不符",
         },
         {
-          value: "选项4",
+          value: "做工粗糙/有瑕疵",
           label: "做工粗糙/有瑕疵",
         },
         {
-          value: "选项5",
+          value: "收到商品时有破损/污渍/变形",
           label: "收到商品时有破损/污渍/变形",
         },
         {
-          value: "选项6",
+          value: "少件",
           label: "少件",
         },
         {
-          value: "选项7",
+          value: "未按约定时间发货",
           label: "未按约定时间发货",
         },
         {
-          value: "选项8",
+          value: "卖家发错货",
           label: "卖家发错货",
         },
       ],
       fouthOptions: [
         {
-          value: "选项1",
+          value: "七天无理由退换货",
           label: "七天无理由退换货",
         },
         {
-          value: "选项2",
+          value: "实际商品与描述不符",
           label: "实际商品与描述不符",
         },
         {
-          value: "选项3",
+          value: "做工粗糙/有瑕疵",
           label: "做工粗糙/有瑕疵",
         },
         {
-          value: "选项4",
+          value: "收到商品时有破损/污渍/变形",
           label: "收到商品时有破损/污渍/变形",
         },
         {
-          value: "选项5",
+          value: "少件",
           label: "少件",
         },
         {
-          value: "选项6",
+          value: "卖家发错货",
           label: "卖家发错货",
         },
       ],
@@ -525,20 +531,9 @@ export default {
         ],
       },
       bookList: {
-        orderId: 2,
-        merchant_id: 2,
-        book_merchant: "新华书店网上商城自营图书",
-        create_time: "2021-07-14 18:31:30",
-        status: 2,
-        book_id: 21,
-        book_img: require("../assets/youbenshi.jpg"),
-        book_name:
-          "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-        book_writer: "冯唐",
-        book_publish: "东南大学出版社",
-        book_unitPrice: 50,
-        book_num: 1,
-        book_total: 50,
+        book_img_b: "",
+        book_name: "",
+        book_total_book: 0,
       },
       refundInfo: {
         goods_status: "",
@@ -562,6 +557,22 @@ export default {
     gotoRefund() {
       this.$router.push("/refund/" + this.bookId);
     },
+    //获取书本信息
+    getBookInfo() {
+      axios({
+        url: this.$store.state.yuming + "/order/getBookByID",
+        method: "GET",
+        params: {
+          order_book_id: this.bookId,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.bookList = res.data.data;
+        } else {
+          this.$message.error("获取商品信息失败，请重试");
+        }
+      });
+    },
     //获取用户的收货地址
     getUserAddress() {
       axios({
@@ -575,6 +586,187 @@ export default {
         }
       });
     },
+    //上传退款申请
+    confirmRefund() {
+      if (this.refundInfo.option != "") {
+        if (this.hasProof == true) {
+          axios({
+            url: this.$store.state.yuming + "/order/returnImg",
+            method: "POST",
+            data: this.imgForm,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }).then((res) => {
+            if (res.data.code == 200) {
+              this.refundInfo.img = "";
+              this.imgForm.delete("order_book_id");
+              this.imgForm.delete("img");
+            } else {
+              this.$message.error("上传图片凭证失败");
+              this.refundInfo.img = "";
+              this.imgForm.delete("order_book_id");
+              this.imgForm.delete("img");
+            }
+          });
+        }
+        this.dataForm.append("order_book_id", this.bookId);
+        this.dataForm.append("return_reason", this.refundInfo.option);
+        this.dataForm.append("return_detail", this.refundInfo.reason);
+        this.dataForm.append("transport_status", this.radio);
+        axios({
+          url: this.$store.state.yuming + "/order/return",
+          method: "POST",
+          data: this.dataForm,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }).then((res) => {
+          if (res.data.code == 200) {
+            this.refundInfo.options = "";
+            this.refundInfo.reason = "";
+            this.radio = 1;
+            this.dataForm.delete("order_book_id");
+            this.dataForm.delete("return_reason");
+            this.dataForm.delete("return_detail");
+            this.dataForm.delete("transport_status");
+          } else {
+            this.$message.error("提交退货申请失败");
+            this.refundInfo.options = "";
+            this.refundInfo.reason = "";
+            this.radio = 1;
+            this.dataForm.delete("order_book_id");
+            this.dataForm.delete("return_reason");
+            this.dataForm.delete("return_detail");
+            this.dataForm.delete("transport_status");
+          }
+        });
+      } else {
+        this.$message({
+          message: "请选择退款原因",
+          type: "warning",
+        });
+      }
+    },
+    //上传退货退款申请
+    confirmReturnGoods() {
+      if (this.refundInfo.option != "") {
+        if (this.hasProof == true) {
+          axios({
+            url: this.$store.state.yuming + "/order/returnImg",
+            method: "POST",
+            data: this.imgForm,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }).then((res) => {
+            if (res.data.code == 200) {
+              this.refundInfo.img = "";
+              this.imgForm.delete("order_book_id");
+              this.imgForm.delete("img");
+            } else {
+              this.$message.error("上传图片凭证失败");
+              this.refundInfo.img = "";
+              this.imgForm.delete("order_book_id");
+              this.imgForm.delete("img");
+            }
+          });
+        }
+        this.dataForm.append("order_book_id", this.bookId);
+        this.dataForm.append("return_reason", this.refundInfo.option);
+        this.dataForm.append("return_detail", this.refundInfo.reason);
+        axios({
+          url: this.$store.state.yuming + "/order/return",
+          method: "POST",
+          data: this.dataForm,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }).then((res) => {
+          if (res.data.code == 200) {
+            this.refundInfo.options = "";
+            this.refundInfo.reason = "";
+            this.dataForm.delete("order_book_id");
+            this.dataForm.delete("return_reason");
+            this.dataForm.delete("return_detail");
+          } else {
+            this.$message.error("提交退货申请失败");
+            this.refundInfo.options = "";
+            this.refundInfo.reason = "";
+            this.dataForm.delete("order_book_id");
+            this.dataForm.delete("return_reason");
+            this.dataForm.delete("return_detail");
+          }
+        });
+      } else {
+        this.$message({
+          message: "请选择退款原因",
+          type: "warning",
+        });
+      }
+    },
+    //上传换货申请
+    confirmExchangeGoods() {
+      if (this.refundInfo.option != "") {
+        if (this.hasProof == true) {
+          axios({
+            url: this.$store.state.yuming + "/order/returnImg",
+            method: "POST",
+            data: this.imgForm,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }).then((res) => {
+            if (res.data.code == 200) {
+              this.refundInfo.img = "";
+              this.imgForm.delete("order_book_id");
+              this.imgForm.delete("img");
+            } else {
+              this.$message.error("上传图片凭证失败");
+              this.refundInfo.img = "";
+              this.imgForm.delete("order_book_id");
+              this.imgForm.delete("img");
+            }
+          });
+        }
+        this.dataForm.append("order_book_id", this.bookId);
+        this.dataForm.append("return_reason", this.refundInfo.option);
+        this.dataForm.append("return_detail", this.refundInfo.reason);
+        this.dataForm.append("exchange_address_id", this.refundInfo.addressId);
+        axios({
+          url: this.$store.state.yuming + "/order/exchange",
+          method: "POST",
+          data: this.dataForm,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }).then((res) => {
+          if (res.data.code == 200) {
+            this.refundInfo.options = "";
+            this.refundInfo.reason = "";
+            this.refundInfo.addressId = "";
+            this.dataForm.delete("order_book_id");
+            this.dataForm.delete("return_reason");
+            this.dataForm.delete("return_detail");
+            this.dataForm.delete("exchange_address_id");
+          } else {
+            this.$message.error("提交退货申请失败");
+            this.refundInfo.options = "";
+            this.refundInfo.reason = "";
+            this.refundInfo.addressId = "";
+            this.dataForm.delete("order_book_id");
+            this.dataForm.delete("return_reason");
+            this.dataForm.delete("return_detail");
+            this.dataForm.delete("exchange_address_id");
+          }
+        });
+      } else {
+        this.$message({
+          message: "请选择退款原因",
+          type: "warning",
+        });
+      }
+    },
     //上传图片时会被调用
     //上传图片触发
     handleCrop(file) {
@@ -587,23 +779,12 @@ export default {
       this.$refs["upload"].$refs["upload-inner"].handleClick();
     },
     getFile(file) {
-      var formData = new FormData();
-      formData.append("img", file);
-      axios({
-        url: this.$store.state.yuming + "/updateAvatar",
-        method: "POST",
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }).then((res) => {
-        if (res.data.code == 200) {
-          this.$refs.myCropper.close();
-        } else {
-          this.$message.error("上传出错");
-        }
-      });
-      // this.$refs.upload.submit();
+      this.hasProof = true;
+      this.imgForm.append("img", file);
+      this.imgForm.append("order_book_id", this.bookId);
+      // 获取上传图片的本地URL，用于上传前的本地预览
+      this.refundInfo.img = window.URL.createObjectURL(file);
+      this.$refs.myCropper.close();
     },
     // 提取文件后缀名
     getSuffix(str) {
@@ -633,11 +814,12 @@ export default {
     },
   },
   async created() {
+    this.isLoading = true;
     if (this.serviceId == 3) {
-      this.thirdLoading = true;
       await this.getUserAddress();
-      this.thirdLoading = false;
     }
+    await this.getBookInfo();
+    this.isLoading = false;
   },
 };
 </script>

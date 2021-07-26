@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header">
       <div class="logo">
         <img height="70px" style="margin: 20px 0" src="../assets/jwbc.png" />
@@ -659,6 +659,7 @@
 export default {
   data() {
     return {
+      isLoading: false,
       orderNum: this.$route.params.orderId,
       allOrderList: [
         {
@@ -720,7 +721,8 @@ export default {
       ],
     };
   },
-  computed: {},
+  computed: {
+  },
   methods: {
     //返回个人主页
     toUser() {

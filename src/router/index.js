@@ -122,7 +122,7 @@ const routes = [
     component: () => import('../components/shopManage/refundInfo.vue')
   },
   {
-    path: '/userorder/:id',
+    path: '/userorder/:orderId',
     name: 'userorder',
     meta: { userAuth: true },//登录鉴权
     component: () => import('../views/userOrder.vue')
@@ -146,7 +146,7 @@ const routes = [
     component: () => import('../views/service.vue')
   },
   {
-    path: '/remark/:orderId',
+    path: '/remark/:bookId',
     name: 'remark',
     meta: { userAuth: true },//登录鉴权
     component: () => import('../views/remark.vue')

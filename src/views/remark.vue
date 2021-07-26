@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header">
       <div class="logo">
         <img height="70px" style="margin: 20px 0" src="../assets/jwbc.png" />
@@ -16,24 +16,20 @@
           <div class="books">
             <el-row>
               <el-col :span="24">
-                <el-row
-                  style="margin: 10px"
-                >
+                <el-row style="margin: 10px">
                   <el-col :span="4">
-                    <img :src="bookList.book_img" style="height: 150px" />
+                    <img :src="bookList.book_img_b" style="height: 150px" />
                   </el-col>
                   <el-col :span="20">
                     <div style="margin-right: 30px" class="book-name">
                       {{ bookList.book_name }}
                     </div>
                     <div class="book-detail" style="margin-top: 15px">
-                      作者：{{ bookList.book_writer }}
+                      作者：{{ bookList.author }}
                     </div>
-                    <div class="book-detail">
-                      出版社：{{ bookList.book_publish }}
-                    </div>
+                    <div class="book-detail">出版社：{{ bookList.press }}</div>
                     <div style="margin: 20px 0px" class="book-total">
-                      ￥{{ bookList.book_total }}
+                      ￥{{ bookList.book_total_book }}
                     </div>
                   </el-col>
                 </el-row>
@@ -65,7 +61,7 @@
               ></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button>提交</el-button>
+              <el-button @click="remarkBook">提交</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -75,9 +71,11 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
+      isLoading: false,
       id: "",
       bookId: this.$route.params.bookId,
       colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
@@ -87,20 +85,11 @@ export default {
         ],
       },
       bookList: {
-        orderId: 2,
-        merchant_id: 2,
-        book_merchant: "新华书店网上商城自营图书",
-        create_time: "2021-07-14 18:31:30",
-        status: 2,
-        book_id: 21,
-        book_img: require("../assets/youbenshi.jpg"),
-        book_name:
-          "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-        book_writer: "冯唐",
-        book_publish: "东南大学出版社",
-        book_unitPrice: 50,
-        book_num: 1,
-        book_total: 50,
+        book_img_b: "",
+        book_name: "",
+        author: "",
+        press: "",
+        book_total_book: 0,
       },
       remarkList: {
         rate: "",
@@ -113,6 +102,52 @@ export default {
       this.id = 1;
       this.$router.push("/userOrder/" + this.id);
     },
+    //获取书本信息
+    getBookInfo() {
+      axios({
+        url: this.$store.state.yuming + "/order/getBookByID",
+        method: "GET",
+        params: {
+          order_book_id: this.bookId,
+        },
+      }).then((res) => {
+        if (res.data.code == 200) {
+          this.bookList = res.data.data;
+        } else {
+          this.$message.error("获取商品信息失败，请重试");
+        }
+      });
+    },
+    remarkBook() {
+      if (this.remarkList.rate == 0) {
+        this.$message({
+          message: "请对此次订单评分",
+          type: "warning",
+        });
+      } else {
+        axios({
+          url: this.$store.state.yuming + "/order/remark",
+          method: "POST",
+          params: {
+            order_book_id: this.bookId,
+            rate: this.remarkList.rate,
+            remark: this.remarkList.description,
+          },
+        }).then((res) => {
+          if (res.data.code == 200) {
+            this.remarkList.rate = "";
+            this.remarkList.description = "";
+          } else {
+            this.$message.error("评价失败，请重试");
+          }
+        });
+      }
+    },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getBookInfo();
+    this.isLoading = false;
   },
 };
 </script>
