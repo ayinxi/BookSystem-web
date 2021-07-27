@@ -59,7 +59,7 @@
         <el-card style="margin: 10px 0">
           <el-container>
             <el-aside style="width: 180px; text-align: center">
-              <el-image class="avatar" :src="item.userImg"></el-image>
+              <el-image class="avatar1" :src="item.userImg"></el-image>
               <p>{{ item.userName }}</p>
             </el-aside>
             <el-main>
@@ -253,7 +253,7 @@ export default {
       });
     },
     goToManage() {
-      this.$router.push("/shopManage");
+      this.$router.push("/shopManage#reloaded");
     },
     getShopInfo() {
       axios({
@@ -396,6 +396,11 @@ export default {
 .avatar {
   width: 178px;
   height: 178px;
+  border-radius: 50%;
+}
+.avatar1 {
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
 }
 </style>

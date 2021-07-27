@@ -186,11 +186,11 @@
               <el-col :span="1"><span>&emsp;</span></el-col>
               <el-col :span="7">
                 <el-card class="cStyle">
-                  <el-row style="height: 40px; margin: 5%"
+                  <el-row style="height: 40px; margin: 0% 5% 5%"
                     ><el-col :span="4"
                       ><i class="iconfont-guanjun" style="font-size: 40px"></i
                     ></el-col>
-                    <el-col :span="11" style="text-align: center; height: 40px"
+                    <el-col :span="12" style="text-align: center; height: 40px"
                       ><p
                         style="
                           font-weight: 1000;
@@ -629,9 +629,7 @@ export default {
 .tscStyle {
   height: 100%;
 }
-.el-card__body {
-  padding: 5px;
-}
+
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
 }

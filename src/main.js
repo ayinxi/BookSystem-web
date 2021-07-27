@@ -46,8 +46,10 @@ axios.interceptors.request.use(
   err => {
     return Promise.reject(err);
   });
-
-
+//跳转后返回顶部
+router.afterEach((to, from, next) => {
+  window.scrollTo(0, 0);
+});
 axios.interceptors.response.use(function (response) { //token过期（12小时） code==9 token无效
   if (response.data.code === 9) {
     store.commit("clearCache");// 删除已经失效或过期的token（不删除也可以，因为登录后覆盖）    
@@ -57,7 +59,7 @@ axios.interceptors.response.use(function (response) { //token过期（12小时�
     })
   } else if (response.headers.token) { // 判断token是否存在，如果存在说明需要更新token    
     store.commit('token', response.headers.token) // 覆盖原来的token(默认一天刷新一次)
-    sessionStorage.setItem('token', response.headers.token)    
+    sessionStorage.setItem('token', response.headers.token)
   }
   return response
 }, function (error) {
