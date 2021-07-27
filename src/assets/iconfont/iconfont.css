@@ -2,17 +2,25 @@
   font-family: "iconfont"; /* Project id 2660429 */
   /* Color fonts */
   src: 
-       url('iconfont.woff2?t=1627025815611') format('woff2'),
-       url('iconfont.woff?t=1627025815611') format('woff'),
-       url('iconfont.ttf?t=1627025815611') format('truetype');
+       url('iconfont.woff2?t=1627401550485') format('woff2'),
+       url('iconfont.woff?t=1627401550485') format('woff'),
+       url('iconfont.ttf?t=1627401550485') format('truetype');
 }
 
-.iconfont,[class^="iconfont"],[class*=" iconfont"] {
+.iconfont,[class^="iconfont"],[class*=" iconfont"]  {
   font-family: "iconfont" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.iconfont-daifukuanL:before {
+  content: "\f155";
+}
+
+.iconfont-daifukuan:before {
+  content: "\ee8a";
 }
 
 .iconfont-tuikuan:before {
@@ -79,8 +87,20 @@
   content: "\eea7";
 }
 
+.iconfont-fankuiW:before {
+  content: "\f154";
+}
+
+.iconfont-fankuiL:before {
+  content: "\f156";
+}
+
 .iconfont-fankui:before {
   content: "\ee9b";
+}
+
+.iconfont-dingdanW:before {
+  content: "\f150";
 }
 
 .iconfont-dingdanlan-copy:before {
@@ -91,8 +111,36 @@
   content: "\ee91";
 }
 
+.iconfont-dingdanL:before {
+  content: "\f157";
+}
+
+.iconfont-daifahuoW:before {
+  content: "\f151";
+}
+
+.iconfont-daishouhuoW:before {
+  content: "\f152";
+}
+
+.iconfont-shouhouW:before {
+  content: "\f153";
+}
+
+.iconfont-daifahuoL:before {
+  content: "\f158";
+}
+
+.iconfont-daishouhuoL:before {
+  content: "\f159";
+}
+
 .iconfont-daifahuo:before {
   content: "\ee8e";
+}
+
+.iconfont-shouhouL:before {
+  content: "\f15a";
 }
 
 .iconfont-daishouhuo:before {
