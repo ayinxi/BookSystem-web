@@ -57,7 +57,7 @@ const routes = [
     component: () => import('../components/shopManage/orderM.vue')
   },
   {
-    path: '/orderInfo',
+    path: '/orderInfo/:order_id',
     name: 'orderInfo',
     meta: { shopAuth: true },//登录鉴权
     component: () => import('../components/shopManage/orderInfo.vue')

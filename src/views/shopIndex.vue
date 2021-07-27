@@ -175,7 +175,7 @@
             </el-row>
             <el-pagination
               :current-page="currentPage"
-              :page-size="1"
+              :page-size="16"
               @current-change="handleCurrentChange"
               layout="prev, pager, next, jumper"
               :total="bookcount"
@@ -253,7 +253,7 @@ export default {
         method: "GET",
         params: {
           page_num: this.currentPage,
-          book_num: 1,
+          book_num: 16,
           style: 1,
           main_category_id: "",
           second_category_id: "",
@@ -306,13 +306,12 @@ export default {
     //根据类型显示这家店的书
     getMainClassBook(id) {
       this.activeIndex1 = id;
-      window.console.log(this.activeIndex1);
       axios({
         url: this.$store.state.yuming + "/book/getPage",
         method: "GET",
         params: {
           page_num: this.currentPage,
-          book_num: 1,
+          book_num: 16,
           style: 1,
           main_category_id: id,
           second_category_id: "",
@@ -479,9 +478,7 @@ export default {
   color: white;
   cursor: pointer;
 }
-.el-card__body {
-  padding: 5px;
-}
+
 .header {
   display: flex;
   justify-content: flex-start;

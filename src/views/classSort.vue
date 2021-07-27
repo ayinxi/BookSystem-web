@@ -111,7 +111,7 @@
                     font-size: 20px;
                   "
                   :index="item.main_id"
-                  @click.native="getMainClassBook(item.main_id)"
+                  @click.native="getOne(item.main_id)"
                   >{{ item.main_name }}
                 </el-menu-item>
                 <div
@@ -121,7 +121,7 @@
                   <el-menu-item
                     style="color: rgb(233, 150, 122); font-weight: 1000"
                     :index="littleitem.second_id"
-                    @click.native="getSecondClassBook(littleitem.second_id)"
+                    @click.native="getTwo(littleitem.second_id)"
                     >{{ littleitem.second_name }}
                   </el-menu-item>
                 </div>
@@ -144,25 +144,25 @@
               </el-menu-item>
               <el-menu-item
                 index="2021"
-                @click.native="getYearBook('2021')"
+                @click.native="getThree('2021')"
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >2021年出版</el-menu-item
               >
               <el-menu-item
                 index="2020"
-                @click.native="getYearBook('2020')"
+                @click.native="getThree('2020')"
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >2020年出版</el-menu-item
               >
               <el-menu-item
                 index="2019"
-                @click.native="getYearBook('2019')"
+                @click.native="getThree('2019')"
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >2019年出版</el-menu-item
               >
               <el-menu-item
                 index="2018"
-                @click.native="getYearBeforeBook('2018')"
+                @click.native="getFour('2018')"
                 style="color: rgb(233, 150, 122); font-weight: 1000"
                 >2018年及以前出版</el-menu-item
               >
@@ -234,7 +234,10 @@ export default {
   data() {
     return {
       goodsNum: "",
+      activeIndex1: "",
       activeIndex2: "",
+      activeIndex3: "",
+      activeIndex4: "",
       currentPage: 1,
       isLoading: false,
       input: "",
@@ -284,8 +287,19 @@ export default {
     showAll() {
       this.$router.push("/");
     },
+    //实现分页
     handleCurrentChange(val) {
       this.currentPage = val;
+      if(this.activeIndex1 !=""){
+        this.getMainClassBook(this.activeIndex1);
+      }
+      else if(this.activeIndex2!=""){
+        this.getSecondClassBook(this.activeIndex2);
+      }
+      else if(this.activeIndex3!=""){
+        this.getYearBook(this.activeIndex3);
+      }
+      else this.getYearBeforeBook(this.activeIndex4);
     },
     goToBookInfo(id) {
       this.$router.push({ path: "/bookInfo", query: { book_id: id } });
@@ -307,8 +321,29 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
+    //点各导航栏都要会第一页
+    getOne(id){
+      this.currentPage=1;
+      this.getMainClassBook(id);
+    },
+    getTwo(id){
+      this.currentPage=1;
+      this.getSecondClassBook(id);
+    },
+    getThree(id){
+      this.currentPage=1;
+      this.getYearBook(id);
+    },
+    getFour(id){
+      this.currentPage=1;
+      this.getYearBeforeBook(id);
+    },
     //通过index传来的参数进行一级分类筛选
     getMainClassBook(id) {
+      this.activeIndex1 = id;
+      this.activeIndex2 = "";
+      this.activeIndex3 = "";
+      this.activeIndex4 = "";
       axios({
         url: this.$store.state.yuming + "/book/getPage",
         method: "GET",
@@ -362,6 +397,10 @@ export default {
     },
     //通过index传来的参数进行二级分类筛选
     getSecondClassBook(id) {
+      this.activeIndex1 = "";
+      this.activeIndex2 = id;
+      this.activeIndex3 = "";
+      this.activeIndex4 = "";
       axios({
         url: this.$store.state.yuming + "/book/getPage",
         method: "GET",
@@ -415,6 +454,10 @@ export default {
     },
     //通过index传来的参数进行某一年份筛选
     getYearBook(year) {
+      this.activeIndex1 = "";
+      this.activeIndex2 = "";
+      this.activeIndex3 = year;
+      this.activeIndex4 = "";
       axios({
         url: this.$store.state.yuming + "/book/getPage",
         method: "GET",
@@ -467,6 +510,10 @@ export default {
         });
     },
     getYearBeforeBook(year) {
+      this.activeIndex1 = "";
+      this.activeIndex2 = "";
+      this.activeIndex3 = "";
+      this.activeIndex4 = year;
       axios({
         url: this.$store.state.yuming + "/book/getPage",
         method: "GET",
@@ -623,9 +670,7 @@ export default {
 .tscStyle {
   height: 100%;
 }
-.el-card__body {
-  padding: 5px;
-}
+
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
 }

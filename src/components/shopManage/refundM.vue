@@ -187,7 +187,7 @@ export default {
   },
   methods: {
     goToManage() {
-      this.$router.push("/shopManage");
+      this.$router.push("/shopManage#reloaded");
     },
     handleInfo() {
       this.$router.push("/refundInfo");

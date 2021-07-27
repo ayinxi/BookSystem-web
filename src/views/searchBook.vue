@@ -122,7 +122,7 @@
               <el-col :span="3">
                 <el-button
                   type="text"
-                  @click.native="handleClick(0)"
+                  @click.native="goToFirst(0)"
                   :class="{ btn_active: flag === 0 }"
                   id="Button0"
                   >全部相关图书</el-button
@@ -131,7 +131,7 @@
               <el-col :span="3">
                 <el-button
                   type="text"
-                  @click.native="handleClick(1)"
+                  @click.native="goToFirst(1)"
                   :class="{ btn_active: flag === 1 }"
                   id="Button1"
                   >书名相关图书</el-button
@@ -140,7 +140,7 @@
               <el-col :span="3">
                 <el-button
                   type="text"
-                  @click.native="handleClick(2)"
+                  @click.native="goToFirst(2)"
                   :class="{ btn_active: flag === 2 }"
                   id="Button2"
                   >作者相关图书</el-button
@@ -149,7 +149,7 @@
               <el-col :span="3">
                 <el-button
                   type="text"
-                  @click.native="handleClick(3)"
+                  @click.native="goToFirst(3)"
                   :class="{ btn_active: flag === 3 }"
                   id="Button3"
                   >出版社相关图书</el-button
@@ -158,15 +158,17 @@
               <el-col :span="3">
                 <el-button
                   type="text"
-                  @click.native="handleClick(4)"
+                  @click.native="goToFirst(4)"
                   :class="{ btn_active: flag === 4 }"
                   id="Button4"
                   >图书简介相关图书</el-button
                 >
               </el-col>
             </el-row></el-header
-          ><el-main v-if="this.displayList.length == 0"
-            ><el-empty description="未找到相关的书籍"></el-empty>
+          ><el-main v-if="this.displayList.length == 0" style="text-align:center"
+            >
+              <img style="width:200px;height:200px" src="../assets/empty_grey.png" />
+              <p>未找到相关的书籍</p>
           </el-main>
           <el-main v-if="this.displayList.length != 0">
             <el-row class="rowStyle3" type="flex">
@@ -245,6 +247,7 @@ export default {
       flag: 0,
       bookcount: 0,
       isLoading: false,
+      dataLoading: false,
       input: this.$store.state.gobalSearchText,
       categoryList: [
         {
@@ -275,13 +278,7 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-    },
-    Search() {
-      this.$store.commit("gobalSearchText", this.input);
-      this.displayList = this.Lists.filter(
-        (item) =>
-          item.Name.includes(this.input) | item.Author.includes(this.input)
-      );
+      this.handleClick(this.flag);
     },
     gotoSign() {
       this.$router.push("/sign");
@@ -318,10 +315,18 @@ export default {
             message: "加入购物车成功",
             type: "success",
           });
+          this.dataLoading = true;
+          this.getGoodsNum();
+          this.dataLoading = false;
         } else {
           this.$message.error("加入购物车失败，请重试");
         }
       });
+    },
+    //每次切换查询方式回到第一页
+    goToFirst(val) {
+      this.currentPage = 1;
+      this.handleClick(val);
     },
     //点击实现本页面的不同搜索方式
     handleClick(val) {
@@ -547,9 +552,7 @@ export default {
   font-weight: 1000;
   font-size: 20px;
 }
-.el-card__body {
-  padding: 20px !important;
-}
+
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
 }

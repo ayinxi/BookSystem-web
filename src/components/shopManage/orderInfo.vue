@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header2">
       <div class="logo2">
         <img width="250px" src="../../assets/jwbc.png" />
@@ -9,8 +9,8 @@
       <el-form ref="tablData" :model="tableData" label-width="110px">
         <el-row>
           <el-col :span="8">
-            <el-form-item label="订单日期：" prop="date">
-              <span>{{ tableData.date }}</span>
+            <el-form-item label="订单日期：" prop="create_time">
+              <span>{{ this.dateFormat(tableData.create_time) }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -37,24 +37,25 @@
           </el-col>
         </el-row>
         <el-form-item label-width="0">
-          <el-table :data="tableData.bookList" border style="width: 100%">
+          <el-table :data="tableData.books" border style="width: 100%">
             <el-table-column label="图书图片" width="180">
               <template slot-scope="scope">
-                <img :src="scope.row.bookimg" class="imgStyle" />
+                <img :src="scope.row.book_image_b" class="imgStyle" />
               </template>
             </el-table-column>
-            <el-table-column label="图书名称" width="180" prop="bookname">
+            <el-table-column label="图书名称" width="180" prop="book_name">
             </el-table-column>
-            <el-table-column prop="booknum" label="图书数量" width="180">
+            <el-table-column prop="number" label="图书数量" width="180">
             </el-table-column>
-            <el-table-column prop="bookprice" label="图书单价" width="180">
+            <el-table-column label="图书单价" width="180">
+              <template slot-scope="scope">￥{{ scope.row.price }}</template>
+            </el-table-column>
+            <el-table-column label="图书库存" width="180">
+              <template slot-scope="scope">{{ scope.row.repertory }}</template>
+            </el-table-column>
+            <el-table-column label="总价">
               <template slot-scope="scope"
-                >￥{{ scope.row.bookprice }}</template
-              >
-            </el-table-column>
-            <el-table-column prop="totalprice" label="总价">
-              <template slot-scope="scope"
-                >￥{{ scope.row.totalprice }}</template
+                >￥{{ scope.row.price*scope.row.number }}</template
               >
             </el-table-column>
           </el-table>
@@ -68,31 +69,53 @@
 </template>
 
 <script>
+import axios from "axios";
+import moment from "moment";
 export default {
   data() {
     return {
+      isLoading: false,
+      order_id: this.$route.params.order_id,
       tableData: {
-        date: "2021-7-8",
-        username: "张三",
-        consigneeName: "李四",
-        address: "计算机楼001",
-        telephone: 12345678901,
-        bookList: [
+        shop_id: "",
+        total: "",
+        send_time: "",
+        books: [
           {
-            bookname: "书本1号",
-            booknum: 5,
-            bookprice: 10,
-            totalprice: 50,
-            bookimg: require("../../assets/kuku.png"),
-          },
-          {
-            bookname: "书本2号",
-            booknum: 6,
-            bookprice: 11,
-            totalprice: 66,
-            bookimg: require("../../assets/kuku.png"),
+            check_opinion: "",
+            book_total_book: "",
+            remark: "",
+            update_time: "",
+            book_image_b: "",
+            book_name: "",
+            number: 0,
+            rate: 0,
+            return_time: "",
+            price: 0,
+            press: "",
+            order_book_id: "",
+            transport_status: 0,
+            return_reason: "",
+            author: "",
+            remark_status: 0,
+            book_id: "",
+            repertory: 0,
+            volume: 0,
+            return_detail: "",
+            return_status: 0,
+            remark_time: "",
+            image_s: "",
+            order_id: "",
+            exchange_address_id: "",
           },
         ],
+        create_time: "",
+        firm_time: "",
+        shop_name: "",
+        order_id: "",
+        username: "",
+        status: "",
+        address_id: "",
       },
     };
   },
@@ -100,6 +123,36 @@ export default {
     returnToM() {
       this.$router.push("/orderM");
     },
+    //时间格式化
+    dateFormat(date) {
+      return moment(date).format("YYYY-MM-DD");
+    },
+    //获取改订单的详情
+    getOrderDetail() {
+      axios({
+        url: this.$store.state.yuming + "/order/getByID",
+        method: "GET",
+        params: {
+          order_id: this.order_id,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.tableData = data;
+          } else {
+            this.$message.error("获取订单失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getOrderDetail();
+    this.isLoading = false;
   },
 };
 </script>

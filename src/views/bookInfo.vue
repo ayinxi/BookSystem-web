@@ -160,8 +160,8 @@
             <p style="color: red; font-weight: 1000; margin: 0%">
               ￥{{ book.price }}
             </p>
-            <p v-if="book.repertory>0">库存：{{ book.repertory }}</p>
-            <p v-if="book.repertory<=0">库存不足</p>
+            <p v-if="book.repertory > 0">库存：{{ book.repertory }}</p>
+            <p v-if="book.repertory <= 0">库存不足</p>
             <el-row
               :gutter="20"
               type="flex"
@@ -225,6 +225,7 @@ export default {
     return {
       input: "",
       isLoading: false,
+      dataLoading: false,
       activeIndex1: "",
       num: 1,
       evaluationList: [
@@ -302,14 +303,19 @@ export default {
         method: "POST",
         data: this.formdata,
       }).then((res) => {
-        if (res.data.code == 200) {
+        if (res.data.code == 200 && this.num <= this.book.repertory) {
           this.$message({
             message: "加入购物车成功",
             type: "success",
           });
+          this.dataLoading = true;
+          this.getGoodsNum();
+          this.dataLoading = false;
           this.num = 1;
+        } else if (this.num > this.book.repertory) {
+          this.$message.warning("库存不足");
         } else {
-          this.$message.error("加入购物车失败，请重试");
+          this.$message.warning("加入购物车失败");
         }
       });
     },
@@ -317,9 +323,14 @@ export default {
     buy() {
       if (this.$store.state.token != "" && this.num <= this.book.repertory) {
         this.$router.push(`/shopping/${this.bookid}/${this.num}`);
-      } else {
-        this.$message({
-          message: "请登录后再购买/库存不足",
+      } else if (this.$store.state.token == "") {
+        this.$message.warning({
+          message: "请登录后再购买",
+          type: "error",
+        });
+      } else if (this.num > this.book.repertory) {
+        this.$message.warning({
+          message: "库存不足",
           type: "error",
         });
       }
@@ -432,8 +443,8 @@ export default {
   align-items: center;
 }
 .avatar {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
 }
 .header {

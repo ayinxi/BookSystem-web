@@ -588,7 +588,7 @@ export default {
     },
     //前往店铺管理页
     goToManage() {
-      this.$router.push("/shopManage");
+      this.$router.push("/shopManage#reloaded");
     },
     //获取这家店铺里的书
     getBook() {
