@@ -10,7 +10,7 @@
       <div
         style="display: flex; justify-content: flex-end; align-items: center"
       >
-        <el-card shadow="always">
+        <el-card shadow="always" class="Mycard">
           <el-form
             ref="userInfo"
             :rules="rules"
@@ -28,24 +28,25 @@
               <h2 class="login-title">新用户注册</h2>
             </el-form-item>
             <el-form-item label="昵称" prop="name">
-              <el-input v-model="userInfo.name"> </el-input>
+              <el-input class="Myinput" v-model="userInfo.name"> </el-input>
             </el-form-item>
             <el-form-item label="绑定邮箱" prop="username">
               <el-input
+              class="Myinput"
                 v-model="userInfo.username"
                 placeholder="邮箱一旦绑定不得更改"
               >
               </el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-              <el-input v-model="userInfo.password" type="password"> </el-input>
+              <el-input class="Myinput" v-model="userInfo.password" type="password"> </el-input>
             </el-form-item>
             <el-form-item label="确认密码" prop="checkpass">
-              <el-input v-model="userInfo.checkpass" type="password">
+              <el-input class="Myinput" v-model="userInfo.checkpass" type="password">
               </el-input>
             </el-form-item>
             <el-form-item label="验证码" prop="activationCode">
-              <el-input v-model="userInfo.activationCode" style="width: 140px">
+              <el-input v-model="userInfo.activationCode" class="otherInput">
               </el-input>
               <el-button @click="countDown" :disabled="disabled">{{
                 content
@@ -240,8 +241,12 @@ export default {
   justify-content: center;
   margin: 20px;
 }
-.el-input {
+.Myinput {
   width: 250px;
+  margin: 10px 20px;
+}
+.otherInput {
+  width: 140px;
   margin: 10px 20px;
 }
 .inputContent {
@@ -251,7 +256,7 @@ export default {
   width: 100%;
   margin-left: 10%;
 }
-.el-card {
+.Mycard {
   margin: 1% 3%;
   width: 500px;
   height: 500px;
