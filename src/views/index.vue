@@ -126,9 +126,7 @@
                   </el-menu-item>
                 </div>
               </div> </el-menu
-            ><el-menu
-              class="el-menu-vertical-demo"
-            >
+            ><el-menu class="el-menu-vertical-demo">
               <el-menu-item>
                 <span
                   slot="title"
@@ -166,7 +164,7 @@
               >
             </el-menu>
           </el-aside>
-          <el-main style="padding-top: 0px">
+          <el-main style="padding-top: 0px; height: 100%">
             <el-row style="margin-bottom: 1%">
               <el-col :span="16">
                 <el-carousel
@@ -221,7 +219,10 @@
                       :title="item.book_name"
                       >{{ item.book_name | ellipsis1 }}</el-link
                     >
-                    <p style="color: rgb(128, 192, 192); margin: 0%" :title="item.author">
+                    <p
+                      style="color: rgb(128, 192, 192); margin: 0%"
+                      :title="item.author"
+                    >
                       {{ item.author | ellipsis1 }}
                     </p>
                   </el-row>
@@ -238,7 +239,7 @@
                     <el-header
                       style="
                         width: 100%;
-                        height: 200px;
+                        height: 150px;
                         align-items: center;
                         margin-top: 10px;
                       "
@@ -265,7 +266,10 @@
                         :title="book.book_name"
                         >{{ book.book_name | ellipsis0 }}</el-link
                       >
-                      <p style="color: rgb(128, 192, 192); margin: 0%" :title="book.author">
+                      <p
+                        style="color: rgb(128, 192, 192); margin: 0%"
+                        :title="book.author"
+                      >
                         {{ book.author | ellipsis0 }}
                       </p>
                       <p style="color: red; font-weight: 1000; margin: 0%">
@@ -329,8 +333,18 @@
                       :title="book.book_name"
                       >{{ book.book_name | ellipsis2 }}</el-link
                     >
-                    <p style="color: rgb(128, 192, 192); margin: 0%" :title="book.author">
+                    <p
+                      v-if="book.author !== ''"
+                      style="color: rgb(128, 192, 192); margin: 0%"
+                      :title="book.author"
+                    >
                       {{ book.author | ellipsis2 }}
+                    </p>
+                    <p
+                      v-if="book.author === ''"
+                      style="color: rgb(128, 192, 192); margin: 0%"
+                    >
+                      佚名
                     </p>
                     <p style="color: red; font-weight: 1000; margin: 0%">
                       ￥{{ book.price }}
@@ -493,7 +507,7 @@ export default {
         method: "GET",
         params: {
           page_num: 1,
-          book_num: 12,
+          book_num: 16,
           style: 2,
           main_category_id: "",
           second_category_id: "",
@@ -643,7 +657,7 @@ export default {
 }
 .imgStyle1 {
   width: 100%;
-  height: 200px;
+  height: 150px;
   cursor: pointer;
 }
 .imgStyle4 {
@@ -689,7 +703,7 @@ export default {
 }
 .tscStyle {
   height: 100%;
-  width:100%
+  width: 100%;
 }
 
 .el-menu-item.is-active {
