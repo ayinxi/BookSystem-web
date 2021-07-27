@@ -198,7 +198,7 @@ export default {
               message: "注册成功",
               type: "success",
             });
-            this.$router.push("/");
+            this.$router.push("/#reloaded");
           } else {
             this.$message.error("注册失败,请稍后再试");
           }

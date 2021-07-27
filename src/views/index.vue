@@ -102,7 +102,6 @@
                 ><p>全部商品分类</p></el-col
               >
             </el-row>
-
             <el-menu>
               <div v-for="item in categoryList" :key="item.main_id">
                 <el-menu-item
@@ -185,12 +184,16 @@
               </el-col>
               <el-col :span="1"><span>&emsp;</span></el-col>
               <el-col :span="7">
-                <el-card class="cStyle">
+                <el-card
+                  class="cStyle"
+                  v-for="item in todaySalesChampion"
+                  :key="item.id"
+                >
                   <el-row style="height: 40px; margin: 0% 5% 5%"
                     ><el-col :span="4"
                       ><i class="iconfont-guanjun" style="font-size: 40px"></i
                     ></el-col>
-                    <el-col :span="12" style="text-align: center; height: 40px"
+                    <el-col :span="14" style="text-align: center; height: 40px"
                       ><p
                         style="
                           font-weight: 1000;
@@ -207,8 +210,8 @@
                   <el-row style="height: 270px">
                     <el-image
                       class="tscStyle"
-                      :src="todaySalesChampion.Img"
-                      @click.native="goToBookInfo(todaySalesChampion.bookid)"
+                      :src="item.image_b"
+                      @click.native="goToBookInfo(item.id)"
                     ></el-image>
                   </el-row>
                   <el-row style="text-align: center">
@@ -216,11 +219,12 @@
                       :underline="false"
                       class="book-name"
                       style="color: black; margin: 1%"
-                      @click="goToBookInfo(todaySalesChampion.bookid)"
-                      >{{ todaySalesChampion.Name }}</el-link
+                      @click="goToBookInfo(item.id)"
+                      :title="item.book_name"
+                      >{{ item.book_name | ellipsis1 }}</el-link
                     >
-                    <p style="color: rgb(128, 192, 192); margin: 0%">
-                      {{ todaySalesChampion.Author }}
+                    <p style="color: rgb(128, 192, 192); margin: 0%" :title="item.author">
+                      {{ item.author | ellipsis1 }}
                     </p>
                   </el-row>
                 </el-card>
@@ -260,10 +264,11 @@
                         :underline="false"
                         class="book-name"
                         @click="goToBookInfo(book.id)"
-                        >{{ book.book_name }}</el-link
+                        :title="book.book_name"
+                        >{{ book.book_name | ellipsis0 }}</el-link
                       >
-                      <p style="color: rgb(128, 192, 192); margin: 0%">
-                        {{ book.author }}
+                      <p style="color: rgb(128, 192, 192); margin: 0%" :title="book.author">
+                        {{ book.author | ellipsis0 }}
                       </p>
                       <p style="color: red; font-weight: 1000; margin: 0%">
                         ￥{{ book.price }}
@@ -323,10 +328,11 @@
                       :underline="false"
                       class="book-name"
                       @click="goToBookInfo(book.id)"
-                      >{{ book.book_name }}</el-link
+                      :title="book.book_name"
+                      >{{ book.book_name | ellipsis2 }}</el-link
                     >
-                    <p style="color: rgb(128, 192, 192); margin: 0%">
-                      {{ book.author }}
+                    <p style="color: rgb(128, 192, 192); margin: 0%" :title="book.author">
+                      {{ book.author | ellipsis2 }}
                     </p>
                     <p style="color: red; font-weight: 1000; margin: 0%">
                       ￥{{ book.price }}
@@ -345,19 +351,45 @@
 import axios from "axios";
 import { Message } from "element-ui";
 export default {
+  filters: {
+    //限制文本显示字数,超出部分用...代替
+    ellipsis0(value) {
+      if (!value) return "";
+      if (value.length > 15) {
+        return value.slice(0, 15) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      }
+      return value;
+    },
+    ellipsis1(value) {
+      if (!value) return "";
+      if (value.length > 25) {
+        return value.slice(0, 25) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      }
+      return value;
+    },
+    ellipsis2(value) {
+      if (!value) return "";
+      if (value.length > 10) {
+        return value.slice(0, 10) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      }
+      return value;
+    },
+  },
   data() {
     return {
       goodsNum: "",
       activeIndex1: "",
-      activeIndex2: " ",
+      activeIndex2: "",
       isLoading: false,
       input: "",
-      todaySalesChampion: {
-        Img: require("../assets/youbenshi.jpg"),
-        Name: "有本事",
-        Author: "冯唐",
-        bookid: "1",
-      },
+      todaySalesChampion: [
+        {
+          author: "",
+          book_name: "",
+          image_b: "",
+          id: "",
+        },
+      ],
       categoryList: [
         {
           book_num: 0,
@@ -427,14 +459,43 @@ export default {
     goToBookInfo(id) {
       this.$router.push({ path: "/bookInfo", query: { book_id: id } });
     },
-    //获取最新上架的八本书（可能会改本数）
+    //获取今日销量冠军
+    getTodaySalesChampion() {
+      axios({
+        url: this.$store.state.yuming + "/book/getPage",
+        method: "GET",
+        params: {
+          page_num: 1,
+          book_num: 1,
+          style: 1,
+          main_category_id: "",
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.todaySalesChampion = data;
+          } else {
+            this.$message.error("获取新书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //获取最新上架的12本书（可能会改本数）
     getNewBook() {
       axios({
         url: this.$store.state.yuming + "/book/getPage",
         method: "GET",
         params: {
           page_num: 1,
-          book_num: 8,
+          book_num: 12,
           style: 2,
           main_category_id: "",
           second_category_id: "",
@@ -566,8 +627,9 @@ export default {
       await this.getGoodsNum();
     }
     await this.getAllCategory();
+    await this.getTodaySalesChampion();
     await this.getNewBook();
-    this.mounted();
+    await this.mounted();
     this.isLoading = false;
   },
 };
