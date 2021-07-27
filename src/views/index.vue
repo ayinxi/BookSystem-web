@@ -128,8 +128,6 @@
               </div> </el-menu
             ><el-menu
               class="el-menu-vertical-demo"
-              :default-active="activeIndex2"
-              @select="handleSelect2"
             >
               <el-menu-item>
                 <span
@@ -355,8 +353,8 @@ export default {
     //限制文本显示字数,超出部分用...代替
     ellipsis0(value) {
       if (!value) return "";
-      if (value.length > 15) {
-        return value.slice(0, 15) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      if (value.length > 10) {
+        return value.slice(0, 10) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
       }
       return value;
     },
@@ -369,8 +367,8 @@ export default {
     },
     ellipsis2(value) {
       if (!value) return "";
-      if (value.length > 10) {
-        return value.slice(0, 10) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      if (value.length > 8) {
+        return value.slice(0, 8) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
       }
       return value;
     },
@@ -641,6 +639,7 @@ export default {
 }
 .book-name {
   font-size: 100%;
+  white-space: nowrap;
 }
 .imgStyle1 {
   width: 100%;
@@ -690,6 +689,7 @@ export default {
 }
 .tscStyle {
   height: 100%;
+  width:100%
 }
 
 .el-menu-item.is-active {

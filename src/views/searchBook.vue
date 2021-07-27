@@ -249,8 +249,8 @@ export default {
     //限制文本显示字数,超出部分用...代替
     ellipsis(value) {
       if (!value) return "";
-      if (value.length > 17) {
-        return value.slice(0, 17) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      if (value.length > 10) {
+        return value.slice(0, 10) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
       }
       return value;
     },
@@ -334,8 +334,10 @@ export default {
           this.dataLoading = true;
           this.getGoodsNum();
           this.dataLoading = false;
+          this.formdata=new FormData();
         } else {
           this.$message.error("加入购物车失败，请重试");
+          this.formdata=new FormData();
         }
       });
     },

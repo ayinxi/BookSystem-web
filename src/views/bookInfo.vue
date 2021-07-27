@@ -313,10 +313,15 @@ export default {
           this.getGoodsNum();
           this.dataLoading = false;
           this.num = 1;
+          this.formdata=new FormData();
         } else if (this.num > this.book.repertory) {
           this.$message.warning("库存不足");
+          this.num = 1;
+          this.formdata=new FormData();
         } else {
           this.$message.warning("加入购物车失败");
+          this.num = 1;
+          this.formdata=new FormData();
         }
       });
     },

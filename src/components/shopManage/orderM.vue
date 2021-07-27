@@ -35,6 +35,7 @@
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
+          v-loading="dataLoading"
         >
           <el-table-column type="selection" width="55"> </el-table-column>
           <el-table-column
@@ -51,7 +52,7 @@
             :filter-method="filterDate"-->
           </el-table-column>
           <el-table-column label="用户名" width="200">
-            <template slot-scope="scope">{{ scope.row.username }}</template>
+            <template slot-scope="scope">{{ scope.row.name }}</template>
           </el-table-column>
           <el-table-column
             label="总价"
@@ -71,12 +72,12 @@
             width="200"
             prop="status"
             :filters="[
-              { text: '未发货', value: '未发货' },
-              { text: '已发货', value: '已发货' },
-              { text: '正在申请退款', value: '正在申请退款' },
-              { text: '已退款', value: '已退款' },
-              { text: '已拒绝退款', value: '已拒绝退款' },
-              { text: '已收货', value: '已收货' },
+              { text: '取消订单', value: 1 },
+              { text: '未付款', value: 2 },
+              { text: '未发货', value: 3 },
+              { text: '已发货', value: 4 },
+              { text: '已收货', value: 5 },
+              { text: '已评价', value: 6 },
             ]"
             :filter-method="filterState"
           >
@@ -101,11 +102,12 @@
               <el-button
                 type="text"
                 style="font-size: 15px"
-                @click="handleConfirm(scope.$index, scope.row)"
+                @click="handleConfirm(scope.row.order_id)"
                 :disabled="
-                  scope.row.state == '已评价' ||
-                  scope.row.state == '已发货' ||
-                  scope.row.state == '已收货'
+                  scope.row.status == 1 ||
+                  scope.row.status == 4 ||
+                  scope.row.status == 5 ||
+                  scope.row.status == 6
                 "
                 >确认订单</el-button
               >
@@ -113,9 +115,12 @@
               <el-button
                 type="text"
                 style="font-size: 15px"
-                @click="handleRefuse(scope.$index, scope.row)"
+                @click="handleRefuse(scope.row.order_id)"
                 :disabled="
-                  scope.row.state == '已发货' || scope.row.state == '已收货'
+                  scope.row.status == 1 ||
+                  scope.row.status == 4 ||
+                  scope.row.status == 5 ||
+                  scope.row.status == 6
                 "
                 >取消订单</el-button
               >
@@ -151,8 +156,8 @@ export default {
     return {
       currentPage: 1,
       ordercount: 0,
-      newOrder: 12345,
       isLoading: false,
+      dataLoading: false,
       tableData: [
         {
           shop_id: "",
@@ -184,6 +189,7 @@ export default {
               exchange_address_id: "",
             },
           ],
+          name:"",
           create_time: "",
           firm_time: "",
           shop_name: "",
@@ -193,6 +199,7 @@ export default {
         },
       ],
       multipleSelection: [],
+      Order_Ids: [],
     };
   },
   methods: {
@@ -207,6 +214,7 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
+      this.getOrder();
     },
     //时间格式化
     dateFormat(row, column) {
@@ -258,7 +266,7 @@ export default {
         });
     },
     //确认订单，相当于发货
-    handleConfirm(index, row) {
+    handleConfirm(id) {
       this.$confirm("是否确认订单?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -268,12 +276,15 @@ export default {
           url: this.$store.state.yuming + "/shop/sendOrder",
           method: "POST",
           params: {
-            order_id: row.order_id,
+            order_id: id,
           },
         })
           .then((res) => {
             const { code } = res.data;
             if (code == "200") {
+              this.dataLoading = true;
+              this.getOrder();
+              this.dataLoading = false;
               this.$message.success("确认订单成功");
             } else {
               this.$message.error("确认订单失败，请刷新");
@@ -285,7 +296,7 @@ export default {
       });
     },
     //取消订单
-    handleRefuse(index,row) {
+    handleRefuse(id) {
       this.$confirm("是否取消订单?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -295,12 +306,15 @@ export default {
           url: this.$store.state.yuming + "/order/cancel",
           method: "POST",
           params: {
-            order_id: row.order_id,
+            order_id: id,
           },
         })
           .then((res) => {
             const { code } = res.data;
             if (code == "200") {
+              this.dataLoading = true;
+              this.getOrder();
+              this.dataLoading = false;
               this.$message.success("取消订单成功");
             } else {
               this.$message.error("取消订单失败，请刷新");
@@ -310,18 +324,6 @@ export default {
             this.$message.error("出现错误，请稍后再试");
           });
       });
-      /*this.tableData.splice(index, 1);
-      this.$message({
-        type: "success",
-        message: "取消成功!",
-      });*/
-
-      /* .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已放弃取消",
-          });
-        });*/
     },
     filterDate(value, row, column) {
       const property = column["property"];
@@ -330,9 +332,48 @@ export default {
     filterTotalprice(value, row) {
       return row.totalprice <= value && row.totalprice > value - 50;
     },
-    filterState(value, row, column) {
-      const property = column["property"];
-      return row[property] === value;
+    filterState(value) {
+      axios({
+        url: this.$store.state.yuming + "/getOrder",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          order_num: 10,
+          status: value,
+          identity: 1,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.tableData = data;
+          } else {
+            this.$message.error("获取订单失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取订单数
+      axios({
+        url: this.$store.state.yuming + "/getOrderNum",
+        method: "GET",
+        params: {
+          status: 1,
+          identity: 1,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.ordercount = data;
+          } else {
+            this.$message.error("获取订单数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     //批量确认订单
     batchConfirm() {
@@ -341,11 +382,14 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+          this.Order_Ids.push(this.multipleSelection[i].order_id);
+        }
         axios({
           url: this.$store.state.yuming + "/shop/batSendOrder",
           method: "POST",
           params: {
-            Order_Ids: ["asdasasdf", "afsafsdgf"],
+            Order_Ids: this.Order_Ids,
           },
           paramsSerializer: (params) => {
             return qs.stringify(params, { indices: false });
@@ -354,9 +398,14 @@ export default {
           .then((res) => {
             const { code } = res.data;
             if (code == "200") {
+              this.dataLoading = true;
+              this.getOrder();
+              this.dataLoading = false;
               this.$message.success("批量确认订单成功");
+              this.Order_Ids=[];
             } else {
               this.$message.error("批量确认订单失败，请刷新");
+              this.Order_Ids=[];
             }
           })
           .catch(() => {
@@ -399,35 +448,14 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
-        /*let multData = this.multipleSelection;
-          let tableData1 = this.tableData;
-          let multDataLen = multData.length;
-          let tableDataLen = tableData1.length;
-          for (let i = 0; i < multDataLen; i++) {
-            for (let y = 0; y < tableDataLen; y++) {
-              if (
-                JSON.stringify(tableData1[y]) == JSON.stringify(multData[i])
-              ) {
-                //判断是否相等，相等就删除
-                this.tableData.splice(y, 1);
-              }
-            }
-          }
-          this.$message({
-            type: "success",
-            message: "批量取消成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已放弃批量取消",
-          });*/
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+          this.Order_Ids.push(this.multipleSelection[i].order_id);
+        }
         axios({
           url: this.$store.state.yuming + "/order/batCancel",
           method: "POST",
           params: {
-            Order_Ids: ["asdasasdf", "afsafsdgf"],
+            Order_Ids: this.Order_Ids,
           },
           paramsSerializer: (params) => {
             return qs.stringify(params, { indices: false });
@@ -436,9 +464,14 @@ export default {
           .then((res) => {
             const { code } = res.data;
             if (code == "200") {
+              this.dataLoading = true;
+              this.getOrder();
+              this.dataLoading = false;
               this.$message.success("批量取消订单成功");
+              this.Order_Ids=[];
             } else {
               this.$message.error("批量取消订单失败，请刷新");
+              this.Order_Ids=[];
             }
           })
           .catch(() => {

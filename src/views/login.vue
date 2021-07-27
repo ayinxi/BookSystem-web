@@ -135,7 +135,7 @@ export default {
                 type: "success",
               });
               if (res.data.identity != 2) {
-                this.$router.push("/#reloaded");
+                this.$router.push("/");
               } else {
                 this.$router.push("/adminManage");
               }
