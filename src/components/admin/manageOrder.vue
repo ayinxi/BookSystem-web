@@ -29,25 +29,22 @@
             </el-form-item>
           </el-form>
           <el-table
-          :data="OrderList.filter((data) => {return data.userName.includes(searchText);})"
+          :data="OrderList.filter((data) => {return data.username.includes(searchText);})"
           style="width: 100%"
-          :default-sort = "{prop: 'buyTime', order: 'descending'}">
+          :default-sort = "{prop: 'create_time', order: 'descending'}">
             <el-table-column type="expand">
               <template slot-scope="scope">
-                <el-table :data="scope.row.bookList" :summary-method="getSummaries" show-summary>
-                    <el-table-column prop="bookName" label="书籍名称"></el-table-column>
-                    <el-table-column prop="bookPrice" label="单价(元)"></el-table-column>
-                    <el-table-column prop="bookNum" label="数量（本）"></el-table-column>
+                <el-table :data="scope.row.books">
+                    <el-table-column prop="book_name" label="书籍名称"></el-table-column>
+                    <el-table-column prop="price" label="单价(元)"></el-table-column>
+                    <el-table-column prop="number" label="数量（本）"></el-table-column>
                 </el-table>
-                
+                <p>总价：{{scope.row.total}}</p>
               </template>
             </el-table-column>
-            <el-table-column prop="buyTime" label="下单时间" sortable></el-table-column>
-            <el-table-column prop="userName" label="买家"></el-table-column>
-            <el-table-column prop="shopName" label="卖家">
-              <template slot-scope="scope">
-                <el-link :href="'http://localhost:8081/'+scope.row.shopAddr">{{scope.row.shopName}}</el-link>
-              </template>
+            <el-table-column prop="create_time" label="下单时间" sortable></el-table-column>
+            <el-table-column prop="username" label="买家"></el-table-column>
+            <el-table-column prop="shop_name" label="卖家">
             </el-table-column>
             <el-table-column prop="state" label="订单状态"
              :filters="[
@@ -81,24 +78,20 @@ export default {
       searchText: "",
       OrderList:[
         {
-          buyTime: "2021-07-15 18:31:30",//购买时间
-          userName: "AB",//购买用户
-          shopName: "CD",//商家名称
-          shopAddr: "login",//商家地址
-          state: "未发货",//订单状态
-          bookList:[
+          create_time: "2021-07-15 18:31:30",//下单时间
+          username: "AB",//购买用户
+          shop_name: "CD",//商家名称
+          status: 2,//订单状态 1.已取消 2.未付款 3.未发货 4.已发货 5.已收货 6.评价
+          total: 1000,
+          books:[
             {
-              bookImg: require("../../assets/kuku.png"),//书籍图片
-              bookName: "C++入门",//书籍名称
-              bookPrice: 100,//书籍单价
-              bookNum: 10,//书籍数量
+              book_image_b: require("../../assets/kuku.png"),//书籍图片
+              book_image_s: require("../../assets/kuku.png"),//书籍图片
+              book_name: "C++入门",//书籍名称
+              price: 100,//书籍单价
+              number: 10,//书籍数量
+              repertory: 100,//库存
             },
-            {
-              bookImg: require("../../assets/kuku.png"),//书籍图片
-              bookName: "Python入门",//书籍名称
-              bookPrice: 99,//书籍单价
-              bookNum: 2,//书籍数量
-            }
           ],
         },
       ],
@@ -116,32 +109,6 @@ export default {
       const property = column["property"];
       return row[property] === value;
     },
-    getSummaries(param) {
-        const { columns, data } = param;
-        const sums = [];
-        columns.forEach((column, index) => {
-          if (index === 0) {
-            sums[index] = '合计';
-            return;
-          }
-          const values = data.map(item => Number(item[column.property]));
-          if (!values.every(value => isNaN(value))) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr);
-              if (!isNaN(value)) {
-                return prev + curr;
-              } else {
-                return prev;
-              }
-            }, 0);
-            sums[index] += ' 元';
-          } else {
-            sums[index] = 'N/A';
-          }
-        });
-
-        return sums;
-      },
   },
 };
 </script>

@@ -7,7 +7,7 @@
       </div>
       <div style="margin: 10px 0"><el-page-header @back="gotoAdmin" content="分类管理"></el-page-header></div>
        <div>
-        <el-card class="box-card1">
+        <el-card class="c-box-card1">
           <el-container>
             <el-aside width="35px"><div class="verticalBar-class"></div></el-aside>
             <el-main>
@@ -21,8 +21,8 @@
           </el-container>
         </el-card>
       </div>
-      <div class="box2">
-        <el-card class="box-card1">
+      <div class="c-box">
+        <el-card class="c-box-card2">
           <el-row style="margin-bottom: 20px">
             <el-col :span="22">全部分类</el-col>
             <el-col :span="2"><el-button type="text" size="mini" @click="clearAddMain()">添加一级分类</el-button></el-col>
@@ -401,7 +401,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .home {
   display: flex;
   justify-content: center;
@@ -424,12 +424,18 @@ export default {
   padding: 30px 10px;
 }
 
-.box2{
+.c-box{
   display: flex;
   justify-content: center;
 }
 
-.box-card1 {
+.c-box-card1 {
+  width: 900px;
+  margin: 20px;
+  height: 121px;
+}
+
+.c-box-card2 {
   width: 900px;
   margin: 20px;
 }
