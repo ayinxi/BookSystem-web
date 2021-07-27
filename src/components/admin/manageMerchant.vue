@@ -538,6 +538,7 @@ export default {
           });
         });
     },
+    //重新加载店铺数据
     reloadData() {
       this.dataLoading = true;
       this.getNonCheckShopNum();

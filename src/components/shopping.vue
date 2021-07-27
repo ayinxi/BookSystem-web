@@ -1,8 +1,5 @@
 <template>
   <div v-loading="isLoading">
-    <!--
-    <div class="bbb"></div>
-    -->
     <!--header-->
     <div class="header">
       <div class="logo">
@@ -34,7 +31,6 @@
         </el-steps>
       </div>
     </div>
-    <!--<div class="divider"></div>-->
     <!--content-->
     <div style="margin:0 10%" v-if="page == 0 && isBookListEmpty == true">
       <el-row><el-col :offset="9"><img src="../assets/empty_grey.png" style="height:220px;margin:50px"></el-col></el-row>
@@ -44,30 +40,30 @@
     <div style="margin:0 10%">
       <div v-if="page == 0 && isBookListEmpty == false" v-loading="shoppingLoading">
     <header>
-      <el-card class="header-card">
+      <el-card class="shopping-header-card">
       <el-row>
-        <el-col :span="1" class="table-header-item">
+        <el-col :span="1" class="shopping-table-header-item">
           <el-checkbox v-model="checkAll" class="myRedCheckBox" @change="check_all"></el-checkbox>
         </el-col>
-        <el-col :span="1" class="table-header-item">全选</el-col>
-        <el-col :span="10" class="table-header-item">商品信息</el-col>
-        <el-col :span="4" class="table-header-item">价格</el-col>
-        <el-col :span="4" class="table-header-item">数量</el-col>
-        <el-col :span="3" class="table-header-item">小计</el-col>
-        <el-col :span="1" class="table-header-item">操作</el-col>
+        <el-col :span="1" class="shopping-table-header-item">全选</el-col>
+        <el-col :span="10" class="shopping-table-header-item">商品信息</el-col>
+        <el-col :span="4" class="shopping-table-header-item">价格</el-col>
+        <el-col :span="4" class="shopping-table-header-item">数量</el-col>
+        <el-col :span="3" class="shopping-table-header-item">小计</el-col>
+        <el-col :span="1" class="shopping-table-header-item">操作</el-col>
       </el-row>
       </el-card>
     </header>
-    <div class="table-container">
+    <div class="shopping-table-container">
       <div v-for="(item,index) in bookList" :key="index">
         <el-card style="margin: 20px 0">
         <el-row style="margin:10px">
           <el-col :span="1">
             <el-checkbox v-model="item.this_all" class="myRedCheckBox" @change="check_shop(item)"></el-checkbox>
           </el-col>
-          <el-col :span="23" class="shop-name"><i class="el-icon-goods"></i> {{item.shop_name}}</el-col>
+          <el-col :span="23" class="shopping-shop-name"><i class="el-icon-goods"></i> {{item.shop_name}}</el-col>
         </el-row>
-        <div class="books">
+        <div class="shopping-books">
           <el-row v-for="(books,idx) in item.books" :key="idx" style="margin:10px">
             <!--<el-divider v-if="idx!=0"></el-divider>-->
             <el-col :span="1">
@@ -77,7 +73,7 @@
               <img :src="books.image_b" style="height:70px" />
             </el-col>
             <el-col :span="9">
-              <div style="margin-right:30px" class="book-name">{{books.book_name}}</div>
+              <div style="margin-right:30px" class="shopping-book-name">{{books.book_name}}</div>
               <div class="book-detail">作者：{{books.author}}</div>
               <div class="book-detail">出版社：{{books.press}}</div>
             </el-col>
@@ -121,16 +117,16 @@
     <footer>
       <el-card>
       <el-row>
-        <el-col :span="1" style="margin-left:10px" class="table-footer-item">
+        <el-col :span="1" style="margin-left:10px" class="shopping-table-footer-item">
           <el-checkbox v-model="checkAll" class="myRedCheckBox" @change="check_all"></el-checkbox>
         </el-col>
-        <el-col :span="1" class="table-footer-item">全选</el-col>
-        <el-col :span="10" class="table-footer-item" style="margin:12px">
+        <el-col :span="1" class="shopping-table-footer-item">全选</el-col>
+        <el-col :span="10" class="shopping-table-footer-item" style="margin:12px">
            <el-button size="medium" type="text" class="table-button" @click="multiDelBook">批量删除</el-button>
         </el-col>
-        <el-col :span="6" class="table-footer-item">已选<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
-        <el-col :span="3" class="table-footer-item" style="margin-top:14px">合计：<span class="table-totalprice">¥{{totalPrice.toFixed(1)}}</span></el-col>
-        <el-col :span="2" class="table-footer-item" style="margin-top:9px">
+        <el-col :span="6" class="shopping-table-footer-item">已选<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
+        <el-col :span="3" class="shopping-table-footer-item" style="margin-top:14px">合计：<span class="table-totalprice">¥{{totalPrice.toFixed(1)}}</span></el-col>
+        <el-col :span="2" class="shopping-table-footer-item" style="margin-top:9px">
           <el-button size="max" type="danger" :round="true" @click="settlement">结算</el-button>
         </el-col>
       </el-row>
@@ -340,41 +336,41 @@
             <h3>送货清单</h3>
           </el-row>
           <header>
-      <el-card class="header-card">
+      <el-card class="shopping-header-card">
       <el-row>
-        <el-col :span="14" class="table-header-item">商品信息</el-col>
-        <el-col :span="4" class="table-header-item">价格</el-col>
-        <el-col :span="4" class="table-header-item">数量</el-col>
-        <el-col :span="2" class="table-header-item">小计</el-col>
+        <el-col :span="14" class="shopping-table-header-item">商品信息</el-col>
+        <el-col :span="4" class="shopping-table-header-item">价格</el-col>
+        <el-col :span="4" class="shopping-table-header-item">数量</el-col>
+        <el-col :span="2" class="shopping-table-header-item">小计</el-col>
       </el-row>
       </el-card>
     </header>
     <!--从购物车生成订单-->
-    <div class="table-container" v-if="isDirectBuy == false">
+    <div class="shopping-table-container" v-if="isDirectBuy == false">
       <div v-for="(item,index) in bookList" :key="index">
         <el-card style="margin: 20px 0" v-if="vifShopName(item)">
         <el-row style="margin:10px">
-          <el-col class="shop-name"><i class="el-icon-goods"></i> {{item.shop_name}}</el-col>
+          <el-col class="shopping-shop-name"><i class="el-icon-goods"></i> {{item.shop_name}}</el-col>
         </el-row>
-        <div class="books" v-for="(books,idx) in item.books" :key="idx">
+        <div class="shopping-books" v-for="(books,idx) in item.books" :key="idx">
           <el-row style="margin:10px" v-if="books.check_one">
             <!--<el-divider v-if="idx!=0"></el-divider>-->
             <el-col :span="2">
               <img :src="books.image_b" style="height:70px" />
             </el-col>
             <el-col :span="9">
-              <div style="margin-right:30px" class="book-name">{{books.book_name}}</div>
+              <div style="margin-right:30px" class="shopping-book-name">{{books.book_name}}</div>
               <div class="book-detail">作者：{{books.author}}</div>
               <div class="book-detail">出版社：{{books.press}}</div>
             </el-col>
             <el-col :span="4" :offset="3">
-              <div style="margin:25px 0" class="table-unitprice">¥{{books.price}}</div>
+              <div style="margin:25px 0" class="table-unitprice">¥{{books.price.toFixed(1)}}</div>
             </el-col>
             <el-col :span="2">
               <div style="margin:20px 0">{{books.sum}}</div>
             </el-col>
             <el-col :span="2" :offset="2">
-              <div style="margin:25px 0" class="table-price">¥{{books.price*books.sum}}</div>
+              <div style="margin:25px 0" class="table-price">¥{{(books.price*books.sum).toFixed(1)}}</div>
             </el-col>
           </el-row>
         </div>
@@ -382,28 +378,28 @@
       </div>
     </div>
     <!--从图书详情页直接购买-->
-    <div class="table-container" v-if="isDirectBuy == true">
+    <div class="shopping-table-container" v-if="isDirectBuy == true">
       <div>
         <el-card style="margin: 20px 0">
         <el-row style="margin:10px">
-          <el-col class="shop-name"><i class="el-icon-goods"></i> {{book.shop_name}}</el-col>
+          <el-col class="shopping-shop-name"><i class="el-icon-goods"></i> {{book.shop_name}}</el-col>
         </el-row>
-        <div class="books">
+        <div class="shopping-books">
           <el-row style="margin:10px">
             <el-col :span="2"><img :src="book.image_b" style="height:70px" /></el-col>
             <el-col :span="9">
-              <div style="margin-right:30px" class="book-name">{{book.book_name}}</div>
+              <div style="margin-right:30px" class="shopping-book-name">{{book.book_name}}</div>
               <div class="book-detail">作者：{{book.author}}</div>
               <div class="book-detail">出版社：{{book.press}}</div>
             </el-col>
             <el-col :span="4" :offset="3">
-              <div style="margin:25px 0" class="table-unitprice">¥{{book.price}}</div>
+              <div style="margin:25px 0" class="table-unitprice">¥{{book.price.toFixed(1)}}</div>
             </el-col>
             <el-col :span="2">
               <div style="margin:20px 0">{{directBuyNum}}</div>
             </el-col>
             <el-col :span="2" :offset="2">
-              <div style="margin:25px 0" class="table-price">¥{{book.price*directBuyNum}}</div>
+              <div style="margin:25px 0" class="table-price">¥{{(book.price*directBuyNum).toFixed(1)}}</div>
             </el-col>
           </el-row>
         </div>
@@ -414,17 +410,17 @@
       <el-card>
       <!--从购物车生成订单-->
       <el-row v-if="isDirectBuy == false">
-        <el-col :span="18" :offset="1" class="table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
-        <el-col :span="3" class="table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{totalPrice}}</span></el-col>
-        <el-col :span="2" class="table-footer-item" style="margin-top:9px">
+        <el-col :span="18" :offset="1" class="shopping-table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
+        <el-col :span="3" class="shopping-table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{totalPrice.toFixed(1)}}</span></el-col>
+        <el-col :span="2" class="shopping-table-footer-item" style="margin-top:9px">
           <el-button size="max" type="danger" :round="true" @click="addCartItem">提交订单</el-button>
         </el-col>
       </el-row>
       <!--从图书详情页直接购买-->
       <el-row v-if="isDirectBuy == true">
-        <el-col :span="18" :offset="1" class="table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{directBuyNum}} </span>件商品</el-col>
-        <el-col :span="3" class="table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{book.price*directBuyNum}}</span></el-col>
-        <el-col :span="2" class="table-footer-item" style="margin-top:9px">
+        <el-col :span="18" :offset="1" class="shopping-table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{directBuyNum}} </span>件商品</el-col>
+        <el-col :span="3" class="shopping-table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{(book.price*directBuyNum).toFixed(1)}}</span></el-col>
+        <el-col :span="2" class="shopping-table-footer-item" style="margin-top:9px">
           <el-button size="max" type="danger" :round="true" @click="addDirect">提交订单</el-button>
         </el-col>
       </el-row>
@@ -1082,15 +1078,6 @@ export default {
 
 </script>
 <style>
-.bbb {
-  background: url("../assets/2.jpg") no-repeat;
-  background-position: center;
-  height: 20%;
-  width: 100%;
-  background-size: cover;
-  position: absolute;
-  z-index: -1;
-}
 
 .divider{
   background-color: rgb(221, 68, 65);
@@ -1124,12 +1111,7 @@ export default {
   justify-content: center;
   margin: 20px 0;
 }
-.text {
-  font-size: 14px;
-}
-.item {
-  margin-bottom: 18px;
-}
+
 .clearfix:before,
 .clearfix:after {
   display: table;
@@ -1138,11 +1120,8 @@ export default {
 .clearfix:after {
   clear: both;
 }
-.box-card {
-  width: 200px;
-}
 
-.table-header{
+.shopping-table-header{
   text-align: center;
   margin: 20px 0;
   background: rgb(245,245,245);
@@ -1151,11 +1130,11 @@ export default {
   border:1px solid rgb(221,221,221);
 }
 
-.table-container{
+.shopping-table-container{
   margin: 20px 0;
 }
 
-.table-footer{
+.shopping-table-footer{
   margin: 30px 0;
   background: rgb(245,245,245);
   color:#303133;
@@ -1163,26 +1142,22 @@ export default {
   border:1px solid rgb(221,221,221);
 }
 
-.table-header-item
+.shopping-table-header-item
 {
   font-size: 13px;
 }
 
-.table-footer-item
+.shopping-table-footer-item
 {
   margin: 20px 0;
   font-size: 13px;
 }
 
-.table-shop
-{
-  font-size: 13px;
-}
-.shop-name{
+.shopping-shop-name{
   font-size: 14px;
   font-weight: 600;
 }
-.book-name{
+.shopping-book-name{
   font-size: 13px;
 }
 .book-detail{
@@ -1190,7 +1165,7 @@ export default {
   color:grey;
 }
 
-.books{
+.shopping-books{
   background: rgb(255, 255, 255);
   color:#303133;
   /*border:1px solid rgb(201, 201, 201);*/
@@ -1239,7 +1214,7 @@ export default {
   color: black;
 }
 
-.header-card{
+.shopping-header-card{
   height: 57px;
 }
 
