@@ -36,19 +36,19 @@
               :rules="firstRules"
             >
               <el-form-item label="退款商品：">
-                <el-row>
+                <el-row v-for="(books, idx) in bookList.books" :key="idx">
                   <el-col :span="3">
                     <img
-                      :src="bookList.book_img_b"
+                      :src="books.book_image_b"
                       style="height: 100px; width: 100px"
                     />
                   </el-col>
                   <el-col :span="21">
                     <div style="margin-right: 30px" class="book-name">
-                      {{ bookList.book_name }}
+                      {{ books.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ bookList.book_total_book }}
+                      ￥{{ books.book_total_book }}
                     </div>
                   </el-col>
                 </el-row>
@@ -168,19 +168,20 @@
               :rules="secondRules"
             >
               <el-form-item label="退款商品：">
-                <el-row>
+                <el-row v-for="(books, idx) in bookList.books"
+                  :key="idx">
                   <el-col :span="3">
                     <img
-                      :src="bookList.book_img_b"
+                      :src="books.book_image_b"
                       style="height: 100px; width: 100px"
                     />
                   </el-col>
                   <el-col :span="21">
                     <div style="margin-right: 30px" class="book-name">
-                      {{ bookList.book_name }}
+                      {{ books.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ bookList.book_total_book }}
+                      ￥{{ books.book_total_book }}
                     </div>
                   </el-col>
                 </el-row>
@@ -278,19 +279,20 @@
               :rules="thirdRules"
             >
               <el-form-item label="换货商品：">
-                <el-row>
+                <el-row v-for="(books, idx) in bookList.books"
+                  :key="idx">
                   <el-col :span="3">
                     <img
-                      :src="bookList.book_img_b"
+                      :src="books.book_image_b"
                       style="height: 100px; width: 100px"
                     />
                   </el-col>
                   <el-col :span="21">
                     <div style="margin-right: 30px" class="book-name">
-                      {{ bookList.book_name }}
+                      {{ books.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ bookList.book_total_book }}
+                      ￥{{ books.book_total_book }}
                     </div>
                   </el-col>
                 </el-row>
@@ -531,9 +533,15 @@ export default {
         ],
       },
       bookList: {
-        book_img_b: "",
-        book_name: "",
-        book_total_book: 0,
+        books: [
+          {
+            book_image_b: "",
+            book_name: "",
+            author: "",
+            press: "",
+            book_total_book: 0,
+          },
+        ],
       },
       refundInfo: {
         goods_status: "",
@@ -838,7 +846,7 @@ export default {
   margin: 20px;
 }
 .book-name {
-  font-size: 13px;
+  font-size: 15px;
 }
 .book-total {
   color: rgb(221, 98, 98);

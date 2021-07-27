@@ -16,20 +16,24 @@
           <div class="books">
             <el-row>
               <el-col :span="24">
-                <el-row style="margin: 10px">
+                <el-row
+                  style="margin: 10px"
+                  v-for="(books, idx) in bookList.books"
+                  :key="idx"
+                >
                   <el-col :span="4">
-                    <img :src="bookList.book_img_b" style="height: 150px" />
+                    <img :src="books.book_image_b" style="height: 150px" />
                   </el-col>
                   <el-col :span="20">
                     <div style="margin-right: 30px" class="book-name">
-                      {{ bookList.book_name }}
+                      {{ books.book_name }}
                     </div>
                     <div class="book-detail" style="margin-top: 15px">
-                      作者：{{ bookList.author }}
+                      作者：{{ books.author }}
                     </div>
-                    <div class="book-detail">出版社：{{ bookList.press }}</div>
+                    <div class="book-detail">出版社：{{ books.press }}</div>
                     <div style="margin: 20px 0px" class="book-total">
-                      ￥{{ bookList.book_total_book }}
+                      ￥{{ books.book_total_book }}
                     </div>
                   </el-col>
                 </el-row>
@@ -85,11 +89,15 @@ export default {
         ],
       },
       bookList: {
-        book_img_b: "",
-        book_name: "",
-        author: "",
-        press: "",
-        book_total_book: 0,
+        books: [
+          {
+            book_img_b: "",
+            book_name: "",
+            author: "",
+            press: "",
+            book_total_book: 0,
+          },
+        ],
       },
       remarkList: {
         rate: "",

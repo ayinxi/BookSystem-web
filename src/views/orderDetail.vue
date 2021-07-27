@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header">
       <div class="logo">
         <img height="70px" style="margin: 20px 0" src="../assets/jwbc.png" />
@@ -12,10 +12,10 @@
     </div>
     <el-row>
       <el-col :offset="3" :span="21">
-        <el-steps :space="300" :active="1" finish-status="success" align-center>
-          <el-step title="拍下商品" description="2021-07-23 9:50:00"></el-step>
-          <el-step title="卖家已发货"></el-step>
-          <el-step title="确认收货"></el-step>
+        <el-steps :space="300" :active="atWhere" finish-status="success" align-center>
+          <el-step title="拍下商品" :description="this.orderDetailList.status==3?this.orderDetailList.create_time:''"></el-step>
+          <el-step title="卖家已发货" :description="this.orderDetailList.status==4?this.orderDetailList.send_time:''"></el-step>
+          <el-step title="确认收货" :description="this.orderDetailList.status==5?this.orderDetailList.firm_time:''"></el-step>
           <el-step title="评价"></el-step>
         </el-steps>
       </el-col>
@@ -27,7 +27,7 @@
             <h3>订单信息</h3>
           </el-col>
           <el-col :span="20" style="margin: 20px 0">
-            订单编号：{{ orderDetailList.orderId }}
+            订单编号：{{ orderDetailList.order_id }}
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -56,35 +56,31 @@
             <el-row>
               <el-col :span="19">
                 <el-row
-                  v-for="(books, idx) in orderDetailList.children"
+                  v-for="(books, idx) in orderDetailList.books"
                   :key="idx"
                   style="margin: 10px"
                 >
-                  <el-col :span="2">
-                    <img :src="books.book_img" style="height: 70px" />
+                  <el-col :span="3">
+                    <img :src="books.book_image_b" style="height: 70px" />
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="11">
                     <div style="margin-right: 30px" class="book-name">
                       {{ books.book_name }}
                     </div>
-                    <div class="book-detail">作者：{{ books.book_writer }}</div>
-                    <div class="book-detail">
-                      出版社：{{ books.book_publish }}
-                    </div>
+                    <div class="book-detail">作者：{{ books.author }}</div>
+                    <div class="book-detail">出版社：{{ books.press }}</div>
+                  </el-col>
+                  <el-col :span="3">
+                    <div style="margin: 25px 0">¥{{ books.price }}</div>
                   </el-col>
                   <el-col :span="3">
                     <div style="margin: 25px 0">
-                      ¥{{ books.book_unitPrice }}
-                    </div>
-                  </el-col>
-                  <el-col :span="3">
-                    <div style="margin: 25px 0">
-                      {{ books.book_num }}
+                      {{ books.number }}
                     </div>
                   </el-col>
                   <el-col :span="3">
                     <div style="margin: 25px 10px">
-                      ￥{{ books.book_total }}
+                      ￥{{ books.book_total_price }}
                     </div>
                   </el-col>
                 </el-row>
@@ -93,15 +89,33 @@
                 <el-row style="margin-top: 35px">
                   <el-col
                     class="status-name"
-                    v-if="orderDetailList.status == 1"
+                    v-if="orderDetailList.status == 2"
+                    style="display: flex; justify-content: center"
+                    >未付款</el-col
+                  >
+                  <el-col
+                    class="status-name"
+                    v-if="orderDetailList.status == 3"
+                    style="display: flex; justify-content: center"
+                    >买家已付款</el-col
+                  >
+                  <el-col
+                    class="status-name"
+                    v-if="orderDetailList.status == 4"
+                    style="display: flex; justify-content: center"
+                    >卖家已发货</el-col
+                  >
+                  <el-col
+                    class="status-name"
+                    v-if="orderDetailList.status == 5"
                     style="display: flex; justify-content: center"
                     >交易成功</el-col
                   >
                   <el-col
                     class="status-name"
-                    v-if="orderDetailList.status == 2"
+                    v-if="orderDetailList.status == 6"
                     style="display: flex; justify-content: center"
-                    >卖家已发货</el-col
+                    >待评价</el-col
                   >
                 </el-row>
               </el-col>
@@ -114,41 +128,31 @@
 </template>
 
 <script>
+import axios from "axios";
+import { Message } from "element-ui";
 export default {
   data() {
     return {
+      isLoading: false,
+      atWhere:0,
       id: "",
       orderId: this.$route.params.orderId,
       orderDetailList: {
-        address:
-          "李心玥,86-15576199089,江苏省 南京市 江宁区 秣陵街道 江宁区东南大学九龙湖校区梅园 ,000000",
-        orderId: 2,
-        merchant_id: 2,
-        book_merchant: "新华书店网上商城自营图书",
-        create_time: "2021-07-14 18:31:30",
-        status: 2,
-        children: [
+        address: "",
+        order_id: "",
+        status: "",
+        create_time: "",
+        send_time: "",
+        firm_time: "",
+        books: [
           {
-            book_id: 21,
-            book_img: require("../assets/youbenshi.jpg"),
-            book_name:
-              "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-            book_writer: "冯唐",
-            book_publish: "东南大学出版社",
-            book_unitPrice: 50,
-            book_num: 1,
-            book_total: 50,
-          },
-          {
-            book_id: 22,
-            book_img: require("../assets/youbenshi.jpg"),
-            book_name:
-              "【新华书店正版图书】有本事 冯唐2021新作无所畏写给想靠真本事立身成事年轻人 写给人生转折点的前行之作文学散文随笔",
-            book_writer: "冯唐",
-            book_publish: "东南大学出版社",
-            book_unitPrice: 50,
-            book_num: 1,
-            book_total: 50,
+            book_image_b: "",
+            book_name: "",
+            author: "",
+            press: "",
+            price: "",
+            number: "",
+            book_total_price: "",
           },
         ],
       },
@@ -159,6 +163,41 @@ export default {
       this.id = 1;
       this.$router.push("/userOrder/" + this.id);
     },
+    getOrderDetails() {
+      axios({
+        url: this.$store.state.yuming + "/order/getByID",
+        method: "GET",
+        params: {
+          order_id: this.orderId,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.orderDetailList = data;
+            if(this.orderDetailList.status==2){
+              this.atWhere=0;
+            }
+            else if(this.orderDetailList.status==3){
+              this.atWhere=1;
+            }else if(this.orderDetailList.status==4){
+              this.atWhere=2;
+            }else{
+              this.atWhere=3;
+            }
+          } else {
+            this.$message.error("获取订单详情失败");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getOrderDetails();
+    this.isLoading = false;
   },
 };
 </script>
@@ -213,7 +252,7 @@ export default {
   display: block;
   height: 1px;
   width: 100%;
-  margin-bottom:15px;
-  margin-top:0px
+  margin-bottom: 15px;
+  margin-top: 0px;
 }
 </style>
