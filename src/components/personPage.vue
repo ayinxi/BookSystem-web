@@ -490,6 +490,7 @@
           name="fourth"
         >
           <el-table
+            v-if="hasApplyHistory == true"
             :data="applyHistory"
             style="width: 100%"
             :default-sort="{ prop: 'create_time', order: 'descending' }"
@@ -590,6 +591,19 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-row>
+            <el-col :offset="9">
+              <img
+                src="../assets/empty_grey.png"
+                style="height: 220px; margin: 50px"
+              />
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :offset="11">
+              <p style="margin-left: 0px; color: grey">还没有申请过店铺哦~</p>
+            </el-col>
+          </el-row>
         </el-tab-pane>
         <el-tab-pane v-else label="我的店铺" name="fifth">
           <div
@@ -669,6 +683,7 @@ export default {
   },
   data() {
     return {
+      hasApplyHistory: false,
       imgUrl: require("../assets/avatar.jpg"),
       orderId: "",
       isLoading: false,
@@ -805,7 +820,7 @@ export default {
     },
     //跳转全部页面
     gotoAllOrder() {
-      this.id =1;
+      this.id = 1;
       this.$router.push("/userOrder/" + this.id);
     },
     //跳转待发货
@@ -1017,6 +1032,9 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.applyHistory = data;
+            this.hasApplyHistory = true;
+          } else if (code == "3") {
+            this.hasApplyHistory = false;
           } else {
             this.$message.error("获取店铺申请历史信息失败");
           }

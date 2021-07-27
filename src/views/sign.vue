@@ -61,7 +61,7 @@
                   margin-left: 20px;
                   margin-right: 10px;
                 "
-                >注册</el-button
+                >注册并登录</el-button
               >
             </el-form-item>
           </el-form>
@@ -128,7 +128,7 @@ export default {
   computed: {
     content() {
       return this.totalCount !== 0
-        ? `${this.totalCount}秒再次获取`
+        ? `${this.totalCount}秒后获取`
         : "获取验证码";
     },
   },
@@ -150,7 +150,7 @@ export default {
     //发送验证码
     sendActivationCode() {
       axios({
-        url: this.$store.state.yuming+"/sendEmail",
+        url: this.$store.state.yuming + "/sendEmail",
         method: "POST",
         params: {
           email: this.userInfo.username,
@@ -180,7 +180,7 @@ export default {
     },
     onSign() {
       axios({
-        url: this.$store.state.yuming+"/registerUser",
+        url: this.$store.state.yuming + "/registerUser",
         method: "POST",
         params: {
           email: this.userInfo.username,
@@ -198,7 +198,7 @@ export default {
               message: "注册成功",
               type: "success",
             });
-            this.$router.push("/");
+            this.$router.push("/login");
           } else {
             this.$message.error("注册失败,请稍后再试");
           }
@@ -263,8 +263,8 @@ export default {
 }
 .el-form-item__error {
   top: 80%;
-  right: 25% !important;
-  left: unset;
+  right: unset;
+  left:10% !important ;
 }
 .el-form-item {
   margin-bottom: 5px;

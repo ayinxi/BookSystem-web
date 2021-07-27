@@ -167,8 +167,12 @@ const routes = [
     name: 'searchBook',
     component: () => import('../views/searchBook.vue')
   },
+  {
+    path: '/pay/:orderId/:total',
+    name: 'pay',
+    component: () => import('../views/pay.vue')
+  },
 ]
-
 const router = new VueRouter({
   routes
 })
