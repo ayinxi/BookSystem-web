@@ -56,7 +56,7 @@
                 </el-popover>
               </el-form-item>
               <el-form-item label="店铺名称"><span>{{scope.row.shop_name}}</span></el-form-item>
-              <el-form-item label="申请邮箱"><span>{{scope.row.username}}</span></el-form-item>
+              <el-form-item label="绑定邮箱"><span>{{scope.row.username}}</span></el-form-item>
             </el-form>
           </template>
         </el-table-column>
@@ -113,7 +113,7 @@
                 </el-popover>
               </el-form-item>
               <el-form-item label="店铺名称"><span>{{scope.row.shop_name}}</span></el-form-item>
-              <el-form-item label="申请邮箱"><span>{{scope.row.username}}</span></el-form-item>
+              <el-form-item label="绑定邮箱"><span>{{scope.row.username}}</span></el-form-item>
               <el-form-item label="申请理由"><span>{{scope.row.apply_reason}}</span></el-form-item>
             </el-form>
           </template>
@@ -157,7 +157,7 @@
           <template slot-scope="scope">
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item label="开店时间"><span>{{scope.row.create_time}}</span></el-form-item>
-              <el-form-item label="店主邮箱"><span>{{scope.row.username}}</span></el-form-item>
+              <el-form-item label="绑定邮箱"><span>{{scope.row.username}}</span></el-form-item>
             </el-form>
           </template>
         </el-table-column>
