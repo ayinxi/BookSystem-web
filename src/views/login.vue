@@ -45,7 +45,7 @@
                       <el-col :offset="2">
                         <el-button
                           type="primary"
-                          @click="onSubmit"
+                          @click="submit"
                           style="
                             width:60%;
                             margin-top: 10px;
@@ -69,7 +69,10 @@
 
 
 <script>
+import axios from 'axios'
 export default {
+
+
   components: {},
   data() {
     return {
@@ -85,13 +88,29 @@ export default {
     };
   },
   methods: {
+    submit(){
+      console.log(this.form.username)
+      console.log(this.form.password)
+      axios({
+        url: 'http://127.0.0.1:8088/login',
+        method: 'POST',
+        params: {
+          username: this.form.username,
+          password: this.form.password
+        }
+      }).then(res=>{
+        console.log(res);
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     async onSubmit(e) {
       e.preventDefault();
       let parmas = {
         username: this.form.username,
         password: this.form.password
       };
-      const res = await this.$http.get("/api/login", parmas);
+      const res = await this.$axios.post("/api/login", parmas);
       const { code, token, massage } = res.data;
       //code=='0'表示登录成功，进行本地存储和store存储 并进行跳转。
       //else 弹出错误提示
