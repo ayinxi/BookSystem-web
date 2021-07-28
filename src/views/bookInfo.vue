@@ -295,7 +295,7 @@ export default {
     },
     //加入购物车
     addShoppingTrolley() {
-      this.formdata.append("book_id", this.bookid);
+      this.formdata.append("book_id", this.id);
       this.formdata.append("sum", this.num);
       axios({
         url: this.$store.state.yuming + "/cartitem/addCartItem",
