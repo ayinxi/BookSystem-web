@@ -84,7 +84,7 @@
                 </el-col>
                 <el-col style="margin: 20px 0">
                   <el-button size="meduim" class="pageperson" @click="gotoLogin"
-                    >登陆</el-button
+                    >登录</el-button
                   >
                 </el-col>
               </el-row>
