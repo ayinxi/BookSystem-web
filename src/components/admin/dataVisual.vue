@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" v-loading="isloading">
     <div class="content">
       <div class="header">
         <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
@@ -69,8 +69,15 @@ export default {
   components: {},
   data() {
     return {
-        pie_class_data: [],
-        pie_order_data: [],
+      isloading: false,
+      dateList: [],
+      classData: [],
+      classPie: [],
+      tempClass:{
+        value: 1000,
+        name: "示例",
+      },
+      orderPie: [],
     };
   },
   mounted() {
@@ -84,6 +91,14 @@ export default {
     gotoAdmin() {
       this.$router.push("/adminManage");
     },
+    //获取当前时间
+    getNowDate() {
+      var nowDate = new Date();
+      var i = 6;
+      for(;i>=0;i--) {
+        this.dateList.push((nowDate.getMonth()+1) + '/' + (nowDate.getDate()-i));
+      }
+    },
     //获取不同分类图书数量
     getAll() {
       axios({
@@ -94,9 +109,13 @@ export default {
         .then((res) => {
           const { code, data } = res.data;
           if (code == "200") {
-            this.pie_class_data = data;
+            this.classData = data;
+             console.log(this.classData);
+        this.tempClass.value = this.classData[0].book_num;
+        this.tempClass.name = this.classData[0].main_name;
+        //console.log(this.tempClass);
           } else if (code == "3") {
-            this.pie_class_data = "";
+            this.classData = "";
           } else {
             this.$message.error("获取分类失败");
           }
@@ -107,6 +126,15 @@ export default {
             message: "出现错误，请稍后再试",
           });
         });
+    },
+    //获取classPie
+    getClassPie() {
+      console.log(this.classData);
+      this.classData.forEach(mainClass => {
+        this.tempClass.value = mainClass.book_num;
+        this.tempClass.name = mainClass.main_name;
+        //console.log(this.tempClass);
+      });
     },
     //近七天新增
     drawDomChart() {
@@ -138,7 +166,7 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['7/19', '7/20', '7/21', '7/22', '7/23', '7/24', '7/25']
+          data: this.dateList,
         },
         yAxis: {
           type: 'value'
@@ -196,7 +224,7 @@ export default {
             type: 'pie',
             radius: '50%',
             data: [
-              {value: 1048, name: '分类1'},
+              this.tempClass,
               {value: 735, name: '分类2'},
               {value: 580, name: '分类3'},
               {value: 484, name: '分类4'},
@@ -253,6 +281,12 @@ export default {
         ]
       });
     },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getNowDate();
+    await this.getAll();
+    this.isLoading = false;
   },
 };
 </script>

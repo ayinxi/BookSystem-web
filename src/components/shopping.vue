@@ -1091,15 +1091,16 @@ export default {
         },
       })
         .then((res) => {
-          document.querySelector("body").innerHTML = res.data;
+          let divForm = document.getElementsByTagName("divform");
+          if (divForm.length) {
+            document.body.removeChild(divForm[0]);
+          }
+          const div = document.createElement("divform");
+          div.innerHTML = res.data; // data就是接口返回的form 表单字符串
+          document.body.appendChild(div);
+          document.forms[0].setAttribute("target", "_blank"); // 新开窗口跳转
           document.forms[0].submit();
         })
-        .catch(() => {
-          Message({
-            type: "error",
-            message: "出现错误，请稍后再试",
-          });
-        });
         */
       this.page = 2;
     },
