@@ -226,7 +226,7 @@ export default {
         avatar_b: "",
         shop_name: "",
       },
-      rate:0,
+      rate:5,
       displayList: [],
     };
   },
