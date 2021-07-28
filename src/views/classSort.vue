@@ -104,7 +104,7 @@
             </el-row>
             <el-menu>
               <div v-for="item in categoryList" :key="item.main_id">
-                <div style="background-color: #fbfbfb;">
+                <div style="background-color: #f9f9f9;">
                 <el-menu-item
                   style="
                     color: rgb(250, 128, 114);
@@ -134,7 +134,7 @@
               class="el-menu-vertical-demo"
               :default-active="activeIndex2"
             >
-            <div style="background-color: #fbfbfb;">
+            <div style="background-color: #f9f9f9;">
               <el-menu-item>
                 <span
                   slot="title"

@@ -104,7 +104,7 @@
             </el-row>
             <el-menu>
               <div v-for="item in categoryList" :key="item.main_id" >
-                <div style="background-color: #fbfbfb;">
+                <div style="background-color: #f7f7f7;">
                 <el-menu-item
                   style="
                     color: rgb(250, 128, 114);
@@ -133,7 +133,7 @@
                 </div>
               </div> </el-menu
             ><el-menu>
-              <div style="background-color: #fbfbfb;">
+              <div style="background-color: #f7f7f7;">
               <el-menu-item style="border-left:solid 1px #e6e6e6;">
                 <span
                   slot="title"
@@ -658,6 +658,9 @@ export default {
 </script>
 
 <style acoped>
+body{
+  background-color: f7f7f7;
+}
 .el-pagination {
   text-align: center;
 }
