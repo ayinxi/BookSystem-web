@@ -114,7 +114,7 @@
                       <el-col :span="1">
                         <div
                           style="margin-top: 15px"
-                          v-if="item.status >= 3 && book.return_status == -1"
+                          v-if="item.status > 3 && book.return_status == -1"
                         >
                           <el-tooltip
                             content="确认收货七天之内可申请退款"
@@ -133,7 +133,7 @@
                         </div>
                         <div
                           style="margin-top: 15px"
-                          v-if="item.status >= 3 && book.return_status == 0"
+                          v-if="item.status > 3 && book.return_status == 0"
                         >
                           <el-button type="text" disabled size="mini"
                             >退款/退换货</el-button
@@ -680,49 +680,6 @@
                         </div>
                       </el-col>
                       <el-col :span="1">
-                        <div
-                          style="margin-top: 15px"
-                          v-if="item.status >= 3 && book.return_status == -1"
-                        >
-                          <el-tooltip
-                            content="确认收货七天之内可申请退款"
-                            placement="bottom"
-                            effect="light"
-                          >
-                            <el-button
-                              type="text"
-                              size="mini"
-                              @click="
-                                gotoRefund(book.order_book_id, item.firm_time)
-                              "
-                              >退款/退换货</el-button
-                            >
-                          </el-tooltip>
-                        </div>
-                        <div
-                          style="margin-top: 15px"
-                          v-if="item.status >= 3 && book.return_status == 0"
-                        >
-                          <el-button type="text" disabled size="mini"
-                            >退款/退换货</el-button
-                          >
-                        </div>
-                        <div
-                          style="margin-top: 15px"
-                          v-if="book.return_status > 0"
-                        >
-                          <el-button
-                            type="text"
-                            size="mini"
-                            @click="
-                              gotoService(
-                                book.order_book_id,
-                                book.return_status
-                              )
-                            "
-                            >退款详情</el-button
-                          >
-                        </div>
                       </el-col>
                     </el-row>
                   </el-col>
@@ -741,11 +698,18 @@
                         </div>
                       </el-col>
                       <el-col :span="6">
-                        <div style="margin-bottom: 5px">
+                        <div >
                           <el-button type="text" size="mini"
                             >提醒卖家发货
                           </el-button>
                         </div>
+                        <el-button
+                            type="text"
+                            size="mini"
+                            style="margin: 0"
+                            @click="cancelOrder(item.order_id)"
+                            >取消订单</el-button
+                          >
                       </el-col>
                     </el-row>
                   </el-col>
