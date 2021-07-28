@@ -5,8 +5,15 @@
         <img height="70px" style="margin: 20px 0" src="../assets/jwbc.png" />
       </div>
       <el-page-header
+        v-if="isDisabled == false"
         @back="gotoRefund"
         content="填写详细信息"
+        style="display: flex; justify-content: center; align-items: center"
+      ></el-page-header>
+      <el-page-header
+        v-if="isDisabled == true"
+        @back="gotoOrder"
+        content="详细信息"
         style="display: flex; justify-content: center; align-items: center"
       ></el-page-header>
     </div>
@@ -740,6 +747,9 @@ export default {
   methods: {
     gotoRefund() {
       this.$router.push("/refund/" + this.bookId);
+    },
+    gotoOrder() {
+      this.$router.push("/userOrder/1");
     },
     //获取书本信息
     getBookInfo() {
