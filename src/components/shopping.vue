@@ -78,7 +78,7 @@
               <div class="book-detail">出版社：{{books.press}}</div>
             </el-col>
             <el-col :span="3">
-              <div style="margin:25px 0" class="table-unitprice">¥{{books.price.toFixed(1)}}</div>
+              <div style="margin:25px 0" class="table-unitprice">¥{{books.price.toFixed(2)}}</div>
             </el-col>
             <el-col :span="5">
               <div style="margin:20px 0">
@@ -95,7 +95,7 @@
               </div>
             </el-col>
             <el-col :span="3">
-              <div style="margin:25px 0" class="table-price">¥{{(books.price*books.sum).toFixed(1)}}</div>
+              <div style="margin:25px 0" class="table-price">¥{{(books.price*books.sum).toFixed(2)}}</div>
             </el-col>
             <el-col :span="1">
                 <el-popconfirm
@@ -125,7 +125,7 @@
            <el-button size="medium" type="text" class="table-button" @click="multiDelBook">批量删除</el-button>
         </el-col>
         <el-col :span="6" class="shopping-table-footer-item">已选<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
-        <el-col :span="3" class="shopping-table-footer-item" style="margin-top:14px">合计：<span class="table-totalprice">¥{{totalPrice.toFixed(1)}}</span></el-col>
+        <el-col :span="3" class="shopping-table-footer-item" style="margin-top:14px">合计：<span class="table-totalprice">¥{{totalPrice.toFixed(2)}}</span></el-col>
         <el-col :span="2" class="shopping-table-footer-item" style="margin-top:9px">
           <el-button size="max" type="danger" :round="true" @click="settlement">结算</el-button>
         </el-col>
@@ -364,13 +364,13 @@
               <div class="book-detail">出版社：{{books.press}}</div>
             </el-col>
             <el-col :span="4" :offset="3">
-              <div style="margin:25px 0" class="table-unitprice">¥{{books.price.toFixed(1)}}</div>
+              <div style="margin:25px 0" class="table-unitprice">¥{{books.price.toFixed(2)}}</div>
             </el-col>
             <el-col :span="2">
               <div style="margin:20px 0">{{books.sum}}</div>
             </el-col>
             <el-col :span="2" :offset="2">
-              <div style="margin:25px 0" class="table-price">¥{{(books.price*books.sum).toFixed(1)}}</div>
+              <div style="margin:25px 0" class="table-price">¥{{(books.price*books.sum).toFixed(2)}}</div>
             </el-col>
           </el-row>
         </div>
@@ -393,13 +393,13 @@
               <div class="book-detail">出版社：{{book.press}}</div>
             </el-col>
             <el-col :span="4" :offset="3">
-              <div style="margin:25px 0" class="table-unitprice">¥{{book.price.toFixed(1)}}</div>
+              <div style="margin:25px 0" class="table-unitprice">¥{{book.price.toFixed(2)}}</div>
             </el-col>
             <el-col :span="2">
               <div style="margin:20px 0">{{directBuyNum}}</div>
             </el-col>
             <el-col :span="2" :offset="2">
-              <div style="margin:25px 0" class="table-price">¥{{(book.price*directBuyNum).toFixed(1)}}</div>
+              <div style="margin:25px 0" class="table-price">¥{{(book.price*directBuyNum).toFixed(2)}}</div>
             </el-col>
           </el-row>
         </div>
@@ -411,7 +411,7 @@
       <!--从购物车生成订单-->
       <el-row v-if="isDirectBuy == false">
         <el-col :span="18" :offset="1" class="shopping-table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{totalNumber}} </span>件商品</el-col>
-        <el-col :span="3" class="shopping-table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{totalPrice.toFixed(1)}}</span></el-col>
+        <el-col :span="3" class="shopping-table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{totalPrice.toFixed(2)}}</span></el-col>
         <el-col :span="2" class="shopping-table-footer-item" style="margin-top:9px">
           <el-button size="max" type="danger" :round="true" @click="addCartItem">提交订单</el-button>
         </el-col>
@@ -419,7 +419,7 @@
       <!--从图书详情页直接购买-->
       <el-row v-if="isDirectBuy == true">
         <el-col :span="18" :offset="1" class="shopping-table-footer-item">共<span style="color:rgb(221, 68, 65)"> {{directBuyNum}} </span>件商品</el-col>
-        <el-col :span="3" class="shopping-table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{(book.price*directBuyNum).toFixed(1)}}</span></el-col>
+        <el-col :span="3" class="shopping-table-footer-item" style="margin-top:14px">实付：<span class="table-totalprice">¥{{(book.price*directBuyNum).toFixed(2)}}</span></el-col>
         <el-col :span="2" class="shopping-table-footer-item" style="margin-top:9px">
           <el-button size="max" type="danger" :round="true" @click="addDirect">提交订单</el-button>
         </el-col>
@@ -575,6 +575,13 @@ export default {
           { max: 50, message: "地址不得超过五十个字", trigger: "blur" },
         ],
       },
+      //支付
+      orderId: "",
+      subject: "",
+      totalAmount: 0,
+      body: "",
+      oneBookName: "",
+      totalNum: 0,
     };
   },
   computed: {
@@ -614,7 +621,7 @@ export default {
     },
     //跳转全部订单页面
     gotoOrder() {
-      this.$router.push("/userOrder/0");
+      this.$router.push("/userOrder/1");
     },
     //选择所有的购物车商品
     check_all() {
@@ -933,14 +940,19 @@ export default {
     //从购物车生成订单
     addCartItem() {
       var multiDelBookId = [];
+      this.totalAmount = 0,
       //处理图书
       this.bookList.forEach(shop => {
         shop.books.forEach(book => {
           if(book.check_one == true) {
             multiDelBookId.push(book.cartItem_id);
+            this.totalAmount += book.price * book.sum;
+            this.totalNum += 1;
+            this.oneBookName = book.book_name;       
           }
         });
       });
+      this.subject = this.oneBookName + "等" + this.totalNum + "本书";
       //处理地址
       if(this.radio == '') {
         if(this.myAddressList == '') {//没有选择地址也没有地址的情况
@@ -966,11 +978,13 @@ export default {
         },
       })
         .then((res) => {
-          const { code } = res.data;
+          const { code, data } = res.data;
           if (code == "200") {
             this.shoppingLoading = true;
             this.getAll();
             this.shoppingLoading = false;
+            this.orderId = data;
+            this.alipay();
             this.$message({
               message: "提交订单成功",
               type: "success",
@@ -1038,11 +1052,15 @@ export default {
         },
       })
         .then((res) => {
-          const { code } = res.data;
+          const { code, data } = res.data;
           if (code == "200") {
             this.shoppingLoading = true;
             this.getAll();
             this.shoppingLoading = false;
+            this.orderId = data;
+            this.subject = this.book.book_name;
+            this.totalAmount = this.book.price * this.directBuyNum;
+            this.alipay();
             this.$message({
               message: "提交订单成功",
               type: "success",
@@ -1057,8 +1075,33 @@ export default {
             message: "出现错误，请稍后再试",
           });
         });
-        this.page = 2;
       }
+    },
+    //支付
+    alipay() {
+      /*
+      axios({
+        url: this.$store.state.yuming+"/alipay",
+        method: "GET",
+        params: {
+          order_id: this.orderId,
+          subject: this.subject,
+          total_amount: this.totalAmount,
+          body: this.body,
+        },
+      })
+        .then((res) => {
+          document.querySelector("body").innerHTML = res.data;
+          document.forms[0].submit();
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+        */
+      this.page = 2;
     },
   },
   async created() {

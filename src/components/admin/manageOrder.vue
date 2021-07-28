@@ -33,6 +33,10 @@
           :data="orderList.filter((data) => {return data.username.includes(searchText);})"
           style="width: 100%"
           :default-sort = "{prop: 'create_time', order: 'descending'}">
+            <template slot="empty">
+              <img src="../../assets/empty_grey.png" style="height:100px;margin-top:30px">
+              <p style="margin-top:0px">暂无订单</p>
+            </template>
             <el-table-column type="expand">
               <template slot-scope="scope">
                 <el-table :data="scope.row.books" border>
@@ -93,9 +97,9 @@
               </template>
             </el-table-column>
             <el-table-column label="操作">
-              <template>
-                <el-button size="mini" type="text">编辑</el-button>
-                <el-button size="mini" type="text">删除</el-button>
+              <template slot-scope="scope">
+                <el-button size="mini" type="text" @click="preChangeOrderStatus(scope.row.order_id)">编辑订单状态</el-button>
+                <el-button size="mini" type="text" @click="cancelOrder(scope.row.order_id)">取消订单</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -111,6 +115,15 @@
         </el-card>
       </div>
     </div>
+    <el-dialog title="编辑订单状态" :visible.sync="editOrderVisible" width="40%">
+      <el-select v-model="orderStatus" filterable placeholder="请选择订单状态">
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+      </el-select>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editOrderVisible = false">取 消</el-button>
+        <el-button type="primary" @click="changeOrderStatus">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -130,14 +143,38 @@ export default {
       currentPage: 1,
       orderCount: 0,
       orderCountPerPage: 10,
+      //编辑订单状态
+      editOrderVisible: false,
+      orderId: "",
+      orderStatus: "",
+      options: [{
+          value: 1,
+          label: '已取消'
+        }, {
+          value: 2,
+          label: '未付款'
+        }, {
+          value: 3,
+          label: '未发货'
+        }, {
+          value: 4,
+          label: '已发货'
+        }, {
+          value: 5,
+          label: '已收货'
+        }, {
+          value: 6,
+          label: '已评价'
+        }],
       //订单
       orderList:[
-        {
+        /*{
           create_time: "2021-07-15 18:31:30",//下单时间
           username: "AB",//购买用户
           shop_name: "CD",//商家名称
           status: 2,//订单状态 1.已取消 2.未付款 3.未发货 4.已发货 5.已收货 6.已评价
-          total: 4000,
+          total: 1000,
+          order_id: "",
           books:[
             {
               book_image_b: require("../../assets/kuku.png"),//书籍图片
@@ -149,38 +186,8 @@ export default {
               return_status: -1,//-1.无效 1.申请退款未审核 2.同意 3.拒绝
               // 4.换货申请未审核 5.换货同意 6.换货拒绝 7.退货退款申请未审核 8.退货退款通过 9.退货退款拒绝
             },
-            {
-              book_image_b: require("../../assets/kuku.png"),//书籍图片
-              book_image_s: require("../../assets/kuku.png"),//书籍图片
-              book_name: "C++入门",//书籍名称
-              price: 100,//书籍单价
-              number: 10,//书籍数量
-              repertory: 100,//库存
-              return_status: 1,//-1.无效 1.申请退款未审核 2.同意 3.拒绝
-              // 4.换货申请未审核 5.换货同意 6.换货拒绝 7.退货退款申请未审核 8.退货退款通过 9.退货退款拒绝
-            },
-            {
-              book_image_b: require("../../assets/kuku.png"),//书籍图片
-              book_image_s: require("../../assets/kuku.png"),//书籍图片
-              book_name: "C++入门",//书籍名称
-              price: 100,//书籍单价
-              number: 10,//书籍数量
-              repertory: 100,//库存
-              return_status: 2,//-1.无效 1.申请退款未审核 2.同意 3.拒绝
-              // 4.换货申请未审核 5.换货同意 6.换货拒绝 7.退货退款申请未审核 8.退货退款通过 9.退货退款拒绝
-            },
-            {
-              book_image_b: require("../../assets/kuku.png"),//书籍图片
-              book_image_s: require("../../assets/kuku.png"),//书籍图片
-              book_name: "C++入门",//书籍名称
-              price: 100,//书籍单价
-              number: 10,//书籍数量
-              repertory: 100,//库存
-              return_status: 7,//-1.无效 1.申请退款未审核 2.同意 3.拒绝
-              // 4.换货申请未审核 5.换货同意 6.换货拒绝 7.退货退款申请未审核 8.退货退款通过 9.退货退款拒绝
-            },
           ],
-        },
+        },*/
       ],
     };
   },
@@ -258,6 +265,70 @@ export default {
             message: "出现错误，请稍后再试",
           });
         });
+    },
+    //取消订单
+    cancelOrder(id) {
+      axios({
+        url: this.$store.state.yuming+"/order/cancel",
+        method: "POST",
+        params: {
+          order_id: id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.reloadOrderData();
+            this.$message({
+              type: "success",
+              message: "取消成功",
+        });
+          } else {
+            this.$message.error("取消失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //准备编辑订单状态的数据
+    preChangeOrderStatus(id) {
+      this.orderId = id;
+      this.orderStatus = "";
+      this.editOrderVisible = true;
+    },
+    //确认编辑订单状态
+    changeOrderStatus() {
+      axios({
+        url: this.$store.state.yuming+"/admin/changeOrderStatus",
+        method: "POST",
+        params: {
+          order_id:this.orderId,
+          status: this.orderStatus,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.reloadOrderData();
+            this.$message({
+              type: "success",
+              message: "编辑订单状态成功",
+        });
+          } else {
+            this.$message.error("编辑订单状态失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+      this.editOrderVisible = false;
     },
   },
   async created() {
