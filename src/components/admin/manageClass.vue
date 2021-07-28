@@ -203,7 +203,7 @@ export default {
           if (code == "200") {
             this.classList = data;
           } else if (code == "3") {
-            this.classList = "";
+            this.classList = [];
           } else {
             this.$message.error("获取分类失败");
           }
