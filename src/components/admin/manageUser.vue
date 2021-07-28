@@ -223,8 +223,69 @@ export default {
     //编辑用户信息
     editUser() {
       this.updateUser();
+      this.updateAvatar();
+      this.formdata = "";
       this.EditVisible = false;
-      this.reloadUserData();
+      //刷新
+      this.userDataLoading = true;
+      this.getAllUser();
+      this.userDataLoading = false;
+    },
+    //编辑头像
+    updateAvatar() {
+      this.formdata.append("user_id", this.user.user_id);
+      axios({
+        url: this.$store.state.yuming+"/admin/updateAvatar",
+        method: "POST",
+        data: this.formdata,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.$message({
+              type: "success",
+              message: "编辑头像成功",
+        });
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //获取所有用户
+    getAllUser() {
+      axios({
+        url: this.$store.state.yuming+"/admin/getAllUser",
+        method: "GET",
+        params: {},
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.userList = data;
+            this.userList.forEach(user => {
+              if(user.identity==1) {
+                user.status = 2;
+              }
+            });
+          } else if (code == "3") {
+            this.userList = "";
+          } else {
+            this.$message.error("获取所有用户失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
     },
     //上传图片触发
     handleCrop(file) {
