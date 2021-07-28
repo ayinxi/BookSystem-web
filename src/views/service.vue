@@ -15,7 +15,7 @@
         <el-col :offset="4" :span="16">
           <el-steps
             :space="300"
-            :active="1"
+            :active="refundStatus"
             align-center
             simple
             finish-status="success"
@@ -55,7 +55,20 @@
               </el-form-item>
               <el-form-item label="服务类型："> 仅退款 </el-form-item>
               <el-form-item label="货物状态：">
-                <el-radio-group v-model="radio" prop="goods_status">
+                <el-radio-group
+                  v-model="radio"
+                  prop="goods_status"
+                  v-if="isDisabled == false"
+                >
+                  <el-radio :label="1">未收到货</el-radio>
+                  <el-radio :label="2">已收到货</el-radio>
+                </el-radio-group>
+                <el-radio-group
+                  v-model="this.bookList.books[0].transport_status"
+                  prop="goods_status"
+                  v-if="isDisabled == true"
+                  disabled
+                >
                   <el-radio :label="1">未收到货</el-radio>
                   <el-radio :label="2">已收到货</el-radio>
                 </el-radio-group>
@@ -88,7 +101,12 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="退款金额：" class="book-total" v-for="(books, idx) in bookList.books" :key="idx">
+              <el-form-item
+                label="退款金额："
+                class="book-total"
+                v-for="(books, idx) in bookList.books"
+                :key="idx"
+              >
                 ￥{{ books.book_total_price }}
               </el-form-item>
               <el-form-item label="退款说明：" prop="reason">
@@ -168,8 +186,7 @@
               :rules="secondRules"
             >
               <el-form-item label="退款商品：">
-                <el-row v-for="(books, idx) in bookList.books"
-                  :key="idx">
+                <el-row v-for="(books, idx) in bookList.books" :key="idx">
                   <el-col :span="3">
                     <img
                       :src="books.book_image_b"
@@ -279,8 +296,7 @@
               :rules="thirdRules"
             >
               <el-form-item label="换货商品：">
-                <el-row v-for="(books, idx) in bookList.books"
-                  :key="idx">
+                <el-row v-for="(books, idx) in bookList.books" :key="idx">
                   <el-col :span="3">
                     <img
                       :src="books.book_image_b"
@@ -388,6 +404,10 @@ export default {
   },
   data() {
     return {
+      isDisabled: true,
+      refundStatus: 0,
+      returnGoodsStatus: 0,
+      exchangeGoodsStatus: 0,
       filelist: [],
       radio: 1,
       bookId: this.$route.params.bookId,
@@ -533,7 +553,7 @@ export default {
         ],
       },
       bookList: {
-        books: [      
+        books: [
           {
             book_image_b: "",
             book_name: "",
@@ -576,6 +596,25 @@ export default {
       }).then((res) => {
         if (res.data.code == 200) {
           this.bookList = res.data.data;
+          if (this.bookList.books[0].return_status == -1) {
+            this.isDisabled = false;
+          } else if (this.bookList.books[0].return_status == 1) {
+            this.refundStatus = 1;
+          } else if (this.bookList.books[0].return_status == 2) {
+            this.refundStatus = 2;
+          } else if (this.bookList.books[0].return_status == 3) {
+            this.refundStatus = 2;
+          } else if (this.bookList.books[0].return_status == 4) {
+            this.returnGoodsStatus = 1;
+          } else if (this.bookList.books[0].return_status == 5) {
+            this.returnGoodsStatus = 2;
+          } else if (this.bookList.books[0].return_status == 6) {
+            this.returnGoodsStatus = 2;
+          } else if (this.bookList.books[0].return_status == 7) {
+            this.exchangeGoodsStatus = 1;
+          } else {
+            this.exchangeGoodsStatus = 2;
+          }
         } else {
           this.$message.error("获取商品信息失败，请重试");
         }
@@ -819,6 +858,14 @@ export default {
       } else {
         this.$message.error("上传图片只能是 JPG、JPEG或PNG 格式!");
       }
+    },
+    async reload() {
+      this.isLoading = true;
+      if (this.serviceId == 3) {
+        await this.getUserAddress();
+      }
+      await this.getBookInfo();
+      this.isLoading = false;
     },
   },
   async created() {

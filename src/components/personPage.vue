@@ -133,12 +133,16 @@
                       <i
                         class="iconfont-daifukuan"
                         style="font-size: 50px; margin: 50px"
-                        @click="gotoDaifahuo"
+                        @click="gotoDaifukuan"
                       />
                       <el-button
                         type="text"
-                        style="font-size: 15px; margin: 20px 50px; color:	#FFFFF0"
-                        @click="gotoDaifahuo"
+                        style="
+                          font-size: 15px;
+                          margin: 20px 50px;
+                          color: #fffff0;
+                        "
+                        @click="gotoDaifukuan"
                         >待付款</el-button
                       >
                     </el-card>
@@ -173,7 +177,11 @@
                       />
                       <el-button
                         type="text"
-                        style="font-size: 15px; margin: 20px 50px; color:	#FFFFF0"
+                        style="
+                          font-size: 15px;
+                          margin: 20px 50px;
+                          color: #fffff0;
+                        "
                         @click="gotoDaishouhuo"
                         >待收货</el-button
                       >
@@ -207,7 +215,11 @@
                       />
                       <el-button
                         type="text"
-                        style="font-size: 15px; margin: 20px 60px; color:	#FFFFF0"
+                        style="
+                          font-size: 15px;
+                          margin: 20px 60px;
+                          color: #fffff0;
+                        "
                         @click="gotoTuikuan"
                       >
                         退款</el-button
@@ -863,24 +875,29 @@ export default {
       this.id = 1;
       this.$router.push("/userOrder/" + this.id);
     },
+    //跳转待付款
+    gotoDaifukuan() {
+      this.id = 2;
+      this.$router.push("/userOrder/" + this.id);
+    },
     //跳转待发货
     gotoDaifahuo() {
-      this.id = 2;
+      this.id = 3;
       this.$router.push("/userOrder/" + this.id);
     },
     //跳转待收货页面
     gotoDaishouhuo() {
-      this.id = 3;
+      this.id = 4;
       this.$router.push("/userOrder/" + this.id);
     },
     //跳转全部页面
     gotoDaipingjia() {
-      this.id = 4;
+      this.id = 5;
       this.$router.push("/userOrder/" + this.id);
     },
     //跳转退款页面
     gotoTuikuan() {
-      this.id = 5;
+      this.id = 6;
       this.$router.push("/userOrder/" + this.id);
     },
     //获取用户的收货地址

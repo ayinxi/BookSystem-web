@@ -17,11 +17,12 @@
           :active="atWhere"
           finish-status="success"
           align-center
+          v-if="cancel == false"
         >
           <el-step
             title="拍下商品"
             :description="
-              this.orderDetailList.status == 3
+              this.orderDetailList.status >= 3
                 ? this.orderDetailList.create_time
                 : ''
             "
@@ -29,7 +30,7 @@
           <el-step
             title="卖家已发货"
             :description="
-              this.orderDetailList.status == 4
+              this.orderDetailList.status >= 4
                 ? this.orderDetailList.send_time
                 : ''
             "
@@ -37,12 +38,38 @@
           <el-step
             title="确认收货"
             :description="
-              this.orderDetailList.status == 5
+              this.orderDetailList.status >= 5
                 ? this.orderDetailList.firm_time
                 : ''
             "
           ></el-step>
           <el-step title="评价"></el-step>
+        </el-steps>
+      </el-col>
+      <el-col  :offset="7" :span="17">
+        <el-steps
+          :space="300"
+          :active="atWhere_"
+          finish-status="success"
+          align-center
+          v-if="cancel == true"
+        >
+          <el-step
+            title="拍下商品"
+            :description="
+              this.orderDetailList.status == 3||this.orderDetailList.status==1
+                ? this.orderDetailList.create_time
+                : ''
+            "
+          ></el-step>
+          <el-step
+            title="买家已取消"
+            :description="
+              this.orderDetailList.status == 1
+                ? this.orderDetailList.books[0].update_time
+                : ''
+            "
+          ></el-step>
         </el-steps>
       </el-col>
     </el-row>
@@ -59,13 +86,13 @@
         <el-divider></el-divider>
         <el-row style="margin: 20px 0">
           <el-col :span="2">收货人： </el-col>
-          <el-col :span="5">{{this.addressList.receiver_name}}</el-col>
+          <el-col :span="5">{{ this.addressList.receiver_name }}</el-col>
           <el-col :span="2">电话号码： </el-col>
-          <el-col :span="10">{{this.addressList.phone}}</el-col>
+          <el-col :span="10">{{ this.addressList.phone }}</el-col>
         </el-row>
         <el-row style="margin: 20px 0">
           <el-col :span="2">收货地址： </el-col>
-          <el-col :span="22">{{this.addressList.address}}</el-col>
+          <el-col :span="22">{{ this.addressList.address }}</el-col>
         </el-row>
       </el-card>
       <el-card>
@@ -121,6 +148,12 @@
                 <el-row style="margin-top: 35px">
                   <el-col
                     class="status-name"
+                    v-if="orderDetailList.status == 1"
+                    style="display: flex; justify-content: center"
+                    >已取消</el-col
+                  >
+                  <el-col
+                    class="status-name"
                     v-if="orderDetailList.status == 2"
                     style="display: flex; justify-content: center"
                     >未付款</el-col
@@ -166,6 +199,8 @@ export default {
     return {
       isLoading: false,
       atWhere: 0,
+      atWhere_: 0,
+      cancel: false,
       id: "",
       orderId: this.$route.params.orderId,
       addressId: "",
@@ -178,6 +213,7 @@ export default {
         firm_time: "",
         books: [
           {
+            update_time: "",
             book_image_b: "",
             book_name: "",
             author: "",
@@ -214,7 +250,10 @@ export default {
             this.orderDetailList = data;
             this.addressId = this.orderDetailList.address_id;
             this.getAddress();
-            if (this.orderDetailList.status == 2) {
+            if (this.orderDetailList.status == 1) {
+              this.atWhere_ = 2;
+              this.cancel = true;
+            } else if (this.orderDetailList.status == 2) {
               this.atWhere = 0;
             } else if (this.orderDetailList.status == 3) {
               this.atWhere = 1;

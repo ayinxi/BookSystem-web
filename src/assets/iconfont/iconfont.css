@@ -2,9 +2,9 @@
   font-family: "iconfont"; /* Project id 2660429 */
   /* Color fonts */
   src: 
-       url('iconfont.woff2?t=1627401550485') format('woff2'),
-       url('iconfont.woff?t=1627401550485') format('woff'),
-       url('iconfont.ttf?t=1627401550485') format('truetype');
+       url('iconfont.woff2?t=1627441151859') format('woff2'),
+       url('iconfont.woff?t=1627441151859') format('woff'),
+       url('iconfont.ttf?t=1627441151859') format('truetype');
 }
 
 .iconfont,[class^="iconfont"],[class*=" iconfont"]  {
@@ -13,6 +13,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.iconfont-daifukuan1:before {
+  content: "\f12f";
 }
 
 .iconfont-daifukuanL:before {

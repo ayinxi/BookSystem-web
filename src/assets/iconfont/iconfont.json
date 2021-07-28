@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "19490721",
+      "name": "待付款",
+      "font_class": "daifukuan1",
+      "unicode": "f12f",
+      "unicode_decimal": 61743
+    },
+    {
       "icon_id": "23171470",
       "name": "账户",
       "font_class": "daifukuanL",

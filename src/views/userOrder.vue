@@ -18,19 +18,23 @@
               <i class="iconfont-dingdan1"></i>
               <span slot="title" style="margin-left: 10px">全部订单</span>
             </el-menu-item>
-            <el-menu-item index="2" @click.native="daifahuoMenu">
+            <el-menu-item index="2" @click.native="daifukuanMenu">
+              <i class="iconfont-daifukuan1"></i>
+              <span slot="title" style="margin-left: 10px">待付款</span>
+            </el-menu-item>
+            <el-menu-item index="3" @click.native="daifahuoMenu">
               <i class="iconfont-daifahuo1"></i>
               <span slot="title" style="margin-left: 10px">待发货</span>
             </el-menu-item>
-            <el-menu-item index="3" @click.native="daishouhuoMenu">
+            <el-menu-item index="4" @click.native="daishouhuoMenu">
               <i class="iconfont-daishouhuo1"></i>
               <span slot="title" style="margin-left: 10px">待收货</span>
             </el-menu-item>
-            <el-menu-item index="4" @click.native="daipingjiaMenu">
+            <el-menu-item index="5" @click.native="daipingjiaMenu">
               <i class="iconfont-xiaoxi"></i>
               <span slot="title" style="margin-left: 10px">待评价</span>
             </el-menu-item>
-            <el-menu-item index="5" @click.native="tuikuanMenu">
+            <el-menu-item index="6" @click.native="tuikuanMenu">
               <i class="iconfont-shouhou1"></i>
               <span slot="title" style="margin-left: 10px">退款</span>
             </el-menu-item>
@@ -99,7 +103,9 @@
                         <div
                           style="margin-top: 15px"
                           v-if="
-                            book.return_status == -1 && allOrderReturn == true
+                            item.status >= 3 &&
+                            book.return_status == -1 &&
+                            allOrderReturn == true
                           "
                         >
                           <el-tooltip
@@ -120,28 +126,41 @@
                         <div
                           style="margin-top: 15px"
                           v-if="
-                            book.return_status == -1 && allOrderReturn == false
+                            item.status >= 3 &&
+                            book.return_status == -1 &&
+                            allOrderReturn == false
                           "
                         >
                           <el-button type="text" disabled size="mini"
                             >退款/退换货</el-button
                           >
                         </div>
+                        <div
+                          style="margin-top: 15px"
+                          v-if="book.return_status != -1"
+                        >
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="
+                              gotoService(book.book_id, book.return_status)
+                            "
+                            >退款详情</el-button
+                          >
+                        </div>
                         <div>
-                          <el-button
-                            type="text"
-                            size="mini"
+                          <div
+                            class="pay-name"
                             @click="gotoRemark(book.order_book_id)"
-                            v-if="item.status == 5&&book.remark_status == 0"
+                            v-if="item.status == 5 && book.remark_status == 0"
                             >评价
-                          </el-button>
-                          <el-button
-                            type="text"
-                            size="mini"
+                          </div>
+                          <div
+                            class="pay-name"
                             disabled
-                            v-if="item.status == 6&&book.remark_status == 1"
+                            v-if="item.status == 6 && book.remark_status == 1"
                             >已评价
-                          </el-button>
+                          </div>
                         </div>
                       </el-col>
                     </el-row>
@@ -150,6 +169,9 @@
                     <el-row style="margin-top: 30px">
                       <el-col :span="18">
                         <div style="margin-bottom: 5px">
+                          <div class="status-name" v-if="item.status == 1">
+                            已取消
+                          </div>
                           <div class="status-name" v-if="item.status == 2">
                             未付款
                           </div>
@@ -173,13 +195,21 @@
                       </el-col>
                       <el-col :span="6">
                         <div style="margin-bottom: 5px">
-                          <el-button
-                            type="text"
-                            size="mini"
+                          <div
+                            class="pay-name"
                             v-if="item.status == 2"
                             @click="allOrderPay(item.order_id, item.total)"
-                            >付款
-                          </el-button>
+                          >
+                            付款
+                          </div>
+                          <el-button
+                            v-if="item.status == 2"
+                            type="text"
+                            size="mini"
+                            style="margin: 0"
+                            @click="cancelOrder(item.order_id)"
+                            >取消订单</el-button
+                          >
                           <el-button
                             type="text"
                             size="mini"
@@ -233,7 +263,137 @@
         <el-col
           :span="20"
           style="margin-left: 10px"
-          v-if="orderNum == 2 && daifahuoTotal != 0"
+          v-if="orderNum == 2 && daifukuanTotal != 0"
+        >
+          <el-card class="header-card">
+            <el-row>
+              <el-col :span="10" :offset="1" class="table-header-item"
+                >商品信息</el-col
+              >
+              <el-col :span="2" class="table-header-item">单价</el-col>
+              <el-col :span="2" class="table-header-item">数量</el-col>
+              <el-col :span="2" class="table-header-item">实付款</el-col>
+              <el-col :span="3" class="table-header-item">商品操作</el-col>
+              <el-col :span="2" class="table-header-item">交易状态</el-col>
+              <el-col :span="2" class="table-header-item">操作</el-col>
+            </el-row>
+          </el-card>
+          <div v-for="(item, index) in this.daifukuanList" :key="index">
+            <el-card style="margin-bottom: 20px">
+              <el-row style="margin-bottom: 30px">
+                <el-col class="shop-name" :span="6">
+                  {{ item.create_time }}</el-col
+                >
+                <el-col class="shop-name" :span="10"
+                  ><i class="el-icon-goods"></i> {{ item.shop_name }}</el-col
+                >
+              </el-row>
+              <div class="books">
+                <el-row>
+                  <el-col :span="19">
+                    <el-row
+                      v-for="(book, idx) in item.books"
+                      :key="idx"
+                      style="margin: 10px"
+                    >
+                      <el-col :span="2">
+                        <img :src="book.book_image_b" style="height: 70px" />
+                      </el-col>
+                      <el-col :span="12">
+                        <div style="margin-right: 30px" class="book-name">
+                          {{ book.book_name }}
+                        </div>
+                        <div class="book-detail">作者：{{ book.author }}</div>
+                        <div class="book-detail">出版社：{{ book.press }}</div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 0">¥{{ book.price }}</div>
+                      </el-col>
+                      <el-col :span="2">
+                        <div style="margin: 25px 0">
+                          {{ book.number }}
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div style="margin: 25px 10px">
+                          ￥{{ book.book_total_price }}
+                        </div>
+                      </el-col>
+                      <el-col :span="1"> </el-col>
+                    </el-row>
+                  </el-col>
+                  <el-col :span="3" :offset="1">
+                    <el-row style="margin-top: 30px">
+                      <el-col :span="18">
+                        <div style="margin-bottom: 5px">
+                          <div class="status-name">未付款</div>
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="gotoOrderDetail(item.order_id)"
+                          >
+                            订单详情
+                          </el-button>
+                        </div>
+                      </el-col>
+                      <el-col :span="6">
+                        <div>
+                          <div
+                            class="pay-name"
+                            @click="allOrderPay(item.order_id, item.total)"
+                          >
+                            付款
+                          </div>
+                          <el-button
+                            v-if="item.status == 2"
+                            type="text"
+                            size="mini"
+                            style="margin: 0"
+                            @click="cancelOrder(item.order_id)"
+                            >取消订单</el-button
+                          >
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-card>
+          </div>
+          <div style="display: flex; justify-content: center">
+            <el-pagination
+              layout="prev, pager, next"
+              :current-page="daifukuanCurrent"
+              :page-size="5"
+              :page-count="daifukuanTotal"
+              @current-change="daifukuanChange"
+            >
+            </el-pagination>
+          </div>
+        </el-col>
+        <el-col
+          :span="20"
+          style="margin-left: 10px"
+          v-if="orderNum == 2 && daifukuanTotal == 0"
+        >
+          <el-row
+            ><el-col :offset="9"
+              ><img
+                src="../assets/empty_grey.png"
+                style="height: 220px; margin: 50px" /></el-col
+          ></el-row>
+          <el-row
+            ><el-col :offset="11"
+              ><p style="margin-left: 0px; color: grey">
+                还没有任何订单哦~
+              </p></el-col
+            ></el-row
+          >
+        </el-col>
+        <el-col
+          :span="20"
+          style="margin-left: 10px"
+          v-if="orderNum == 3 && daifahuoTotal != 0"
         >
           <el-card class="header-card">
             <el-row>
@@ -292,7 +452,11 @@
                       <el-col :span="1">
                         <div
                           style="margin-top: 15px"
-                          v-if="(book.refund_status = 1)"
+                          v-if="
+                            item.status >= 3 &&
+                            book.return_status == -1 &&
+                            daifahuoReturn == true
+                          "
                         >
                           <el-tooltip
                             content="确认收货七天之内可申请退款"
@@ -302,10 +466,37 @@
                             <el-button
                               type="text"
                               size="mini"
-                              @click="gotoRefund(book.order_book_id)"
+                              @click="
+                                gotoRefund(book.order_book_id, item.firm_time)
+                              "
                               >退款/退换货</el-button
                             >
                           </el-tooltip>
+                        </div>
+                        <div
+                          style="margin-top: 15px"
+                          v-if="
+                            item.status >= 3 &&
+                            book.return_status == -1 &&
+                            daifahuoReturn == false
+                          "
+                        >
+                          <el-button type="text" disabled size="mini"
+                            >退款/退换货</el-button
+                          >
+                        </div>
+                        <div
+                          style="margin-top: 15px"
+                          v-if="!book.return_status == -1"
+                        >
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="
+                              gotoService(books.book_id, books.return_status)
+                            "
+                            >退款详情</el-button
+                          >
                         </div>
                       </el-col>
                     </el-row>
@@ -351,7 +542,7 @@
         <el-col
           :span="20"
           style="margin-left: 10px"
-          v-if="orderNum == 2 && daifahuoTotal == 0"
+          v-if="orderNum == 3 && daifahuoTotal == 0"
         >
           <el-row
             ><el-col :offset="9"
@@ -370,7 +561,7 @@
         <el-col
           :span="20"
           style="margin-left: 10px"
-          v-if="orderNum == 3 && daifahuoTotal != 0"
+          v-if="orderNum == 4 && daishouhuoTotal != 0"
         >
           <el-card class="header-card">
             <el-row>
@@ -429,7 +620,11 @@
                       <el-col :span="1">
                         <div
                           style="margin-top: 15px"
-                          v-if="(book.refund_status = 1)"
+                          v-if="
+                            item.status >= 3 &&
+                            book.return_status == -1 &&
+                            daishouhuoReturn == true
+                          "
                         >
                           <el-tooltip
                             content="确认收货七天之内可申请退款"
@@ -439,17 +634,36 @@
                             <el-button
                               type="text"
                               size="mini"
-                              @click="gotoRefund(book.order_book_id)"
+                              @click="
+                                gotoRefund(book.order_book_id, item.firm_time)
+                              "
                               >退款/退换货</el-button
                             >
                           </el-tooltip>
                         </div>
                         <div
                           style="margin-top: 15px"
-                          v-if="(book.refund_status = 0)"
+                          v-if="
+                            item.status >= 3 &&
+                            book.return_status == -1 &&
+                            daishouhuoReturn == false
+                          "
                         >
                           <el-button type="text" disabled size="mini"
                             >退款/退换货</el-button
+                          >
+                        </div>
+                        <div
+                          style="margin-top: 15px"
+                          v-if="!book.return_status == -1"
+                        >
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="
+                              gotoService(books.book_id, books.return_status)
+                            "
+                            >退款详情</el-button
                           >
                         </div>
                       </el-col>
@@ -471,7 +685,10 @@
                       </el-col>
                       <el-col :span="6">
                         <div style="margin-bottom: 5px">
-                          <el-button type="text" size="mini"
+                          <el-button
+                            type="text"
+                            size="mini"
+                            @click="confirmReceive(item.order_id)"
                             >确认收货
                           </el-button>
                         </div>
@@ -496,7 +713,7 @@
         <el-col
           :span="20"
           style="margin-left: 10px"
-          v-if="orderNum == 3 && daishouhuoTotal == 0"
+          v-if="orderNum == 4 && daishouhuoTotal == 0"
         >
           <el-row
             ><el-col :offset="9"
@@ -515,7 +732,7 @@
         <el-col
           :span="20"
           style="margin-left: 10px"
-          v-if="orderNum == 4 && daipingjiaTotal != 0"
+          v-if="orderNum == 5 && daipingjiaTotal != 0"
         >
           <el-card class="header-card">
             <el-row>
@@ -574,7 +791,11 @@
                       <el-col :span="1">
                         <div
                           style="margin-top: 15px"
-                          v-if="(book.refund_status = 1)"
+                          v-if="
+                            item.status >= 3 &&
+                            book.return_status == -1 &&
+                            daipingjiaReturn == true
+                          "
                         >
                           <el-tooltip
                             content="确认收货七天之内可申请退款"
@@ -584,34 +805,51 @@
                             <el-button
                               type="text"
                               size="mini"
-                              @click="gotoRefund(book.order_book_id)"
+                              @click="
+                                gotoRefund(book.order_book_id, item.firm_time)
+                              "
                               >退款/退换货</el-button
                             >
                           </el-tooltip>
                         </div>
                         <div
                           style="margin-top: 15px"
-                          v-if="(book.refund_status = 0)"
+                          v-if="
+                            item.status >= 3 &&
+                            book.return_status == -1 &&
+                            daipingjiaReturn == false
+                          "
                         >
                           <el-button type="text" disabled size="mini"
                             >退款/退换货</el-button
                           >
                         </div>
-                        <div>
+                        <div
+                          style="margin-top: 15px"
+                          v-if="!book.return_status == -1"
+                        >
                           <el-button
                             type="text"
                             size="mini"
+                            @click="
+                              gotoService(books.book_id, books.return_status)
+                            "
+                            >退款详情</el-button
+                          >
+                        </div>
+                        <div>
+                          <div
+                            class="pay-name"
                             @click="gotoRemark(book.order_book_id)"
                             v-if="book.remark_status == 0"
                             >评价
-                          </el-button>
-                          <el-button
-                            type="text"
-                            size="mini"
+                          </div>
+                          <div
+                            class="pay-name"
                             disabled
                             v-if="book.remark_status == 1"
                             >已评价
-                          </el-button>
+                          </div>
                         </div>
                       </el-col>
                     </el-row>
@@ -650,7 +888,7 @@
         <el-col
           :span="20"
           style="margin-left: 10px"
-          v-if="orderNum == 4 && daipingjiaTotal == 0"
+          v-if="orderNum == 5 && daipingjiaTotal == 0"
         >
           <el-row
             ><el-col :offset="9"
@@ -666,7 +904,7 @@
             ></el-row
           >
         </el-col>
-        <el-col :span="20" style="margin-left: 10px" v-if="orderNum == 5">
+        <el-col :span="20" style="margin-left: 10px" v-if="orderNum == 6">
           <el-card class="header-card">
             <el-row>
               <el-col :span="10" :offset="1" class="table-header-item"
@@ -734,7 +972,9 @@
                             <el-button
                               type="text"
                               size="mini"
-                              @click="gotoRefund(book.order_book_id)"
+                              @click="
+                                gotoRefund(book.order_book_id, item.firm_time)
+                              "
                               >退款/退换货</el-button
                             >
                           </el-tooltip>
@@ -785,9 +1025,10 @@ export default {
     return {
       isLoading: false,
       orderNum: this.$route.params.orderId,
+      serviceId: "",
       allOrderCurrent: 1,
       allOrderTotal: 1,
-      allOrderReturn:true,
+      allOrderReturn: true,
       allOrderList: [
         {
           order_id: "",
@@ -811,8 +1052,33 @@ export default {
           ],
         },
       ],
+      daifukuanCurrent: 1,
+      daifukuanTotal: 1,
+      daifukuanList: [
+        {
+          order_id: "",
+          shop_name: "",
+          create_time: "",
+          status: "",
+          books: [
+            {
+              remark_status: "",
+              return_status: "",
+              order_book_id: "",
+              book_image_b: "",
+              book_name: "",
+              author: "",
+              press: "",
+              price: "",
+              number: "",
+              book_total_price: "",
+            },
+          ],
+        },
+      ],
       daifahuoCurrent: 1,
       daifahuoTotal: 1,
+      daifahuoReturn: true,
       daifahuoList: [
         {
           order_id: "",
@@ -837,6 +1103,7 @@ export default {
       ],
       daishouhuoCurrent: 1,
       daishouhuoTotal: 1,
+      daishouhuoReturn: true,
       daishouhuoList: [
         {
           order_id: "",
@@ -861,6 +1128,7 @@ export default {
       ],
       daipingjiaCurrent: 1,
       daipingjiaTotal: 1,
+      daipingjiaReturn: true,
       daipingjiaList: [
         {
           order_id: "",
@@ -944,20 +1212,37 @@ export default {
     gotoRemark(e) {
       this.$router.push("/remark/" + e);
     },
+    gotoService(id, status) {
+      if (status == 1 || status == 2 || status == 3) {
+        this.serviceId = 1;
+        this.$router.push(`/service/${id}/${this.serviceId}`);
+      }
+      if (status == 4 || status == 5 || status == 6) {
+        this.serviceId = 2;
+        this.$router.push(`/service/${id}/${this.serviceId}`);
+      }
+      if (status == 7 || status == 8 || status == 9) {
+        this.serviceId = 3;
+        this.$router.push(`/service/${id}/${this.serviceId}`);
+      }
+    },
     allOrderMenu() {
       this.orderNum = "1";
     },
-    daifahuoMenu() {
+    daifukuanMenu() {
       this.orderNum = "2";
     },
-    daishouhuoMenu() {
+    daifahuoMenu() {
       this.orderNum = "3";
     },
-    daipingjiaMenu() {
+    daishouhuoMenu() {
       this.orderNum = "4";
     },
-    tuikuanMenu() {
+    daipingjiaMenu() {
       this.orderNum = "5";
+    },
+    tuikuanMenu() {
+      this.orderNum = "6";
     },
     //全部订单
     //分页
@@ -975,7 +1260,7 @@ export default {
         params: {
           page_num: this.allOrderCurrent,
           order_num: 5,
-          status: 1,
+          status: 0,
           identity: 0,
         },
       })
@@ -1000,7 +1285,7 @@ export default {
         url: this.$store.state.yuming + "/getOrderNum",
         method: "GET",
         params: {
-          status: 1,
+          status: 0,
           identity: 0,
         },
       })
@@ -1010,6 +1295,63 @@ export default {
             this.allOrderTotal = Math.ceil(data / 5);
           } else {
             this.$message.error("获取全部订单数目失败");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //待付款订单
+    //分页
+    async daifukuanChange(value) {
+      this.daifukuanCurrent = value;
+      this.isLoading = true;
+      await this.getDaifukuan();
+      this.isLoading = false;
+    },
+    //分页获取订单信息
+    getDaifukuan() {
+      axios({
+        url: this.$store.state.yuming + "/getOrder",
+        method: "GET",
+        params: {
+          page_num: this.daifukuanCurrent,
+          order_num: 5,
+          status: 2,
+          identity: 0,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.daifukuanList = data;
+          } else {
+            this.$message.error("获取待付款订单信息失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //获取订单数目
+    getDaifukuanNum() {
+      axios({
+        url: this.$store.state.yuming + "/getOrderNum",
+        method: "GET",
+        params: {
+          status: 2,
+          identity: 0,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.daifukuanTotal = Math.ceil(data / 5);
+          } else {
+            this.$message.error("获取待付款订单数目失败");
           }
         })
         .catch(() => {
@@ -1187,6 +1529,7 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
+    //付款
     allOrderPay(order_id, total) {
       //this.$router.push(`/pay/${order_id}/${total}`);
       axios({
@@ -1199,15 +1542,94 @@ export default {
           body: "",
         },
       }).then((res) => {
-        document.querySelector("body").innerHTML = res.data; //查找到当前页面的body，将后台返回的form替换掉他的内容
-        document.forms[0].submit(); //执行submit表单提交，让页面重定向，跳转到支付宝页面
+        //document.querySelector("body").innerHTML = res.data; //查找到当前页面的body，将后台返回的form替换掉他的内容
+        //document.forms[0].setAttribute('target', '_blank')
+        //document.forms[0].submit(); //执行submit表单提交，让页面重定向，跳转到支付宝页面
+        // 添加之前先删除一下，如果单页面，页面不刷新，添加进去的内容会一直保留在页面中，二次调用form表单会出错
+        let divForm = document.getElementsByTagName("divform");
+        if (divForm.length) {
+          document.body.removeChild(divForm[0]);
+        }
+        const div = document.createElement("divform");
+        div.innerHTML = res.data; // data就是接口返回的form 表单字符串
+        document.body.appendChild(div);
+        document.forms[0].setAttribute("target", "_blank"); // 新开窗口跳转
+        document.forms[0].submit();
+        this.reloaded();
       });
+    },
+    //重新加载页面
+    async reloaded() {
+      this.isLoading = true;
+      await this.getAllOrders();
+      await this.getAllOrdersNum();
+      await this.getDaifukuan();
+      await this.getDaifukuanNum();
+      await this.getDaifahuo();
+      await this.getDaifahuoNum();
+      await this.getDaishouhuo();
+      await this.getDaishouhuoNum();
+      await this.getDaipingjia();
+      await this.getDaipingjiaNum();
+      this.isLoading = false;
+    },
+    //取消订单
+    cancelOrder(id) {
+      axios({
+        url: this.$store.state.yuming + "/order/cancel",
+        method: "POST",
+        params: {
+          order_id: id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.$message({
+              message: "取消订单成功",
+              type: "success",
+            });
+            this.reloaded();
+          } else {
+            this.$message.error("取消失败，请重试");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //确认收货
+    confirmReceive(id) {
+      axios({
+        url: this.$store.state.yuming + "/order/firm",
+        method: "POST",
+        params: {
+          order_id: id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.$message({
+              message: "确认订单成功",
+              type: "success",
+            });
+            this.reloaded();
+          } else {
+            this.$message.error("确认失败，请重试");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
   },
   async created() {
     this.isLoading = true;
     await this.getAllOrders();
     await this.getAllOrdersNum();
+    await this.getDaifukuan();
+    await this.getDaifukuanNum();
     await this.getDaifahuo();
     await this.getDaifahuoNum();
     await this.getDaishouhuo();
@@ -1263,5 +1685,9 @@ export default {
   display: flex;
   align-items: center;
   font-size: 15px;
+}
+.pay-name {
+  font-size: 10px;
+  color: rgb(64,158,255);
 }
 </style>
