@@ -441,10 +441,10 @@
           <img src="../assets/avatar.jpg" height="200px"/>
         </el-row>
         <el-row class="orderFinish">
-          <p>恭喜您完成订单！</p>
+          <p>提交订单成功</p>
         </el-row>
         <el-row class="orderFinish">
-          <p>商家正在尽快安排发货...</p>
+          <p>请您尽快完成付款...</p>
         </el-row>
         <el-row class="orderFinish">
           <el-button size="medium" :round="true" @click="gotoOrder">查看订单</el-button>
@@ -1079,7 +1079,6 @@ export default {
     },
     //支付
     alipay() {
-      /*
       axios({
         url: this.$store.state.yuming+"/alipay",
         method: "GET",
@@ -1101,7 +1100,7 @@ export default {
           document.forms[0].setAttribute("target", "_blank"); // 新开窗口跳转
           document.forms[0].submit();
         })
-        */
+      
       this.page = 2;
     },
   },
