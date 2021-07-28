@@ -10,7 +10,7 @@
       <div
         style="display: flex; justify-content: flex-end; align-items: center"
       >
-        <el-card shadow="always">
+        <el-card shadow="always" class="loginCard">
           <div>
             <h2 class="login-title">教我编程图书商城</h2>
             <el-form :model="form" status-icon :rules="rules" ref="form">
@@ -21,6 +21,7 @@
                   </el-col>
                   <el-col :span="10">
                     <el-input
+                      class="Myinput"
                       v-model="form.username"
                       placeholder="邮箱"
                       clearable
@@ -36,6 +37,7 @@
                   </el-col>
                   <el-col :span="10">
                     <el-input
+                     class="Myinput"
                       v-model="form.password"
                       placeholder="密码"
                       type="password"
@@ -189,7 +191,7 @@ export default {
   justify-content: center;
   margin: 20px;
 }
-.el-input {
+.Myinput {
   width: 250px;
   margin: 10px 20px;
 }
@@ -200,10 +202,10 @@ export default {
   width: 100%;
   margin-left: 10%;
 }
-.el-card {
+.loginCard {
   margin: 5% 7%;
   width: 400px;
-  height: 400px;
+  height: 350px;
 }
 .submit {
   display: flex;

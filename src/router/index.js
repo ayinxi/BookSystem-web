@@ -168,7 +168,6 @@ const routes = [
     component: () => import('../views/searchBook.vue')
   },
 ]
-
 const router = new VueRouter({
   routes
 })

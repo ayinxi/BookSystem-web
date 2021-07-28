@@ -99,8 +99,7 @@
                         <div
                           style="margin-top: 15px"
                           v-if="
-                            book.return_status == -1 &&
-                            allOrderReturn == true
+                            book.return_status == -1 && allOrderReturn == true
                           "
                         >
                           <el-tooltip
@@ -121,8 +120,7 @@
                         <div
                           style="margin-top: 15px"
                           v-if="
-                            book.return_status == -1 &&
-                            allOrderReturn == false
+                            book.return_status == -1 && allOrderReturn == false
                           "
                         >
                           <el-button type="text" disabled size="mini"
@@ -179,6 +177,7 @@
                             type="text"
                             size="mini"
                             v-if="item.status == 2"
+                            @click="allOrderPay(item.order_id, item.total)"
                             >付款
                           </el-button>
                           <el-button
@@ -795,6 +794,7 @@ export default {
           shop_name: "",
           create_time: "",
           status: "",
+          total: "",
           books: [
             {
               remark_status: "",
@@ -907,11 +907,7 @@ export default {
       ],
     };
   },
-  computed: {
-    allOrderRemark() {
-      var nowDate = Date.now();
-    },
-  },
+  computed: {},
   methods: {
     //返回个人主页
     toUser() {
@@ -931,14 +927,14 @@ export default {
         const { code, data } = res.data;
         if (code == "200") {
           if (data == 0) {
-            this.allOrderReturn=true;
+            this.allOrderReturn = true;
             this.$router.push("/refund/" + id);
           } else {
             this.$message({
               message: "确认收货七天之后不可退款",
               type: "warning",
             });
-            this.allOrderReturn=false;
+            this.allOrderReturn = false;
           }
         } else {
           this.$message.error("出现错误，请重试");
@@ -1190,6 +1186,22 @@ export default {
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
         });
+    },
+    allOrderPay(order_id, total) {
+      //this.$router.push(`/pay/${order_id}/${total}`);
+      axios({
+        url: this.$store.state.yuming + "/alipay",
+        method: "GET",
+        params: {
+          order_id: order_id,
+          subject: "图书",
+          total_amount: total,
+          body: "",
+        },
+      }).then((res) => {
+        document.querySelector("body").innerHTML = res.data; //查找到当前页面的body，将后台返回的form替换掉他的内容
+        document.forms[0].submit(); //执行submit表单提交，让页面重定向，跳转到支付宝页面
+      });
     },
   },
   async created() {

@@ -10,7 +10,7 @@
       <div
         style="display: flex; justify-content: flex-end; align-items: center"
       >
-        <el-card shadow="always">
+        <el-card shadow="always" class="Mycard">
           <el-form
             ref="userInfo"
             :rules="rules"
@@ -28,24 +28,25 @@
               <h2 class="login-title">新用户注册</h2>
             </el-form-item>
             <el-form-item label="昵称" prop="name">
-              <el-input v-model="userInfo.name"> </el-input>
+              <el-input class="Myinput" v-model="userInfo.name"> </el-input>
             </el-form-item>
             <el-form-item label="绑定邮箱" prop="username">
               <el-input
+              class="Myinput"
                 v-model="userInfo.username"
                 placeholder="邮箱一旦绑定不得更改"
               >
               </el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-              <el-input v-model="userInfo.password" type="password"> </el-input>
+              <el-input class="Myinput" v-model="userInfo.password" type="password"> </el-input>
             </el-form-item>
             <el-form-item label="确认密码" prop="checkpass">
-              <el-input v-model="userInfo.checkpass" type="password">
+              <el-input class="Myinput" v-model="userInfo.checkpass" type="password">
               </el-input>
             </el-form-item>
             <el-form-item label="验证码" prop="activationCode">
-              <el-input v-model="userInfo.activationCode" style="width: 140px">
+              <el-input v-model="userInfo.activationCode" class="otherInput">
               </el-input>
               <el-button @click="countDown" :disabled="disabled">{{
                 content
@@ -61,7 +62,7 @@
                   margin-left: 20px;
                   margin-right: 10px;
                 "
-                >注册</el-button
+                >注册并登录</el-button
               >
             </el-form-item>
           </el-form>
@@ -128,7 +129,7 @@ export default {
   computed: {
     content() {
       return this.totalCount !== 0
-        ? `${this.totalCount}秒再次获取`
+        ? `${this.totalCount}秒后获取`
         : "获取验证码";
     },
   },
@@ -150,7 +151,7 @@ export default {
     //发送验证码
     sendActivationCode() {
       axios({
-        url: this.$store.state.yuming+"/sendEmail",
+        url: this.$store.state.yuming + "/sendEmail",
         method: "POST",
         params: {
           email: this.userInfo.username,
@@ -180,7 +181,7 @@ export default {
     },
     onSign() {
       axios({
-        url: this.$store.state.yuming+"/registerUser",
+        url: this.$store.state.yuming + "/registerUser",
         method: "POST",
         params: {
           email: this.userInfo.username,
@@ -198,7 +199,7 @@ export default {
               message: "注册成功",
               type: "success",
             });
-            this.$router.push("/#reloaded");
+            this.$router.push("/login");
           } else {
             this.$message.error("注册失败,请稍后再试");
           }
@@ -240,8 +241,12 @@ export default {
   justify-content: center;
   margin: 20px;
 }
-.el-input {
+.Myinput {
   width: 250px;
+  margin: 10px 20px;
+}
+.otherInput {
+  width: 140px;
   margin: 10px 20px;
 }
 .inputContent {
@@ -251,7 +256,7 @@ export default {
   width: 100%;
   margin-left: 10%;
 }
-.el-card {
+.Mycard {
   margin: 1% 3%;
   width: 500px;
   height: 500px;
@@ -263,8 +268,8 @@ export default {
 }
 .el-form-item__error {
   top: 80%;
-  right: 25% !important;
-  left: unset;
+  right: unset;
+  left:10% !important ;
 }
 .el-form-item {
   margin-bottom: 5px;

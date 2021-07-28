@@ -99,6 +99,7 @@
                   justify-content: space-around;
                   align-items: center;
                   flex-wrap: wrap;
+                  margin-left: 5%;
                 "
               >
                 <el-row
@@ -108,71 +109,98 @@
                     justify-content: space-between;
                   "
                 >
-                  <el-col :span="4">
-                    <i
-                      class="iconfont-dingdan"
-                      style="font-size: 50px; margin: 50px"
-                      @click="gotoAllOrder"
-                    />
-                    <el-button
-                      type="text"
-                      style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoAllOrder"
-                      >全部订单</el-button
-                    >
+                  <el-col :span="8">
+                    <div class="noCard">
+                      <i
+                        class="iconfont-dingdanlan-copy"
+                        style="font-size: 50px; margin: 50px"
+                        @click="gotoAllOrder"
+                      />
+                      <el-button
+                       type="text"
+                        style="font-size: 15px; margin: 20px 50px"
+                        @click="gotoAllOrder"
+                        >全部订单</el-button
+                      >
+                    </div>
                   </el-col>
-                  <el-col :span="4">
-                    <i
-                      class="iconfont-daifahuo"
-                      style="font-size: 50px; margin: 50px"
-                      @click="gotoDaifahuo"
-                    />
-                    <el-button
-                      type="text"
-                      style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaifahuo"
-                      >待发货</el-button
-                    >
+                  <el-col :span="8">
+                    <el-card class="cccard" shadow="never">
+                      <i
+                        class="iconfont-daifukuan"
+                        style="font-size: 50px; margin: 50px"
+                        @click="gotoDaifahuo"
+                      />
+                      <el-button
+                        type="text"
+                        style="font-size: 15px; margin: 20px 50px"
+                        @click="gotoDaifahuo"
+                        >待付款</el-button
+                      >
+                    </el-card>
                   </el-col>
-                  <el-col :span="4">
-                    <i
-                      class="iconfont-daishouhuo"
-                      style="font-size: 50px; margin: 50px"
-                      @click="gotoDaishouhuo"
-                    />
-                    <el-button
-                      type="text"
-                      style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaishouhuo"
-                      >待收货</el-button
-                    >
+                  <el-col :span="8">
+                   
+                      <i
+                        class="iconfont-daishouhuo"
+                        style="font-size: 50px; margin: 50px"
+                        @click="gotoDaishouhuo"
+                      />
+                      <el-button
+                        type="text"
+                        style="font-size: 15px; margin: 20px 50px"
+                        @click="gotoDaishouhuoW"
+                        >待收货</el-button
+                      >
+                  
                   </el-col>
-                  <el-col :span="4">
-                    <i
-                      class="iconfont-fankui"
-                      style="font-size: 50px; margin: 50px"
-                      @click="gotoDaipingjia"
-                    />
-                    <el-button
-                      type="text"
-                      style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoDaipingjia"
-                      >待评价</el-button
-                    >
+                </el-row>
+                <el-row>
+                  <el-col :span="8">
+                    <el-card class="cccard">
+                      <i
+                        class="iconfont-daishouhuoW"
+                        style="font-size: 50px; margin: 50px"
+                        @click="gotoDaishouhuo"
+                      />
+                      <el-button
+                        type="text"
+                        style="font-size: 15px; margin: 20px 50px"
+                        @click="gotoDaishouhuoW"
+                        >待收货</el-button
+                      >
+                    </el-card>
                   </el-col>
-                  <el-col :span="4">
-                    <i
-                      class="iconfont-shouhou"
-                      style="font-size: 50px; margin: 50px"
-                      @click="gotoTuikuan"
-                    />
-                    <el-button
-                      type="text"
-                      style="font-size: 15px; margin: 20px 50px"
-                      @click="gotoTuikuan"
-                    >
-                      退款</el-button
-                    >
+                  <el-col :span="8">
+                    <div class="noCard">
+                      <i
+                        class="iconfont-fankui"
+                        style="font-size: 50px; margin: 50px"
+                        @click="gotoDaipingjia"
+                      />
+                      <el-button
+                        type="text"
+                        style="font-size: 15px; margin: 20px 50px"
+                        @click="gotoDaipingjia"
+                        >待评价</el-button
+                      >
+                    </div>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-card class="cccard">
+                      <i
+                        class="iconfont-shouhou"
+                        style="font-size: 50px; margin: 50px"
+                        @click="gotoTuikuan"
+                      />
+                      <el-button
+                        type="text"
+                        style="font-size: 15px; margin: 20px 50px"
+                        @click="gotoTuikuan"
+                      >
+                        退款</el-button
+                      >
+                    </el-card>
                   </el-col>
                 </el-row>
               </div>
@@ -490,6 +518,7 @@
           name="fourth"
         >
           <el-table
+            v-if="hasApplyHistory == true"
             :data="applyHistory"
             style="width: 100%"
             :default-sort="{ prop: 'create_time', order: 'descending' }"
@@ -590,6 +619,19 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-row>
+            <el-col :offset="9">
+              <img
+                src="../assets/empty_grey.png"
+                style="height: 220px; margin: 50px"
+              />
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :offset="11">
+              <p style="margin-left: 0px; color: grey">还没有申请过店铺哦~</p>
+            </el-col>
+          </el-row>
         </el-tab-pane>
         <el-tab-pane v-else label="我的店铺" name="fifth">
           <div
@@ -669,6 +711,7 @@ export default {
   },
   data() {
     return {
+      hasApplyHistory: false,
       imgUrl: require("../assets/avatar.jpg"),
       orderId: "",
       isLoading: false,
@@ -805,7 +848,7 @@ export default {
     },
     //跳转全部页面
     gotoAllOrder() {
-      this.id =1;
+      this.id = 1;
       this.$router.push("/userOrder/" + this.id);
     },
     //跳转待发货
@@ -1017,6 +1060,9 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.applyHistory = data;
+            this.hasApplyHistory = true;
+          } else if (code == "3") {
+            this.hasApplyHistory = false;
           } else {
             this.$message.error("获取店铺申请历史信息失败");
           }
@@ -1224,5 +1270,16 @@ export default {
 }
 .item {
   margin-bottom: 18px;
+}
+.cccard {
+  margin: 10px 20px;
+  width: 200px;
+  height: 150px;
+  background-color: rgb(61,103,138);
+}
+.noCard {
+  margin: 20px 20px;
+  width: 200px;
+  height: 150px;
 }
 </style>
