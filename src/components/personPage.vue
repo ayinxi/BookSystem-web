@@ -110,10 +110,14 @@
                   "
                 >
                   <el-col :span="8">
-                    <el-card shadow="never" class="noCard" @click.native="gotoAllOrder">
+                    <el-card
+                      shadow="never"
+                      class="noCard"
+                      @click.native="gotoAllOrder"
+                    >
                       <i
                         class="iconfont-dingdanlan-copy"
-                        style="font-size: 50px; margin: 50px"                     
+                        style="font-size: 50px; margin: 50px"
                       />
                       <el-button
                         type="text"
@@ -127,10 +131,14 @@
                     </el-card>
                   </el-col>
                   <el-col :span="8">
-                    <el-card class="cccard" shadow="never"  @click.native="gotoDaifukuan">
+                    <el-card
+                      class="cccard"
+                      shadow="never"
+                      @click.native="gotoDaifukuan"
+                    >
                       <i
                         class="iconfont-daifukuan"
-                        style="font-size: 50px; margin: 50px"                     
+                        style="font-size: 50px; margin: 50px"
                       />
                       <el-button
                         type="text"
@@ -144,7 +152,11 @@
                     </el-card>
                   </el-col>
                   <el-col :span="8">
-                    <el-card shadow="never" class="noCard" @click.native="gotoDaifahuo">
+                    <el-card
+                      shadow="never"
+                      class="noCard"
+                      @click.native="gotoDaifahuo"
+                    >
                       <i
                         class="iconfont-daifahuoL"
                         style="font-size: 50px; margin: 50px"
@@ -163,7 +175,11 @@
                 </el-row>
                 <el-row>
                   <el-col :span="8">
-                    <el-card class="cccard" shadow="never" @click.native="gotoDaishouhuo">
+                    <el-card
+                      class="cccard"
+                      shadow="never"
+                      @click.native="gotoDaishouhuo"
+                    >
                       <i
                         class="iconfont-daishouhuoW"
                         style="font-size: 50px; margin: 50px"
@@ -180,7 +196,11 @@
                     </el-card>
                   </el-col>
                   <el-col :span="8">
-                    <el-card shadow="never" class="noCard" @click.native="gotoDaipingjia">
+                    <el-card
+                      shadow="never"
+                      class="noCard"
+                      @click.native="gotoDaipingjia"
+                    >
                       <i
                         class="iconfont-fankuiL"
                         style="font-size: 50px; margin: 50px"
@@ -197,7 +217,11 @@
                     </el-card>
                   </el-col>
                   <el-col :span="8">
-                    <el-card class="cccard" shadow="never" @click.native="gotoTuikuan">
+                    <el-card
+                      class="cccard"
+                      shadow="never"
+                      @click.native="gotoTuikuan"
+                    >
                       <i
                         class="iconfont-shouhouW"
                         style="font-size: 50px; margin: 50px"
@@ -632,19 +656,21 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-row>
-            <el-col :offset="9">
-              <img
-                src="../assets/empty_grey.png"
-                style="height: 220px; margin: 50px"
-              />
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :offset="11">
-              <p style="margin-left: 0px; color: grey">还没有申请过店铺哦~</p>
-            </el-col>
-          </el-row>
+          <div v-if="hasApplyHistory==false">
+            <el-row>
+              <el-col :offset="9">
+                <img
+                  src="../assets/empty_grey.png"
+                  style="height: 220px; margin: 50px"
+                />
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :offset="11">
+                <p style="margin-left: 0px; color: grey">还没有申请过店铺哦~</p>
+              </el-col>
+            </el-row>
+          </div>
         </el-tab-pane>
         <el-tab-pane v-else label="我的店铺" name="fifth">
           <div

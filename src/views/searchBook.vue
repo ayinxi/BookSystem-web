@@ -575,8 +575,7 @@ export default {
   background-color: rgb(231, 241, 252) !important;
 }
 .btn_active {
-  background: #409eff;
-  color: #fff;
+  color: black;
 }
 .card:hover{
   box-shadow: 0 0 2px 6px #F3F3F3;
