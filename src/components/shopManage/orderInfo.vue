@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="用户名称：" prop="name">
-              <span>{{ tableData.name }}</span>
+              <span>{{ this.tableData.name }}</span>
             </el-form-item>
           </el-col>
         </el-row>

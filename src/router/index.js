@@ -34,7 +34,7 @@ const routes = [
     component: () => import('../views/index.vue')
   },
   {
-    path: '/bookInfo',
+    path: '/bookInfo/:id',
     name: 'bookInfo',
     component: () => import('../views/bookInfo.vue')
   },
@@ -116,7 +116,7 @@ const routes = [
     component: () => import('../components/shopManage/refundM.vue')
   },
   {
-    path: '/refundInfo',
+    path: '/refundInfo/:id',
     name: 'refundInfo',
     meta: { shopAuth: true },//登录鉴权
     component: () => import('../components/shopManage/refundInfo.vue')

@@ -311,7 +311,7 @@ export default {
               const { code } = res.data;
               if (code == "200") {
                 this.dataLoading = true;
-                this.getOrder();
+                this.filterStatus(this.flag);
                 this.dataLoading = false;
                 this.$message.success("确认订单成功");
               } else {
@@ -348,7 +348,7 @@ export default {
               const { code } = res.data;
               if (code == "200") {
                 this.dataLoading = true;
-                this.getOrder();
+                this.filterStatus(this.flag);
                 this.dataLoading = false;
                 this.$message.success("取消订单成功");
               } else {
@@ -365,13 +365,6 @@ export default {
             message: "已放弃取消订单",
           });
         });
-    },
-    filterDate(value, row, column) {
-      const property = column["property"];
-      return row[property] === value;
-    },
-    filterTotalprice(value, row) {
-      return row.totalprice <= value && row.totalprice > value - 50;
     },
     //不同订单状态筛选
     goToFirst(value) {
@@ -448,7 +441,7 @@ export default {
               const { code } = res.data;
               if (code == "200") {
                 this.dataLoading = true;
-                this.getOrder();
+                this.filterStatus(this.flag);
                 this.dataLoading = false;
                 this.$message.success("批量确认订单成功");
                 this.Order_Ids = [];
@@ -493,7 +486,7 @@ export default {
               const { code } = res.data;
               if (code == "200") {
                 this.dataLoading = true;
-                this.getOrder();
+                this.filterStatus(this.flag);
                 this.dataLoading = false;
                 this.$message.success("批量取消订单成功");
                 this.Order_Ids = [];

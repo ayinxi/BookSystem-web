@@ -154,8 +154,6 @@
                     action="http://47.94.131.208:8888"
                     :show-file-list="false"
                     :on-change="changePhotoFile"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload"
                     :auto-upload="false"
                     :name="this.lists1.bookImg"
                   >
@@ -295,8 +293,6 @@
                     action="http://47.94.131.208:8888"
                     :show-file-list="false"
                     :on-change="changePhotoFile"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload"
                     :auto-upload="false"
                     :name="this.lists1.bookImg"
                   >
@@ -997,32 +993,31 @@ export default {
       }
       this.$refs.myCropper.close();
     },
-    //头像上传成功之后的方法,进行回调
-    handleAvatarSuccess(res) {
-      if (res.code === 0) {
-        this.lists1.bookImg = res.img;
-        // this.handleCrop(file);
-      } else {
-        this.$message.error("上传出错");
-      }
+    // 提取文件后缀名
+    getSuffix(str) {
+      const fileExtension = str.substring(str.lastIndexOf(".") + 1);
+      return fileExtension;
     },
     //上传图片时会被调用
     changePhotoFile(file) {
-      this.handleCrop(file);
-    },
-    //头像上传之前的方法
-    beforeAvatarUpload(file) {
-      const isJPG =
-        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      let type = this.getSuffix(file.name);
       const isLt6M = file.size / 1024 / 1024 < 6;
-
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
+      if (
+        type == "JPG" ||
+        type == "JPEG" ||
+        type == "PNG" ||
+        type == "jpg" ||
+        type == "png" ||
+        type == "jpge"
+      ) {
+        if (!isLt6M) {
+          this.$message.error("上传头像图片大小不能超过 6MB!");
+        } else {
+          this.handleCrop(file);
+        }
+      } else {
+        this.$message.error("上传头像图片只能是 JPG、JPEG或PNG 格式!");
       }
-      if (!isLt6M) {
-        this.$message.error("上传头像图片大小不能超过 6MB!");
-      }
-      return isJPG && isLt6M;
     },
     //获取店铺信息
     getShopInfo() {

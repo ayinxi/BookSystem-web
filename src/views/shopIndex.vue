@@ -383,7 +383,7 @@ export default {
     },
     //加入图书详情页
     goToBookInfo(id) {
-      this.$router.push({ path: "/bookInfo", query: { book_id: id } });
+      this.$router.push(`/bookInfo/${id}`);
     },
     //进行搜索
     goToSearch() {

@@ -104,22 +104,25 @@
             </el-row>
             <el-menu>
               <div v-for="item in categoryList" :key="item.main_id">
+                <div style="background-color: #fbfbfb;">
                 <el-menu-item
                   style="
                     color: rgb(250, 128, 114);
                     font-weight: 1000;
                     font-size: 20px;
+                    border-left:solid 1px #e6e6e6;
                   "
                   :index="item.main_id"
                   @click.native="getOne(item.main_id)"
                   >{{ item.main_name }}
                 </el-menu-item>
+                </div>
                 <div
                   v-for="littleitem in item.second_category"
                   :key="littleitem.second_id"
                 >
                   <el-menu-item
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
+                    style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;"
                     :index="littleitem.second_id"
                     @click.native="getTwo(littleitem.second_id)"
                     >{{ littleitem.second_name }}
@@ -131,6 +134,7 @@
               class="el-menu-vertical-demo"
               :default-active="activeIndex2"
             >
+            <div style="background-color: #fbfbfb;">
               <el-menu-item>
                 <span
                   slot="title"
@@ -138,32 +142,34 @@
                     color: rgb(250, 128, 114);
                     font-weight: 1000;
                     font-size: 20px;
+                    border-left:solid 1px #e6e6e6;
                   "
                   >按出版时间分</span
                 >
               </el-menu-item>
+            </div>
               <el-menu-item
                 index="2021"
                 @click.native="getThree('2021')"
-                style="color: rgb(233, 150, 122); font-weight: 1000"
+                style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;"
                 >2021年出版</el-menu-item
               >
               <el-menu-item
                 index="2020"
                 @click.native="getThree('2020')"
-                style="color: rgb(233, 150, 122); font-weight: 1000"
+                style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;"
                 >2020年出版</el-menu-item
               >
               <el-menu-item
                 index="2019"
                 @click.native="getThree('2019')"
-                style="color: rgb(233, 150, 122); font-weight: 1000"
+                style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;"
                 >2019年出版</el-menu-item
               >
               <el-menu-item
                 index="2018"
                 @click.native="getFour('2018')"
-                style="color: rgb(233, 150, 122); font-weight: 1000"
+                style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;border-bottom:solid 1px #e6e6e6;"
                 >2018年及以前出版</el-menu-item
               >
             </el-menu>
@@ -310,7 +316,7 @@ export default {
       } else this.getYearBeforeBook(this.activeIndex4);
     },
     goToBookInfo(id) {
-      this.$router.push({ path: "/bookInfo", query: { book_id: id } });
+      this.$router.push(`/bookInfo/${id}`);
     },
     getGoodsNum() {
       axios({
