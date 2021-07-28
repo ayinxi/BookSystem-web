@@ -52,7 +52,7 @@
         <el-card class="box-card2">
           <el-col :span="6" style="text-align: center">
             <p style="margin: 1%">今日新增订单数</p>
-            <p style="font-size: 40px">{{ newOrder }}</p>
+            <p style="font-size: 40px">{{ ordercount }}</p>
           </el-col>
           <el-col :span="18" style="text-align: center">
             <p style="margin: 1%">各订单类型所占比例</p>
@@ -112,11 +112,12 @@ export default {
   data() {
     return {
       isLoading: false,
-      newOrder: 123,
+      ordercount: 0,
       shopname: "",
       shop_id: "",
       //七种图书的本数
       num: [],
+      ordernum: [],
       categoryList: [
         {
           book_num: 0,
@@ -127,12 +128,6 @@ export default {
       ],
     };
   },
-  /*mounted() {
-    this.drawBarChart();
-    this.$nextTick(() => {
-      this.drawPieChart();
-    });
-  },*/
   computed: {
     hasUsername() {
       return this.$store.state.username;
@@ -164,7 +159,7 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.categoryList = data;
-            for(let i =0;i<7;i++)this.getBooknums(i);
+            for (let i = 0; i < 7; i++) this.getBooknums(i);
           }
         })
         .catch(() => {
@@ -316,14 +311,7 @@ export default {
           top: "center",
           itemGap: 5, //设置图例的间距
           orient: "vertical",
-          data: [
-            "未发货",
-            "已发货",
-            "正在申请退款",
-            "已退款",
-            "已拒绝退款",
-            "已收货",
-          ],
+          data: ["取消订单", "未付款", "未发货", "已发货", "已收货", "已评价"],
         },
         series: [
           {
@@ -333,28 +321,28 @@ export default {
             center: ["30%", "50%"],
             data: [
               {
-                value: 335,
+                value: this.ordernum[0],
+                name: "取消订单",
+              },
+              {
+                value: this.ordernum[1],
+                name: "未付款",
+              },
+              {
+                value: this.ordernum[2],
                 name: "未发货",
               },
               {
-                value: 310,
+                value: this.ordernum[3],
                 name: "已发货",
               },
               {
-                value: 234,
-                name: "正在申请退款",
-              },
-              {
-                value: 135,
-                name: "已退款",
-              },
-              {
-                value: 548,
-                name: "已拒绝退款",
-              },
-              {
-                value: 532,
+                value: this.ordernum[4],
                 name: "已收货",
+              },
+              {
+                value: this.ordernum[5],
+                name: "已评价",
               },
             ],
             animationDuration: 2000,
@@ -389,6 +377,54 @@ export default {
         ],
       });
     },
+    //获取总订单数
+    getOrderCount() {
+      axios({
+        url: this.$store.state.yuming + "/getOrderNum",
+        method: "GET",
+        params: {
+          status: 0,
+          identity: 1,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.ordercount = data;
+            for (let i = 1; i < 7; i++) this.getOrderNums(i);
+          } else {
+            this.$message.error("获取订单数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //获取各类订单的数量
+    getOrderNums(val) {
+      axios({
+        url: this.$store.state.yuming + "/getOrderNum",
+        method: "GET",
+        params: {
+          status: val,
+          identity: 1,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.ordernum[val-1] = data;
+            this.$nextTick(() => {
+              this.drawPieChart();
+            });
+          } else {
+            this.$message.error("获取订单数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
     //获取各类书的数量
     getBooknums(val) {
       axios({
@@ -408,9 +444,6 @@ export default {
           if (code == "200") {
             this.num[val] = count;
             this.drawBarChart();
-            this.$nextTick(() => {
-              this.drawPieChart();
-            });
           } else {
             this.$message.error("获取图书数目失败，请刷新");
           }
@@ -452,6 +485,7 @@ export default {
     this.isLoading = true;
     await this.getShopInfo();
     await this.getAllCategory();
+    await this.getOrderCount();
     await this.mounted();
     this.isLoading = false;
   },

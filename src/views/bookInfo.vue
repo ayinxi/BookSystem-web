@@ -192,13 +192,23 @@
             ><span style="font-size: 25px">用户评价</span></el-divider
           >
         </div>
-        <el-footer style="height:100%">
+        <el-footer
+            v-if="this.evaluationList.length == 0"
+            style="text-align: center;height:100%"
+          >
+            <img
+              style="width: 200px; height: 200px"
+              src="../assets/empty_grey.png"
+            />
+            <p>暂无评价</p>
+          </el-footer>
+        <el-footer style="height:100%" v-if="this.evaluationList.length!=0">
           <div v-for="item in evaluationList" :key="item.userName">
             <el-card style="margin: 20px 0 20px;height:170px">
               <el-container>
-                <el-aside style="width: 160px; text-align: center">
-                  <el-image class="avatar" :src="item.userImg"></el-image>
-                  <p>{{ item.userName }}</p>
+                <el-aside style="width: 180px; text-align: center">
+                  <el-image class="avatar" :src="item.avatar_s"></el-image>
+                  <p>{{ item.name }}</p>
                 </el-aside>
                 <el-main>
                   <el-rate
@@ -207,7 +217,8 @@
                     score-template="{value}"
                   >
                   </el-rate>
-                  <p>{{ item.evaluation }}</p>
+                  <p>{{ item.remark }}</p>
+                  <p>评论时间：{{ item.remark_time }}</p>
                 </el-main>
               </el-container>
             </el-card>
@@ -229,20 +240,7 @@ export default {
       dataLoading: false,
       activeIndex1: "",
       num: 1,
-      evaluationList: [
-        {
-          userName: "芜湖",
-          userImg: require("../assets/avatar.jpg"),
-          rate: 5,
-          evaluation: "这本书真好看",
-        },
-        {
-          userName: "胃口很挑",
-          userImg: require("../assets/avatar.jpg"),
-          rate: 1,
-          evaluation: "太烂了",
-        },
-      ],
+      evaluationList: [],
       goodsNum: "",
       bookid: "",
       book: {},
@@ -386,7 +384,26 @@ export default {
           if (code == "200") {
             this.book = data;
           } else {
-            this.$message.error("获取店铺状态失败,请刷新");
+            this.$message.error("获取图书详情失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //获取用户评价
+    getRemark(){
+      axios({
+        url: this.$store.state.yuming + "/book/getRemark",
+        method: "GET",
+        params: { book_id: this.bookid },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.evaluationList = data;
+          } else {
+            this.$message.error("获取用户评价失败,请刷新");
           }
         })
         .catch(() => {
@@ -424,6 +441,7 @@ export default {
     }
     this.getBookDetail();
     this.getAllCategory();
+    this.getRemark();
     this.isLoading = false;
   },
 };

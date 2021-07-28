@@ -29,7 +29,7 @@
             <p class="pStyle1">
               店铺评分：
               <el-rate
-                v-model="this.shopInfo.rate"
+                v-model="this.rate"
                 disabled
                 show-score
                 text-color="#ff9900"
@@ -55,20 +55,51 @@
       ><el-divider content-position="left"
         ><span style="font-size: 25px">用户评价</span></el-divider
       >
-      <div v-for="item in evaluationList" :key="item.userName">
-        <el-card style="margin: 10px 0">
-          <el-container>
-            <el-aside style="width: 180px; text-align: center">
-              <el-image class="avatar1" :src="item.userImg"></el-image>
-              <p>{{ item.userName }}</p>
-            </el-aside>
-            <el-main>
-              <el-rate v-model="item.rate" disabled score-template="{value}">
-              </el-rate>
-              <p>{{ item.evaluation }}</p>
-            </el-main>
-          </el-container>
-        </el-card>
+      <div
+        v-if="this.evaluationList.length == 0"
+        style="text-align: center; height: 100%"
+      >
+        <img
+          style="width: 200px; height: 200px"
+          src="../../assets/empty_grey.png"
+        />
+        <p>暂无评价</p>
+      </div>
+      <div v-if="this.evaluationList.length != 0">
+        <div v-for="item in evaluationList" :key="item.userName">
+          <el-card style="margin: 20px 0; height: 170px">
+            <el-container>
+              <el-aside style="width: 180px; text-align: center">
+                <el-image
+                  class="avatar1"
+                  :src="item.remark.avatar_b"
+                ></el-image>
+                <p>{{ item.remark.name }}</p>
+              </el-aside>
+              <el-main style="padding:0 20px 20px">
+                <p style="margin:0 0 16px">评论书籍：{{ item.book.book_name }}</p>
+                <el-rate
+                  v-model="item.remark.rate"
+                  disabled
+                  score-template="{value}"
+                >
+                </el-rate>
+                <p>{{ item.remark.remark }}</p>
+                <p>评论时间：{{ item.remark.remark_time }}</p>
+              </el-main>
+            </el-container>
+          </el-card>
+        </div>
+        <el-row style="text-align: center">
+          <el-pagination
+            :current-page="currentPage"
+            @current-change="handleCurrentChange"
+            :total="this.count"
+            :page-size="5"
+            layout="prev, pager, next, jumper"
+          >
+          </el-pagination>
+        </el-row>
       </div>
     </div>
     <el-dialog
@@ -145,27 +176,17 @@ export default {
   data() {
     return {
       dialogChangeVisible: false,
+      currentPage: 1,
+      count: 0,
       isLoading: false,
       shopInfo: {
+        id:"",
         shop_name: "",
         shopper_name: "",
         avatar_b: "",
-        rate: 5,
       },
-      evaluationList: [
-        {
-          userName: "芜湖",
-          userImg: require("../../assets/avatar.jpg"),
-          rate: 5,
-          evaluation: "这本书真好看",
-        },
-        {
-          userName: "胃口很挑",
-          userImg: require("../../assets/avatar.jpg"),
-          rate: 1,
-          evaluation: "太烂了",
-        },
-      ],
+      rate:0,
+      evaluationList: [],
       formdata: new FormData(),
       imgdata: new FormData(),
       rules: {
@@ -267,6 +288,7 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.shopInfo = data;
+            this.getRate();
           }
         })
         .catch(() => {
@@ -283,6 +305,66 @@ export default {
         })
         .catch(() => {});
     },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getRemark();
+    },
+    //获取评价
+    getRemark() {
+      axios({
+        url: this.$store.state.yuming + "/getRemarkPage",
+        method: "GET",
+        params: { page_num: this.currentPage, remark_num: 5 },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.evaluationList = data;
+          } else {
+            this.$message.error("获取用户评价失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //获取评分
+    getRate(){
+      axios({
+        url: this.$store.state.yuming + "/shop/rate",
+        method: "GET",
+        params: {shop_id:this.shopInfo.id,}
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.rate = data;
+          } else {
+            this.$message.error("获取用户评价数量失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //获取数量
+    getCount(){
+      axios({
+        url: this.$store.state.yuming + "/getRemarkNum",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.count = data;
+          } else {
+            this.$message.error("获取用户评价数量失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
     //上传图片触发
     handleCrop(file) {
       this.$nextTick(() => {
@@ -295,7 +377,7 @@ export default {
     },
     getFile(file) {
       this.imgdata.append("img", file);
-      this.imgdata.append("username",this.hasUsername)
+      this.imgdata.append("username", this.hasUsername);
       // 获取上传图片的本地URL，用于上传前的本地预览
       axios({
         url: this.$store.state.yuming + "/shop/updateAvatar",
@@ -345,6 +427,8 @@ export default {
   async created() {
     this.isLoading = true;
     await this.getShopInfo();
+    await this.getRemark();
+    await this.getCount();
     this.isLoading = false;
   },
 };
