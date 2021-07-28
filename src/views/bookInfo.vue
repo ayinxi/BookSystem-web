@@ -326,7 +326,7 @@ export default {
     //直接购买
     buy() {
       if (this.$store.state.token != "" && this.num <= this.book.repertory) {
-        this.$router.push(`/shopping/${this.bookid}/${this.num}`);
+        this.$router.push(`/shopping/${this.id}/${this.num}`);
       } else if (this.$store.state.token == "") {
         this.$message.warning({
           message: "请登录后再购买",
