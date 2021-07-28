@@ -78,13 +78,16 @@ export default {
         name: "示例",
       },
       orderPie: [],
+      tempOrder: 0,
     };
   },
+  /*
   mounted() {
     this.drawDomChart();
     this.drawPieChart_book();
     this.drawPieChart_order();
   },
+  */
   computed: {},
   methods:{
     //回到管理员主页
@@ -110,10 +113,6 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.classData = data;
-             console.log(this.classData);
-        this.tempClass.value = this.classData[0].book_num;
-        this.tempClass.name = this.classData[0].main_name;
-        //console.log(this.tempClass);
           } else if (code == "3") {
             this.classData = "";
           } else {
@@ -127,6 +126,7 @@ export default {
           });
         });
     },
+    /*
     //获取classPie
     getClassPie() {
       console.log(this.classData);
@@ -135,6 +135,42 @@ export default {
         this.tempClass.name = mainClass.main_name;
         //console.log(this.tempClass);
       });
+    },
+    */
+    //获取各状态订单数量
+    getOrderNum(s) {
+      axios({
+        url: this.$store.state.yuming+"/getOrderNum",
+        method: "GET",
+        params: {
+          identity: 2,
+          status: s,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.tempOrder = data;
+            this.orderPie.push(this.tempOrder);
+          } else if (code == "3") {
+            this.tempOrder = 0;
+          } else {
+            this.$message.error("获取各状态订单数量失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    getOrderPie() {
+      for(let i = 1;i <= 6;i++)
+      {
+        this.getOrderNum(i);
+      }
+      console.log(this.orderPie);
     },
     //近七天新增
     drawDomChart() {
@@ -224,8 +260,7 @@ export default {
             type: 'pie',
             radius: '50%',
             data: [
-              this.tempClass,
-              {value: 735, name: '分类2'},
+              {value: 100, name: '分类2'},
               {value: 580, name: '分类3'},
               {value: 484, name: '分类4'},
               {value: 300, name: '分类5'},
@@ -266,9 +301,12 @@ export default {
             type: 'pie',
             radius: '50%',
             data: [
-              {value: 1048, name: '未发货'},
+              {value: this.orderPie[0], name: '已取消'},
+              {value: this.orderPie[1], name: '未付款'},
+              {value: this.orderPie[2], name: '未发货'},
               {value: 735, name: '未收货'},
               {value: 580, name: '未评价'},
+              {value: 580, name: '已评价'},
             ],
             emphasis: {
               itemStyle: {
@@ -285,7 +323,11 @@ export default {
   async created() {
     this.isLoading = true;
     await this.getNowDate();
-    await this.getAll();
+    //await this.getAll();
+    await this.getOrderPie();
+    this.drawDomChart();
+    this.drawPieChart_book();
+    this.drawPieChart_order();
     this.isLoading = false;
   },
 };

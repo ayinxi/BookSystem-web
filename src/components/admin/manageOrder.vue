@@ -56,17 +56,17 @@
                           <el-button type="text" @click="returnPass(scope_s.row.order_book_id)">同意退款</el-button>
                           <el-button type="text" @click="preReturnFail(scope_s.row.order_book_id)">拒绝退款</el-button>
                         </div>
-                        <div v-if="scope_s.row.return_status==2">正在退款</div>
+                        <div v-if="scope_s.row.return_status==2">已退款</div>
                         <div v-if="scope_s.row.return_status==4">
                           <el-button type="text" @click="exchangePass(scope_s.row.order_book_id)">同意换货</el-button>
                           <el-button type="text" @click="preExchangeFail(scope_s.row.order_book_id)">拒绝换货</el-button>
                         </div>
-                        <div v-if="scope_s.row.return_status==5">正在换货</div>
+                        <div v-if="scope_s.row.return_status==5">已换货</div>
                         <div v-if="scope_s.row.return_status==7">
                           <el-button type="text" @click="returnAllPass(scope_s.row.order_book_id)">同意退货退款</el-button>
                           <el-button type="text" @click="preReturnAllFail(scope_s.row.order_book_id)">拒绝退货退款</el-button>
                         </div>
-                        <div v-if="scope_s.row.return_status==8">正在退货退款</div>
+                        <div v-if="scope_s.row.return_status==8">已退货退款</div>
                       </template>
                     </el-table-column>
                 </el-table>
@@ -247,7 +247,7 @@ export default {
         method: "GET",
         params: {
           identity: 2,
-          status: 1,
+          status: 0,
         },
       })
         .then((res) => {
@@ -273,7 +273,7 @@ export default {
         params: {
           page_num: this.currentPage,
           order_num: this.orderCountPerPage,
-          status: 1,
+          status: 0,
           identity: 2,
         },
       })
