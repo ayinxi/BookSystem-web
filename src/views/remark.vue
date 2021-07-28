@@ -33,7 +33,7 @@
                     </div>
                     <div class="book-detail">出版社：{{ books.press }}</div>
                     <div style="margin: 20px 0px" class="book-total">
-                      ￥{{ books.book_total_book }}
+                      ￥{{ books.book_total_price }}
                     </div>
                   </el-col>
                 </el-row>

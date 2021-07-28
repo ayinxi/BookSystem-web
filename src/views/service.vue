@@ -366,29 +366,29 @@
       <el-row>
         <el-col :offset="3" :span="18">
           <el-steps
-            v-if="exchangeGoodsAdmin == false"
+            v-if="exchangeGoodsAdmin == true"
             :space="300"
             :active="exchangeGoodsStatus"
             align-center
             simple
             finish-status="success"
           >
-            <el-step title="买家申请退货退款"></el-step>
-            <el-step title="卖家处理退货申请"></el-step>
+            <el-step title="买家申请换货"></el-step>
+            <el-step title="卖家处理换货申请"></el-step>
             <el-step title="买家退货"></el-step>
             <el-step title="卖家再次发货"></el-step>
             <el-step title="换货完毕"></el-step>
           </el-steps>
           <el-steps
-            v-if="exchangeGoodsAdmin == true"
+            v-if="exchangeGoodsAdmin ==false"
             :space="300"
             :active="3"
             align-center
             simple
             finish-status="finish"
           >
-            <el-step title="买家申请退货退款"></el-step>
-            <el-step title="卖家处理退货申请"></el-step>
+            <el-step title="买家申请换货"></el-step>
+            <el-step title="卖家处理换货申请"></el-step>
             <el-step title="拒绝申请"></el-step>
           </el-steps>
         </el-col>
