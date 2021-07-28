@@ -321,7 +321,10 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.shopInfo = data;
-            this.getRate();
+            this.getCount();
+            if (this.count != 0) {
+              this.getRate();
+            }
           }
         })
         .catch(() => {
@@ -373,7 +376,7 @@ export default {
           if (code == "200") {
             this.rate = data;
           } else {
-            this.$message.error("获取用户评价数量失败,请刷新");
+            this.$message.error("获取评分失败,请刷新");
           }
         })
         .catch(() => {
