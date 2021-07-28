@@ -14,8 +14,9 @@
       <el-row>
         <el-col :offset="4" :span="16">
           <el-steps
+            v-if="this.refundAdmin == true"
             :space="300"
-            :active="1"
+            :active="refundStatus"
             align-center
             simple
             finish-status="success"
@@ -23,6 +24,18 @@
             <el-step title="买家申请仅退款"></el-step>
             <el-step title="卖家处理退款申请"></el-step>
             <el-step title="退款完毕"></el-step>
+          </el-steps>
+          <el-steps
+            v-if="this.refundAdmin == false"
+            :space="300"
+            :active="3"
+            align-center
+            simple
+            finish-status="finish"
+          >
+            <el-step title="买家申请仅退款"></el-step>
+            <el-step title="卖家处理退款申请"></el-step>
+            <el-step title="拒绝申请"></el-step>
           </el-steps>
         </el-col>
       </el-row>
@@ -43,28 +56,48 @@
                       style="height: 100px; width: 100px"
                     />
                   </el-col>
-                  <el-col :span="21">
+                  <el-col :span="20" style="margin-left: 10px">
                     <div style="margin-right: 30px" class="book-name">
                       {{ books.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ books.book_total_book }}
+                      ￥{{ books.book_total_price }}
                     </div>
                   </el-col>
                 </el-row>
               </el-form-item>
               <el-form-item label="服务类型："> 仅退款 </el-form-item>
               <el-form-item label="货物状态：">
-                <el-radio-group v-model="radio" prop="goods_status">
+                <el-radio-group
+                  v-model="radio"
+                  prop="goods_status"
+                  v-if="isDisabled == false"
+                >
                   <el-radio :label="1">未收到货</el-radio>
                   <el-radio :label="2">已收到货</el-radio>
                 </el-radio-group>
+                <div
+                  v-if="
+                    isDisabled == true &&
+                    this.bookList.books[0].transport_status == 1
+                  "
+                >
+                  未收到货
+                </div>
+                <div
+                  v-if="
+                    isDisabled == true &&
+                    this.bookList.books[0].transport_status == 2
+                  "
+                >
+                  已收到货
+                </div>
               </el-form-item>
               <el-form-item label="退款原因：" prop="option">
                 <el-select
                   v-model="refundInfo.option"
                   placeholder="请选择"
-                  v-if="radio == 1"
+                  v-if="radio == 1 && isDisabled == false"
                 >
                   <el-option
                     v-for="item in firstOptions"
@@ -77,7 +110,7 @@
                 <el-select
                   v-model="refundInfo.option"
                   placeholder="请选择"
-                  v-if="radio == 2"
+                  v-if="radio == 2 && isDisabled == false"
                 >
                   <el-option
                     v-for="item in secondOptions"
@@ -87,12 +120,21 @@
                   >
                   </el-option>
                 </el-select>
+                <div v-if="isDisabled == true">
+                  {{ this.bookList.books[0].return_reason }}
+                </div>
               </el-form-item>
-              <el-form-item label="退款金额：" class="book-total">
-                ￥{{ bookList.book_total }}
+              <el-form-item
+                label="退款金额："
+                class="book-total"
+                v-for="(books, idx) in bookList.books"
+                :key="idx"
+              >
+                ￥{{ books.book_total_price }}
               </el-form-item>
               <el-form-item label="退款说明：" prop="reason">
                 <el-input
+                  v-if="isDisabled == false"
                   type="textarea"
                   v-model="refundInfo.reason"
                   maxlength="200"
@@ -101,9 +143,13 @@
                   style="width: 500px"
                   rows="5"
                 ></el-input>
+                <div v-if="isDisabled == true" style="width: 500px">
+                  {{ bookList.books[0].return_detail }}
+                </div>
               </el-form-item>
               <el-form-item label="上传图片：" prop="img">
                 <el-upload
+                  v-if="isDisabled == false"
                   class="avatar-uploader"
                   ref="upload"
                   action="http://47.94.131.208:8888"
@@ -131,8 +177,23 @@
                   @getFile="getFile"
                   @upAgain="upAgain"
                 ></my-cropper>
+                <img
+                  v-if="
+                    isDisabled == true && this.bookList.books[0].return_image_b
+                  "
+                  :src="this.bookList.books[0].return_image_b"
+                  class="avatar"
+                  style="margin-top: 15px"
+                />
+                <div
+                  v-if="
+                    isDisabled == true && !this.bookList.books[0].return_image_b
+                  "
+                >
+                  没有上传凭证哦~
+                </div>
               </el-form-item>
-              <el-form-item>
+              <el-form-item v-if="isDisabled == false">
                 <el-button @click="confirmRefund"> 提交 </el-button>
               </el-form-item>
             </el-form>
@@ -144,8 +205,9 @@
       <el-row>
         <el-col :offset="3" :span="18">
           <el-steps
+            v-if="returnGoodsAdmin == true"
             :space="300"
-            :active="1"
+            :active="returnGoodsStatus"
             align-center
             simple
             finish-status="success"
@@ -154,6 +216,18 @@
             <el-step title="卖家处理退货申请"></el-step>
             <el-step title="买家退货"></el-step>
             <el-step title="退款完毕"></el-step>
+          </el-steps>
+          <el-steps
+            v-if="returnGoodsAdmin == false"
+            :space="300"
+            :active="3"
+            align-center
+            simple
+            finish-status="finish"
+          >
+            <el-step title="买家申请退货退款"></el-step>
+            <el-step title="卖家处理退货申请"></el-step>
+            <el-step title="拒绝申请"></el-step>
           </el-steps>
         </el-col>
       </el-row>
@@ -168,27 +242,30 @@
               :rules="secondRules"
             >
               <el-form-item label="退款商品：">
-                <el-row v-for="(books, idx) in bookList.books"
-                  :key="idx">
+                <el-row v-for="(books, idx) in bookList.books" :key="idx">
                   <el-col :span="3">
                     <img
                       :src="books.book_image_b"
                       style="height: 100px; width: 100px"
                     />
                   </el-col>
-                  <el-col :span="21">
+                  <el-col :span="20" style="margin-left: 10px">
                     <div style="margin-right: 30px" class="book-name">
                       {{ books.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ books.book_total_book }}
+                      ￥{{ books.book_total_price }}
                     </div>
                   </el-col>
                 </el-row>
               </el-form-item>
               <el-form-item label="服务类型："> 退货退款 </el-form-item>
               <el-form-item label="退款原因：" prop="option">
-                <el-select v-model="refundInfo.option" placeholder="请选择">
+                <el-select
+                  v-model="refundInfo.option"
+                  placeholder="请选择"
+                  v-if="isDisabled == false"
+                >
                   <el-option
                     v-for="item in thirdOptions"
                     :key="item.value"
@@ -197,12 +274,21 @@
                   >
                   </el-option>
                 </el-select>
+                <div v-if="isDisabled == true">
+                  {{ this.bookList.books[0].return_reason }}
+                </div>
               </el-form-item>
-              <el-form-item label="退款金额：" class="book-total">
-                ￥{{ bookList.book_total_book }}
+              <el-form-item
+                label="退款金额："
+                class="book-total"
+                v-for="(books, idx) in bookList.books"
+                :key="idx"
+              >
+                ￥{{ books.book_total_price }}
               </el-form-item>
               <el-form-item label="退款说明：" prop="reason">
                 <el-input
+                  v-if="isDisabled == false"
                   type="textarea"
                   v-model="refundInfo.reason"
                   maxlength="200"
@@ -211,9 +297,13 @@
                   style="width: 500px"
                   rows="5"
                 ></el-input>
+                <div v-if="isDisabled == true" style="width: 500px">
+                  {{ bookList.books[0].return_detail }}
+                </div>
               </el-form-item>
               <el-form-item label="上传图片：" prop="img">
                 <el-upload
+                  v-if="isDisabled == false"
                   class="avatar-uploader"
                   ref="upload"
                   action="http://47.94.131.208:8888"
@@ -241,8 +331,23 @@
                   @getFile="getFile"
                   @upAgain="upAgain"
                 ></my-cropper>
+                <img
+                  v-if="
+                    isDisabled == true && this.bookList.books[0].return_image_b
+                  "
+                  :src="this.bookList.books[0].return_image_b"
+                  class="avatar"
+                  style="margin-top: 15px"
+                />
+                <div
+                  v-if="
+                    isDisabled == true && !this.bookList.books[0].return_image_b
+                  "
+                >
+                  没有上传凭证哦~
+                </div>
               </el-form-item>
-              <el-form-item>
+              <el-form-item v-if="isDisabled == false">
                 <el-button @click="confirmReturnGoods"> 提交 </el-button>
               </el-form-item>
             </el-form>
@@ -254,8 +359,9 @@
       <el-row>
         <el-col :offset="3" :span="18">
           <el-steps
+            v-if="exchangeGoodsAdmin == false"
             :space="300"
-            :active="1"
+            :active="exchangeGoodsStatus"
             align-center
             simple
             finish-status="success"
@@ -265,6 +371,18 @@
             <el-step title="买家退货"></el-step>
             <el-step title="卖家再次发货"></el-step>
             <el-step title="换货完毕"></el-step>
+          </el-steps>
+          <el-steps
+            v-if="exchangeGoodsAdmin == true"
+            :space="300"
+            :active="3"
+            align-center
+            simple
+            finish-status="finish"
+          >
+            <el-step title="买家申请退货退款"></el-step>
+            <el-step title="卖家处理退货申请"></el-step>
+            <el-step title="拒绝申请"></el-step>
           </el-steps>
         </el-col>
       </el-row>
@@ -279,27 +397,30 @@
               :rules="thirdRules"
             >
               <el-form-item label="换货商品：">
-                <el-row v-for="(books, idx) in bookList.books"
-                  :key="idx">
+                <el-row v-for="(books, idx) in bookList.books" :key="idx">
                   <el-col :span="3">
                     <img
                       :src="books.book_image_b"
                       style="height: 100px; width: 100px"
                     />
                   </el-col>
-                  <el-col :span="21">
+                  <el-col :span="20" style="margin-left: 10px">
                     <div style="margin-right: 30px" class="book-name">
                       {{ books.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ books.book_total_book }}
+                      ￥{{ books.book_total_price }}
                     </div>
                   </el-col>
                 </el-row>
               </el-form-item>
               <el-form-item label="服务类型："> 换货 </el-form-item>
               <el-form-item label="换货原因：" prop="option">
-                <el-select v-model="refundInfo.option" placeholder="请选择">
+                <el-select
+                  v-model="refundInfo.option"
+                  placeholder="请选择"
+                  v-if="isDisabled == false"
+                >
                   <el-option
                     v-for="item in fouthOptions"
                     :key="item.value"
@@ -308,8 +429,15 @@
                   >
                   </el-option>
                 </el-select>
+                <div v-if="isDisabled == true">
+                  {{ bookList.books[0].return_reason }}
+                </div>
               </el-form-item>
-              <el-form-item label="换货地址：" prop="addressId">
+              <el-form-item
+                label="换货地址："
+                prop="addressId"
+                v-if="isDisabled == false"
+              >
                 <el-table :data="myAddressList">
                   <el-table-column width="35">
                     <template slot-scope="scope">
@@ -327,8 +455,25 @@
                   </el-table-column>
                 </el-table>
               </el-form-item>
+              <el-form-item label="换货地址：" v-if="isDisabled == true">
+                <el-row>
+                  <el-col :span="2">收货人：</el-col>
+                  <el-col :span="19">{{
+                    this.returnAddress.receiver_name
+                  }}</el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="2">电话号码：</el-col>
+                  <el-col :span="19">{{ this.returnAddress.phone }}</el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="2">收货地址：</el-col>
+                  <el-col :span="12">{{ this.returnAddress.address }}</el-col>
+                </el-row>
+              </el-form-item>
               <el-form-item label="退款说明：" prop="reason">
                 <el-input
+                  v-if="isDisabled == false"
                   type="textarea"
                   v-model="refundInfo.reason"
                   maxlength="200"
@@ -337,9 +482,13 @@
                   style="width: 500px"
                   rows="5"
                 ></el-input>
+                <div v-if="isDisabled == true" style="width: 500px">
+                  {{ bookList.books[0].return_detail }}
+                </div>
               </el-form-item>
               <el-form-item label="上传图片：" prop="img">
                 <el-upload
+                  v-if="isDisabled == false"
                   class="avatar-uploader"
                   ref="upload"
                   action="http://47.94.131.208:8888"
@@ -367,8 +516,23 @@
                   @getFile="getFile"
                   @upAgain="upAgain"
                 ></my-cropper>
+                <img
+                  v-if="
+                    isDisabled == true && this.bookList.books[0].return_image_b
+                  "
+                  :src="this.bookList.books[0].return_image_b"
+                  class="avatar"
+                  style="margin-top: 15px"
+                />
+                <div
+                  v-if="
+                    isDisabled == true && !this.bookList.books[0].return_image_b
+                  "
+                >
+                  没有上传凭证哦~
+                </div>
               </el-form-item>
-              <el-form-item>
+              <el-form-item v-if="isDisabled == false">
                 <el-button @click="confirmExchangeGoods"> 提交 </el-button>
               </el-form-item>
             </el-form>
@@ -388,6 +552,13 @@ export default {
   },
   data() {
     return {
+      isDisabled: true,
+      refundStatus: 0,
+      returnGoodsStatus: 0,
+      exchangeGoodsStatus: 0,
+      refundAdmin: true,
+      returnGoodsAdmin: true,
+      exchangeGoodsAdmin: true,
       filelist: [],
       radio: 1,
       bookId: this.$route.params.bookId,
@@ -539,7 +710,7 @@ export default {
             book_name: "",
             author: "",
             press: "",
-            book_total_book: 0,
+            book_total_price: "",
           },
         ],
       },
@@ -559,6 +730,11 @@ export default {
           status: "",
         },
       ],
+      returnAddress: {
+        receiver_name: "",
+        phone: "",
+        address: "",
+      },
     };
   },
   methods: {
@@ -576,6 +752,33 @@ export default {
       }).then((res) => {
         if (res.data.code == 200) {
           this.bookList = res.data.data;
+          if (this.bookList.books[0].return_status == -1) {
+            this.isDisabled = false;
+          } else if (this.bookList.books[0].return_status == 1) {
+            this.refundStatus = 1;
+          } else if (this.bookList.books[0].return_status == 2) {
+            this.refundStatus = 3;
+          } else if (this.bookList.books[0].return_status == 3) {
+            this.refundStatus = 2;
+            this.refundAdmin = false;
+          } else if (this.bookList.books[0].return_status == 7) {
+            this.returnGoodsStatus = 1;
+          } else if (this.bookList.books[0].return_status == 8) {
+            this.returnGoodsStatus = 4;
+          } else if (this.bookList.books[0].return_status == 9) {
+            this.returnGoodsStatus = 3;
+            this.returnGoodsAdmin = false;
+          } else if (this.bookList.books[0].return_status == 4) {
+            this.exchangeGoodsStatus = 1;
+            this.getAddress();
+          } else if (this.bookList.books[0].return_status == 5) {
+            this.exchangeGoodsStatus = 5;
+            this.getAddress();
+          } else {
+            this.exchangeGoodsStatus = 3;
+            this.exchangeGoodsAdmin = false;
+            this.getAddress();
+          }
         } else {
           this.$message.error("获取商品信息失败，请重试");
         }
@@ -593,6 +796,27 @@ export default {
           this.$message.error("获取收货地址，请重试");
         }
       });
+    },
+    //获取换货地址
+    getAddress() {
+      axios({
+        url: this.$store.state.yuming + "/address/public/getByID",
+        method: "GET",
+        params: {
+          address_id: this.bookList.address_id,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.returnAddress = data;
+          } else {
+            this.$message.error("获取换货地址信息失败");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     //上传退款申请
     confirmRefund() {
@@ -638,6 +862,11 @@ export default {
             this.dataForm.delete("return_reason");
             this.dataForm.delete("return_detail");
             this.dataForm.delete("transport_status");
+            this.$router.push("/userOrder/1");
+            this.$message({
+              message: "提交成功",
+              type: "success",
+            });
           } else {
             this.$message.error("提交退货申请失败");
             this.refundInfo.options = "";
@@ -684,7 +913,7 @@ export default {
         this.dataForm.append("return_reason", this.refundInfo.option);
         this.dataForm.append("return_detail", this.refundInfo.reason);
         axios({
-          url: this.$store.state.yuming + "/order/return",
+          url: this.$store.state.yuming + "/order/returnAll",
           method: "POST",
           data: this.dataForm,
           headers: {
@@ -697,6 +926,11 @@ export default {
             this.dataForm.delete("order_book_id");
             this.dataForm.delete("return_reason");
             this.dataForm.delete("return_detail");
+            this.$router.push("/userOrder/1");
+            this.$message({
+              message: "提交成功",
+              type: "success",
+            });
           } else {
             this.$message.error("提交退货申请失败");
             this.refundInfo.options = "";
@@ -757,6 +991,11 @@ export default {
             this.dataForm.delete("return_reason");
             this.dataForm.delete("return_detail");
             this.dataForm.delete("exchange_address_id");
+            this.$router.push("/userOrder/1");
+            this.$message({
+              message: "提交成功",
+              type: "success",
+            });
           } else {
             this.$message.error("提交退货申请失败");
             this.refundInfo.options = "";

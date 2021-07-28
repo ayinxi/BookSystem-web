@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" v-loading="isloading">
     <div class="content">
       <div class="header">
         <img height="70px" style="margin:20px 0" src="../../assets/jwbc.png" />
@@ -24,16 +24,16 @@
         <el-card style="background-color: #3d678a;width: 900px;margin: 20px;">
           <el-row style="color: white">
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>新增用户</span></el-row>
+              <el-row><h2>124</h2></el-row><el-row><span>新增用户</span></el-row>
             </el-col>
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>新增商家</span></el-row>
+              <el-row><h2>35</h2></el-row><el-row><span>新增商家</span></el-row>
             </el-col>
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>新增图书</span></el-row>
+              <el-row><h2>415</h2></el-row><el-row><span>新增图书</span></el-row>
             </el-col>
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>新增订单</span></el-row>
+              <el-row><h2>229</h2></el-row><el-row><span>新增订单</span></el-row>
             </el-col>
           </el-row>
         </el-card>
@@ -69,20 +69,38 @@ export default {
   components: {},
   data() {
     return {
-        pie_class_data: [],
-        pie_order_data: [],
+      isloading: false,
+      dateList: [],
+      classData: [],
+      classPie: [],
+      tempClass:{
+        value: 1000,
+        name: "示例",
+      },
+      orderPie: [],
+      tempOrder: 0,
     };
   },
+  /*
   mounted() {
     this.drawDomChart();
     this.drawPieChart_book();
     this.drawPieChart_order();
   },
+  */
   computed: {},
   methods:{
     //回到管理员主页
     gotoAdmin() {
       this.$router.push("/adminManage");
+    },
+    //获取当前时间
+    getNowDate() {
+      var nowDate = new Date();
+      var i = 6;
+      for(;i>=0;i--) {
+        this.dateList.push((nowDate.getMonth()+1) + '/' + (nowDate.getDate()-i));
+      }
     },
     //获取不同分类图书数量
     getAll() {
@@ -94,9 +112,9 @@ export default {
         .then((res) => {
           const { code, data } = res.data;
           if (code == "200") {
-            this.pie_class_data = data;
+            this.classData = data;
           } else if (code == "3") {
-            this.pie_class_data = "";
+            this.classData = [];
           } else {
             this.$message.error("获取分类失败");
           }
@@ -107,6 +125,51 @@ export default {
             message: "出现错误，请稍后再试",
           });
         });
+    },
+    /*
+    //获取classPie
+    getClassPie() {
+      console.log(this.classData);
+      this.classData.forEach(mainClass => {
+        this.tempClass.value = mainClass.book_num;
+        this.tempClass.name = mainClass.main_name;
+        //console.log(this.tempClass);
+      });
+    },
+    */
+    //获取各状态订单数量
+    getOrderNum(s) {
+      axios({
+        url: this.$store.state.yuming+"/getOrderNum",
+        method: "GET",
+        params: {
+          identity: 2,
+          status: s,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.tempOrder = data;
+            this.orderPie.push(this.tempOrder);
+          } else if (code == "3") {
+            this.tempOrder = 0;
+          } else {
+            this.$message.error("获取各状态订单数量失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    getOrderPie() {
+      for(let i = 1;i <= 6;i++)
+      {
+        this.getOrderNum(i);
+      }
     },
     //近七天新增
     drawDomChart() {
@@ -138,7 +201,7 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['7/19', '7/20', '7/21', '7/22', '7/23', '7/24', '7/25']
+          data: this.dateList,
         },
         yAxis: {
           type: 'value'
@@ -148,25 +211,25 @@ export default {
             name: '新增用户',
             type: 'line',
             stack: '总量',
-            data: [120, 132, 101, 134, 90, 230, 210]
+            data: [98, 83, 55, 87, 126, 100, 124]
           },
           {
             name: '新增商家',
             type: 'line',
             stack: '总量',
-            data: [220, 182, 191, 234, 290, 330, 310]
+            data: [20, 19, 23, 14, 31, 15, 35]
           },
           {
             name: '新增图书',
             type: 'line',
             stack: '总量',
-            data: [150, 232, 201, 154, 190, 330, 410]
+            data: [103, 100, 202, 205, 300, 401, 415]
           },
           {
             name: '新增订单',
             type: 'line',
             stack: '总量',
-            data: [320, 332, 301, 334, 390, 330, 320]
+            data: [208, 125, 104, 106, 255, 130, 229]
           },
         ]
       });
@@ -192,15 +255,17 @@ export default {
         },
         series: [
           {
-            name: '访问来源',
+            name: '图书数量',
             type: 'pie',
             radius: '50%',
             data: [
-              {value: 1048, name: '分类1'},
-              {value: 735, name: '分类2'},
-              {value: 580, name: '分类3'},
-              {value: 484, name: '分类4'},
-              {value: 300, name: '分类5'},
+              {value: 95, name: '青春文学'},
+              {value: 5649, name: '小说'},
+              {value: 134, name: '少儿文学'},
+              {value: 136, name: '教育'},
+              {value: 991, name: '网络文学'},
+              {value: 2282, name: '文艺'},
+              {value: 8865, name: '其他'},
             ],
             emphasis: {
               itemStyle: {
@@ -234,13 +299,16 @@ export default {
         },
         series: [
           {
-            name: '访问来源',
+            name: '订单数量',
             type: 'pie',
             radius: '50%',
             data: [
-              {value: 1048, name: '未发货'},
-              {value: 735, name: '未收货'},
-              {value: 580, name: '未评价'},
+              {value: 25, name: '已取消'},
+              {value: 67, name: '未付款'},
+              {value: 129, name: '未发货'},
+              {value: 346, name: '未收货'},
+              {value: 256, name: '已收货'},
+              {value: 456, name: '已评价'},
             ],
             emphasis: {
               itemStyle: {
@@ -253,6 +321,16 @@ export default {
         ]
       });
     },
+  },
+  async created() {
+    this.isLoading = true;
+    await this.getNowDate();
+    //await this.getAll();
+    await this.getOrderPie();
+    this.drawDomChart();
+    this.drawPieChart_book();
+    this.drawPieChart_order();
+    this.isLoading = false;
   },
 };
 </script>

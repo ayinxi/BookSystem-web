@@ -12,7 +12,7 @@
             <el-aside width="35px"><div class="verticalBar2"></div></el-aside>
             <el-main>
           <div style="font-size: 15px padding: 18px 0">
-            在此处，您可以查看、查找、编辑、删除订单。
+            在此处，您可以查看、查找、编辑、取消订单。
           </div>
             </el-main>
           </el-container>
@@ -25,12 +25,13 @@
               <el-input
               v-model="searchText"
               placeholder="输入买家邮箱模糊搜索"
+              @change="search(searchText)"
               ></el-input>
             </el-form-item>
           </el-form>
           <el-table
           v-loading="orderDataLoading"
-          :data="orderList.filter((data) => {return data.username.includes(searchText);})"
+          :data="orderList"
           style="width: 100%"
           :default-sort = "{prop: 'create_time', order: 'descending'}">
             <template slot="empty">
@@ -44,29 +45,31 @@
                     <el-table-column prop="price" label="单价(元)"></el-table-column>
                     <el-table-column prop="number" label="数量（本）"></el-table-column>
                     <el-table-column label="小计(元)">
-                      <template slot-scope="scope">
-                        <div>{{scope.row.price*scope.row.number}}</div>
+                      <template slot-scope="scope_s">
+                        <div>{{scope_s.row.price*scope_s.row.number}}</div>
                       </template>
                     </el-table-column>
                     <el-table-column prop="return_status" label="状态" width="210px">
-                      <template slot-scope="scope">
-                        <div v-if="scope.row.return_status==-1||scope.row.return_status==3
-                        ||scope.row.return_status==6||scope.row.return_status==9">正常</div>
-                        <div v-if="scope.row.return_status==1">
-                          <el-button type="text">同意退款</el-button>
-                          <el-button type="text">拒绝退款</el-button>
+                      <template slot-scope="scope_s">
+                        <div v-if="scope_s.row.return_status==-1">正常</div>
+                        <div v-if="scope_s.row.return_status==1">
+                          <el-button type="text" @click="returnPass(scope_s.row.order_book_id)">同意退款</el-button>
+                          <el-button type="text" @click="preReturnFail(scope_s.row.order_book_id)">拒绝退款</el-button>
                         </div>
-                        <div v-if="scope.row.return_status==2">正在退款</div>
-                        <div v-if="scope.row.return_status==4">
-                          <el-button type="text">同意换货</el-button>
-                          <el-button type="text">拒绝换货</el-button>
+                        <div v-if="scope_s.row.return_status==2">已退款</div>
+                        <div v-if="scope_s.row.return_status==3">已拒绝退款</div>
+                        <div v-if="scope_s.row.return_status==4">
+                          <el-button type="text" @click="exchangePass(scope_s.row.order_book_id)">同意换货</el-button>
+                          <el-button type="text" @click="preExchangeFail(scope_s.row.order_book_id)">拒绝换货</el-button>
                         </div>
-                        <div v-if="scope.row.return_status==5">正在换货</div>
-                        <div v-if="scope.row.return_status==7">
-                          <el-button type="text">同意退货退款</el-button>
-                          <el-button type="text">拒绝退货退款</el-button>
+                        <div v-if="scope_s.row.return_status==5">已换货</div>
+                        <div v-if="scope_s.row.return_status==6">已拒绝换货</div>
+                        <div v-if="scope_s.row.return_status==7">
+                          <el-button type="text" @click="returnAllPass(scope_s.row.order_book_id)">同意退货退款</el-button>
+                          <el-button type="text" @click="preReturnAllFail(scope_s.row.order_book_id)">拒绝退货退款</el-button>
                         </div>
-                        <div v-if="scope.row.return_status==8">正在退货退款</div>
+                        <div v-if="scope_s.row.return_status==8">已退货退款</div>
+                        <div v-if="scope_s.row.return_status==9">已拒绝退货退款</div>
                       </template>
                     </el-table-column>
                 </el-table>
@@ -74,7 +77,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="create_time" label="下单时间" sortable></el-table-column>
-            <el-table-column prop="username" label="买家邮箱"></el-table-column>
+            <el-table-column prop="username" label="买家邮箱" width="170px"></el-table-column>
             <el-table-column prop="shop_name" label="卖家名称">
             </el-table-column>
             <el-table-column prop="status" label="订单状态"
@@ -124,6 +127,27 @@
         <el-button type="primary" @click="changeOrderStatus">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="拒绝退款" :visible.sync="returnFailVisible">
+      <el-input v-model="checkOpinion" placeholder="请输入拒绝退款理由"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="returnFailVisible = false">取 消</el-button>
+        <el-button type="primary" @click="returnFail">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="拒绝换货" :visible.sync="exchangeFailVisible">
+      <el-input v-model="checkOpinion" placeholder="请输入拒绝换货理由"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="exchangeFailVisible = false">取 消</el-button>
+        <el-button type="primary" @click="exchangeFail">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="拒绝退货退款" :visible.sync="returnAllFailVisible">
+      <el-input v-model="checkOpinion" placeholder="请输入拒绝退货退款理由"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="returnAllFailVisible = false">取 消</el-button>
+        <el-button type="primary" @click="returnAllFail">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -147,6 +171,10 @@ export default {
       editOrderVisible: false,
       orderId: "",
       orderStatus: "",
+      checkOpinion: "",
+      returnFailVisible: false,
+      exchangeFailVisible: false,
+      returnAllFailVisible: false,
       options: [{
           value: 1,
           label: '已取消'
@@ -206,6 +234,59 @@ export default {
     //分页
     handleCurrentChange(val) {
       this.currentPage = val;
+      if(this.searchText=="") {
+        this.getOrderNum();
+        this.getOrder();
+      }
+      else this.searchOrder(this.searchText);
+    },
+    //模糊查询订单
+    search(username) {
+      this.currentPage = 1;
+      this.searchOrder(username);
+    },
+    searchOrder(username) {
+      axios({
+        url: this.$store.state.yuming + "/order/fuzzyQuery",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          order_num: this.orderCountPerPage,
+          status: 0,
+          content: username,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.orderList = data;
+          } else {
+            this.$message.error("查询订单失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取订单的数目
+      axios({
+        url: this.$store.state.yuming + "/order/fuzzyQueryCount",
+        method: "GET",
+        params: {
+          status: 0,
+          content: username,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.orderCount = data;
+          } else {
+            this.$message.error("获取订单数量失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     //重新加载订单数据
     reloadOrderData() {
@@ -221,7 +302,7 @@ export default {
         method: "GET",
         params: {
           identity: 2,
-          status: 1,
+          status: 0,
         },
       })
         .then((res) => {
@@ -247,7 +328,7 @@ export default {
         params: {
           page_num: this.currentPage,
           order_num: this.orderCountPerPage,
-          status: 1,
+          status: 0,
           identity: 2,
         },
       })
@@ -329,6 +410,171 @@ export default {
           });
         });
       this.editOrderVisible = false;
+    },
+    //同意退款
+    returnPass(id) {
+      axios({
+        url: this.$store.state.yuming + "/shop/returnPass",
+        method: "POST",
+        params: {
+          order_book_id: id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.reloadOrderData();
+          } else {
+            this.$message.error("同意退款失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //同意换货
+    exchangePass(id) {
+      axios({
+        url: this.$store.state.yuming + "/shop/exchangePass",
+        method: "POST",
+        params: {
+          order_book_id: id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.reloadOrderData();
+          } else {
+            this.$message.error("同意换货失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //同意退款退货
+     returnAllPass(id) {
+      axios({
+        url: this.$store.state.yuming + "/shop/returnAllPass",
+        method: "POST",
+        params: {
+          order_book_id: id,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.reloadOrderData();
+          } else {
+            this.$message.error("同意退款退货失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
+    //拒绝退款
+    preReturnFail(id) {
+      this.orderId = id;
+      this.checkOpinion = "";
+      this.returnFailVisible = true;
+    },
+    returnFail() {
+      axios({
+        url: this.$store.state.yuming + "/shop/returnFail",
+        method: "POST",
+        params: {
+          order_book_id: this.orderId,
+          check_opinion: this.checkOpinion,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.reloadOrderData();
+          } else {
+            this.$message.error("拒绝退款失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+      this.returnFailVisible = false;
+    },
+    //拒绝换货
+    preExchangeFail(id) {
+      this.orderId = id;
+      this.checkOpinion = "";
+      this.exchangeFailVisible = true;
+    },
+    exchangeFail() {
+      axios({
+        url: this.$store.state.yuming + "/shop/exchangeFail",
+        method: "POST",
+        params: {
+          order_book_id: this.orderId,
+          check_opinion: this.checkOpinion,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.reloadOrderData();
+          } else {
+            this.$message.error("拒绝换货失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+      this.exchangeFailVisible = false;
+    },
+    //拒绝退款退货
+    preReturnAllFail(id) {
+      this.orderId = id;
+      this.checkOpinion = "";
+      this.returnAllFailVisible = true;
+    },
+    returnAllFail() {
+      axios({
+        url: this.$store.state.yuming + "/shop/returnAllFail",
+        method: "POST",
+        params: {
+          order_book_id: this.orderId,
+          check_opinion: this.checkOpinion,
+        },
+      })
+        .then((res) => {
+          const { code } = res.data;
+          if (code == "200") {
+            this.reloadOrderData();
+          } else {
+            this.$message.error("拒绝退款退货失败,请重试");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+      this.returnAllFailVisible = false;
     },
   },
   async created() {
