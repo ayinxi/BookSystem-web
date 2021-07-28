@@ -66,7 +66,7 @@
           <div class="aM-text aM-item">
             订单管理
           </div>
-          <i style="color: #909399">查看、查找、编辑、删除订单。</i>
+          <i style="color: #909399">查看、查找、编辑、取消订单。</i>
         </el-card>
         </el-button>
       </div>

@@ -1146,8 +1146,7 @@
                   {{ item.books.create_time }}</el-col
                 >
                 <el-col class="shop-name" :span="10"
-                  ><i class="el-icon-goods"></i>
-                  {{ item.shop_name }}</el-col
+                  ><i class="el-icon-goods"></i> {{ item.shop_name }}</el-col
                 >
               </el-row>
               <div class="books">
@@ -1169,7 +1168,9 @@
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div style="margin: 25px 0">¥{{ item.books.price }}</div>
+                        <div style="margin: 25px 0">
+                          ¥{{ item.books.price }}
+                        </div>
                       </el-col>
                       <el-col :span="2">
                         <div style="margin: 25px 0">
@@ -1423,7 +1424,6 @@ export default {
       tuikuanReturn: true,
       tuikuanList: [
         {
-
           books: {
             remark_status: "",
             return_status: "",
@@ -1463,6 +1463,7 @@ export default {
             this.allOrderReturn = true;
             this.$router.push("/refund/" + id);
           } else {
+            this.changeStatus(id);
             this.$message({
               message: "确认收货七天之后不可退款",
               type: "warning",
@@ -1471,6 +1472,23 @@ export default {
           }
         } else {
           this.$message.error("出现错误，请重试");
+        }
+      });
+    },
+    //
+    changeStatus(id) {
+      axios({
+        url: this.$store.state.yuming + "/order/updateReturnStatus",
+        method: "POST",
+        params: {
+          order_book_id: id,
+          return_status: 0,
+        },
+      }).then((res) => {
+        const {code} = res.data;
+        if (code == "200") {
+        } else {
+          this.$message.error("更新状态错误，请重试");
         }
       });
     },

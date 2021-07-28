@@ -31,7 +31,7 @@
             :active="3"
             align-center
             simple
-            finish-status="success"
+            finish-status="finish"
           >
             <el-step title="买家申请仅退款"></el-step>
             <el-step title="卖家处理退款申请"></el-step>
@@ -183,6 +183,7 @@
                   "
                   :src="this.bookList.books[0].return_image_b"
                   class="avatar"
+                  style="margin-top: 15px"
                 />
                 <div
                   v-if="
@@ -222,7 +223,7 @@
             :active="3"
             align-center
             simple
-            finish-status="success"
+            finish-status="finish"
           >
             <el-step title="买家申请退货退款"></el-step>
             <el-step title="卖家处理退货申请"></el-step>
@@ -336,6 +337,7 @@
                   "
                   :src="this.bookList.books[0].return_image_b"
                   class="avatar"
+                  style="margin-top: 15px"
                 />
                 <div
                   v-if="
@@ -357,7 +359,7 @@
       <el-row>
         <el-col :offset="3" :span="18">
           <el-steps
-            v-if="exchangeGoodsAdmin == true"
+            v-if="exchangeGoodsAdmin == false"
             :space="300"
             :active="exchangeGoodsStatus"
             align-center
@@ -371,12 +373,12 @@
             <el-step title="换货完毕"></el-step>
           </el-steps>
           <el-steps
-            v-if="exchangeGoodsAdmin == false"
+            v-if="exchangeGoodsAdmin == true"
             :space="300"
             :active="3"
             align-center
             simple
-            finish-status="success"
+            finish-status="finish"
           >
             <el-step title="买家申请退货退款"></el-step>
             <el-step title="卖家处理退货申请"></el-step>
@@ -456,15 +458,17 @@
               <el-form-item label="换货地址：" v-if="isDisabled == true">
                 <el-row>
                   <el-col :span="2">收货人：</el-col>
-                  <el-col :span="19">{{this.returnAddress.receiver_name}}</el-col>
+                  <el-col :span="19">{{
+                    this.returnAddress.receiver_name
+                  }}</el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="2">电话号码：</el-col>
-                  <el-col :span="19">{{this.returnAddress.phone}}</el-col>
+                  <el-col :span="19">{{ this.returnAddress.phone }}</el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="2">收货地址：</el-col>
-                  <el-col :span="12">{{this.returnAddress.address}}</el-col>
+                  <el-col :span="12">{{ this.returnAddress.address }}</el-col>
                 </el-row>
               </el-form-item>
               <el-form-item label="退款说明：" prop="reason">
@@ -518,6 +522,7 @@
                   "
                   :src="this.bookList.books[0].return_image_b"
                   class="avatar"
+                  style="margin-top: 15px"
                 />
                 <div
                   v-if="
@@ -857,7 +862,11 @@ export default {
             this.dataForm.delete("return_reason");
             this.dataForm.delete("return_detail");
             this.dataForm.delete("transport_status");
-            this.reload();
+            this.$router.push("/userOrder/1");
+            this.$message({
+              message: "提交成功",
+              type: "success",
+            });
           } else {
             this.$message.error("提交退货申请失败");
             this.refundInfo.options = "";
@@ -917,7 +926,11 @@ export default {
             this.dataForm.delete("order_book_id");
             this.dataForm.delete("return_reason");
             this.dataForm.delete("return_detail");
-            this.reload();
+            this.$router.push("/userOrder/1");
+            this.$message({
+              message: "提交成功",
+              type: "success",
+            });
           } else {
             this.$message.error("提交退货申请失败");
             this.refundInfo.options = "";
@@ -978,7 +991,11 @@ export default {
             this.dataForm.delete("return_reason");
             this.dataForm.delete("return_detail");
             this.dataForm.delete("exchange_address_id");
-            this.reload();
+            this.$router.push("/userOrder/1");
+            this.$message({
+              message: "提交成功",
+              type: "success",
+            });
           } else {
             this.$message.error("提交退货申请失败");
             this.refundInfo.options = "";
@@ -1041,14 +1058,6 @@ export default {
       } else {
         this.$message.error("上传图片只能是 JPG、JPEG或PNG 格式!");
       }
-    },
-    async reload() {
-      this.isLoading = true;
-      if (this.serviceId == 3) {
-        await this.getUserAddress();
-      }
-      await this.getBookInfo();
-      this.isLoading = false;
     },
   },
   async created() {

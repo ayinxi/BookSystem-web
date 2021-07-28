@@ -290,7 +290,7 @@ export default {
       this.$router.push("/#reloaded");
     },
     goToBookInfo(id) {
-      this.$router.push({ path: "/bookInfo", query: { book_id: id } });
+      this.$router.push(`/bookInfo/${id}`);
     },
     handleCurrentChange(val) {
       this.currentPage = val;

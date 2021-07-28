@@ -55,6 +55,72 @@
     </div>
     <div style="margin: 1.5% 10%">
       <el-card>
+        <el-row
+          ><span>选择查看的订单状态：</span
+          ><el-button
+            type="text"
+            @click.native="goToFirst(0)"
+            :class="{ btn_active: flag === 0 }"
+            id="Button0"
+            >全部</el-button
+          ><el-button
+            type="text"
+            @click.native="goToFirst(1)"
+            :class="{ btn_active: flag === 1 }"
+            id="Button1"
+            >申请退款中</el-button
+          ><el-button
+            type="text"
+            @click.native="goToFirst(2)"
+            :class="{ btn_active: flag === 2 }"
+            id="Button2"
+            >同意退款</el-button
+          ><el-button
+            type="text"
+            @click.native="goToFirst(3)"
+            :class="{ btn_active: flag === 3 }"
+            id="Button3"
+            >拒绝退款</el-button
+          ><el-button
+            type="text"
+            @click.native="goToFirst(4)"
+            :class="{ btn_active: flag === 4 }"
+            id="Button4"
+            >申请换货中</el-button
+          ><el-button
+            type="text"
+            @click.native="goToFirst(5)"
+            :class="{ btn_active: flag === 5 }"
+            id="Button5"
+            >同意换货</el-button
+          ><el-button
+            type="text"
+            @click.native="goToFirst(6)"
+            :class="{ btn_active: flag === 6 }"
+            id="Button6"
+            >拒绝换货</el-button
+          >
+          <el-button
+            type="text"
+            @click.native="goToFirst(7)"
+            :class="{ btn_active: flag === 7 }"
+            id="Button7"
+            >申请退货退款中</el-button
+          ><el-button
+            type="text"
+            @click.native="goToFirst(8)"
+            :class="{ btn_active: flag === 8 }"
+            id="Button8"
+            >同意退货退款</el-button
+          >
+          <el-button
+            type="text"
+            @click.native="goToFirst(9)"
+            :class="{ btn_active: flag === 9 }"
+            id="Button9"
+            >拒绝退货退款</el-button
+          >
+        </el-row>
         <el-table
           ref="multipleTable"
           :data="tableData"
@@ -65,62 +131,55 @@
         >
           <el-table-column type="selection" width="55"> </el-table-column>
           <el-table-column
-            prop="date"
+            prop="return_time"
             label="日期"
-            width="200"
-            sortable
-            :filters="[
-              { text: '2021-07-08', value: '2021-07-08' },
-              { text: '2021-07-09', value: '2021-07-09' },
-            ]"
-            :filter-method="filterDate"
+            width="150"
+            :formatter="dateFormat"
           >
-            <template slot-scope="scope">{{ scope.row.date }}</template>
           </el-table-column>
-          <el-table-column label="用户名" width="200">
-            <template slot-scope="scope">{{ scope.row.username }}</template>
+          <el-table-column label="用户名" width="150">
+            <template slot-scope="scope">{{ scope.row.name }}</template>
           </el-table-column>
-          <el-table-column
-            label="总价"
-            width="200"
-            prop="totalprice"
-            sortable
-            :filters="[
-              { text: '0-50元', value: 50 },
-              { text: '50-100元', value: 100 },
-            ]"
-            :filter-method="filterTotalprice"
-          >
-            <template slot-scope="scope">￥{{ scope.row.totalprice }}</template>
+          <el-table-column label="总价" width="150" prop="book_price">
+            <template slot-scope="scope">￥{{ scope.row.book_price }}</template>
           </el-table-column>
-          <el-table-column
-            label="订单状态"
-            width="200"
-            prop="state"
-            :filters="[
-              { text: '正在申请退款', value: '正在申请退款' },
-              { text: '已退款', value: '已退款' },
-              { text: '已拒绝退款', value: '已拒绝退款' },
-            ]"
-            :filter-method="filterState"
-          >
-            <template slot-scope="scope">{{ scope.row.state }}</template>
+          <el-table-column label="理由" width="200" prop="return_reason">
+          </el-table-column>
+          <el-table-column label="订单状态" width="180" prop="state">
+            <template slot-scope="scope"
+              ><span v-if="scope.row.return_status == 1">申请退款中</span>
+              <span v-if="scope.row.return_status == 2">同意退款</span>
+              <span v-if="scope.row.return_status == 3">拒绝退款</span>
+              <span v-if="scope.row.return_status == 4">申请换货中</span>
+              <span v-if="scope.row.return_status == 5">同意换货</span>
+              <span v-if="scope.row.return_status == 6">拒绝换货</span
+              ><span v-if="scope.row.return_status == 7">申请退货退款中</span
+              ><span v-if="scope.row.return_status == 8">同意退货退款</span
+              ><span v-if="scope.row.return_status == 9"
+                >拒绝退货退款</span
+              ></template
+            >
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope"
               ><el-button
                 type="text"
                 style="font-size: 15px"
-                @click="handleInfo(scope.$index, scope.row)"
+                @click="handleInfo(scope.row.id)"
                 >查看详情</el-button
               >
               <el-divider direction="vertical"></el-divider>
               <el-button
                 type="text"
                 style="font-size: 15px"
-                @click="handleConfirm(scope.row.state, scope.row.order_book_id)"
+                @click="handleConfirm(scope.row.return_status, scope.row.id)"
                 :disabled="
-                  scope.row.state == '已退款' || scope.row.state == '已拒绝退款'
+                  scope.row.return_status == 2 ||
+                  scope.row.return_status == 3 ||
+                  scope.row.return_status == 5 ||
+                  scope.row.return_status == 6 ||
+                  scope.row.return_status == 8 ||
+                  scope.row.return_status == 9
                 "
                 >同意</el-button
               >
@@ -128,9 +187,14 @@
               <el-button
                 type="text"
                 style="font-size: 15px"
-                @click="handleRefuse(scope.row.state, scope.row.order_book_id)"
+                @click="handleRefuse(scope.row.return_status, scope.row.id)"
                 :disabled="
-                  scope.row.state == '已退款' || scope.row.state == '已拒绝退款'
+                  scope.row.return_status == 2 ||
+                  scope.row.return_status == 3 ||
+                  scope.row.return_status == 5 ||
+                  scope.row.return_status == 6 ||
+                  scope.row.return_status == 8 ||
+                  scope.row.return_status == 9
                 "
                 >拒绝</el-button
               >
@@ -159,75 +223,151 @@
 import echarts from "echarts";
 import axios from "axios";
 import qs from "qs";
+import moment from "moment";
 export default {
   data() {
     return {
       isLoading: false,
       dataLoading: false,
-      newRefundOrder: 12345,
-      currentPage:1,
-      count:0,
+      newRefundOrder: 0,
+      num: [],
+      currentPage: 1,
+      count: 0,
+      flag: 0,
       reason: "",
       multipleSelection: [],
       Order_Book_Ids: [],
-      tableData: [
-        {
-          date: "2021-7-8",
-          username: "张三",
-          address: "计算机楼001",
-          bookname: "书本1号",
-          booknum: 5,
-          bookprice: 10,
-          telephone: 12345678901,
-          totalprice: 50,
-          state: "正在申请退款",
-        },
-        {
-          date: "2021-7-9",
-          username: "李四",
-          address: "计算机楼002",
-          bookname: "书本2号",
-          booknum: 6,
-          bookprice: 14,
-          telephone: 12345678902,
-          totalprice: 84,
-          state: "已退款",
-        },
-      ],
+      tableData: [],
     };
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.drawPieChart();
-    });
   },
   methods: {
     goToManage() {
       this.$router.push("/shopManage#reloaded");
     },
-    handleInfo() {
-      this.$router.push("/refundInfo");
+    handleInfo(id) {
+      this.$router.push(`/refundInfo/${id}`);
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getReback(this.flag);
+    },
+    //时间格式化
+    dateFormat(row, column) {
+      var date = row[column.property];
+      return moment(date).format("YYYY-MM-DD");
+    },
+    //获取初始数据
+    getOrder() {
+      axios({
+        url: this.$store.state.yuming + "/order/reback",
+        method: "POST",
+        params: {
+          status: 0,
+          page_num: this.currentPage,
+          order_num: 10,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.tableData = data;
+          } else {
+            this.$message.error("获取退款订单失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取数量
+      axios({
+        url: this.$store.state.yuming + "/order/rebackCount",
+        method: "POST",
+        params: {
+          status: 0,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.count = data;
+            this.newRefundOrder = data;
+            for (let i = 1; i <= 9; i++) this.getNum(i);
+          } else {
+            this.$message.error("获取退款订单失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //获取各种状态的个数
+    getNum(val) {
+      axios({
+        url: this.$store.state.yuming + "/order/rebackCount",
+        method: "POST",
+        params: {
+          status: val,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.num[val - 1] = data;
+            this.$nextTick(() => {
+              this.drawPieChart();
+            });
+          } else {
+            this.$message.error("获取退款订单个数失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
     //获取数据
+    goToFirst(val) {
+      this.currentPage = 1;
+      this.getReback(val);
+    },
     getReback(val) {
+      this.flag = val;
+      document.getElementById("Button" + val).blur();
       axios({
         url: this.$store.state.yuming + "/order/reback",
         method: "POST",
         params: {
           status: val,
-          page_num:this.currentPage,
-          order_num:10,
+          page_num: this.currentPage,
+          order_num: 10,
         },
       })
         .then((res) => {
-          const { code,data } = res.data;
+          const { code, data } = res.data;
           if (code == "200") {
-            this.tableData=data;
+            this.tableData = data;
           } else {
-            this.$message.error("同意退款失败，请刷新");
+            this.$message.error("获取退款订单失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      axios({
+        url: this.$store.state.yuming + "/order/rebackCount",
+        method: "POST",
+        params: {
+          status: val,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.count = data;
+          } else {
+            this.$message.error("获取退款订单个数失败，请刷新");
           }
         })
         .catch(() => {
@@ -235,8 +375,8 @@ export default {
         });
     },
     //根据不同的状态来同意退款，换货，还是退货退款
-    handleConfirm(state, id) {
-      if (state == 1) {
+    handleConfirm(status, id) {
+      if (status == 1) {
         this.$confirm("是否同意退款?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -253,7 +393,7 @@ export default {
               const { code } = res.data;
               if (code == "200") {
                 this.dataLoading = true;
-                //获取数据
+                this.getReback(this.flag);
                 this.dataLoading = false;
                 this.$message.success("同意退款成功");
               } else {
@@ -264,7 +404,7 @@ export default {
               this.$message.error("出现错误，请稍后再试");
             });
         });
-      } else if (state == 2) {
+      } else if (status == 4) {
         this.$confirm("是否同意换货?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -281,7 +421,7 @@ export default {
               const { code } = res.data;
               if (code == "200") {
                 this.dataLoading = true;
-                //获取数据
+                this.getReback(this.flag);
                 this.dataLoading = false;
                 this.$message.success("同意换货成功");
               } else {
@@ -292,7 +432,7 @@ export default {
               this.$message.error("出现错误，请稍后再试");
             });
         });
-      } else {
+      } else if (status == 7) {
         this.$confirm("是否同意退货退款?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -309,7 +449,7 @@ export default {
               const { code } = res.data;
               if (code == "200") {
                 this.dataLoading = true;
-                //获取数据
+                this.getReback(this.flag);
                 this.dataLoading = false;
                 this.$message.success("同意退货退款成功");
               } else {
@@ -322,8 +462,8 @@ export default {
         });
       }
     },
-    handleRefuse(state, id) {
-      if (state == 1) {
+    handleRefuse(status, id) {
+      if (status == 1) {
         this.$prompt("请输入拒绝退款的理由", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -336,14 +476,14 @@ export default {
               method: "POST",
               params: {
                 order_book_id: id,
-                check_reason: value,
+                check_opinion: value,
               },
             })
               .then((res) => {
                 const { code } = res.data;
                 if (code == "200") {
                   this.dataLoading = true;
-                  //获取数据
+                  this.getReback(this.flag);
                   this.dataLoading = false;
                   this.$message.success("拒绝退款成功");
                   this.reason = "";
@@ -363,7 +503,7 @@ export default {
               message: "已放弃拒绝退款",
             });
           });
-      } else if (state == 2) {
+      } else if (status == 4) {
         this.$prompt("请输入拒绝换货的理由", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -376,14 +516,14 @@ export default {
               method: "POST",
               params: {
                 order_book_id: id,
-                check_reason: value,
+                check_opinion: value,
               },
             })
               .then((res) => {
                 const { code } = res.data;
                 if (code == "200") {
                   this.dataLoading = true;
-                  //获取数据
+                  this.getReback(this.flag);
                   this.dataLoading = false;
                   this.$message.success("拒绝换货成功");
                   this.reason = "";
@@ -403,7 +543,7 @@ export default {
               message: "已放弃拒绝换货",
             });
           });
-      } else {
+      } else if (status == 7) {
         this.$prompt("请输入拒绝退货退款的理由", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -416,14 +556,14 @@ export default {
               method: "POST",
               params: {
                 order_book_id: id,
-                check_reason: value,
+                check_opinion: value,
               },
             })
               .then((res) => {
                 const { code } = res.data;
                 if (code == "200") {
                   this.dataLoading = true;
-                  //获取数据
+                  this.getReback(this.flag);
                   this.dataLoading = false;
                   this.$message.success("拒绝退货退款成功");
                   this.reason = "";
@@ -447,7 +587,7 @@ export default {
     },
     //批量同意退款
     batchConfirm() {
-      if (this.multipleSelection[0].state == 1) {
+      if (this.multipleSelection[0].status == 1) {
         this.$confirm("是否批量同意退款?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -455,13 +595,13 @@ export default {
         })
           .then(() => {
             for (let i = 0; i < this.multipleSelection.length; i++) {
-              this.Order_Book_Ids.push(this.multipleSelection[i].order_book_id);
+              this.Order_Book_Ids.push(this.multipleSelection[i].id);
             }
             axios({
               url: this.$store.state.yuming + "/shop/batReturnPass",
               method: "POST",
               params: {
-                Order_Book_Ids: this.Order_Book_Ids,
+                order_book_id: this.Order_Book_Ids,
               },
               paramsSerializer: (params) => {
                 return qs.stringify(params, { indices: false });
@@ -471,7 +611,7 @@ export default {
                 const { code } = res.data;
                 if (code == "200") {
                   this.dataLoading = true;
-                  //获取数据
+                  this.getReback(this.flag);
                   this.dataLoading = false;
                   this.$message.success("批量同意退款成功");
                   this.Order_Book_Ids = [];
@@ -491,7 +631,7 @@ export default {
               message: "已放弃批量同意退款",
             });
           });
-      } else if (this.multipleSelection[0].state == 2) {
+      } else if (this.multipleSelection[0].status == 4) {
         this.$confirm("是否批量同意换货?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -499,13 +639,13 @@ export default {
         })
           .then(() => {
             for (let i = 0; i < this.multipleSelection.length; i++) {
-              this.Order_Book_Ids.push(this.multipleSelection[i].order_book_id);
+              this.Order_Book_Ids.push(this.multipleSelection[i].id);
             }
             axios({
               url: this.$store.state.yuming + "/shop/batExchangePass",
               method: "POST",
               params: {
-                Order_Book_Ids: this.Order_Book_Ids,
+                order_book_id: this.Order_Book_Ids,
               },
               paramsSerializer: (params) => {
                 return qs.stringify(params, { indices: false });
@@ -515,7 +655,7 @@ export default {
                 const { code } = res.data;
                 if (code == "200") {
                   this.dataLoading = true;
-                  //获取数据
+                  this.getReback(this.flag);
                   this.dataLoading = false;
                   this.$message.success("批量同意换货成功");
                   this.Order_Book_Ids = [];
@@ -543,7 +683,7 @@ export default {
         })
           .then(() => {
             for (let i = 0; i < this.multipleSelection.length; i++) {
-              this.Order_Book_Ids.push(this.multipleSelection[i].order_book_id);
+              this.order_book_ids.push(this.multipleSelection[i].id);
             }
             axios({
               url: this.$store.state.yuming + "/shop/batReturnAllPass",
@@ -559,7 +699,7 @@ export default {
                 const { code } = res.data;
                 if (code == "200") {
                   this.dataLoading = true;
-                  //获取数据
+                  this.getReback(this.flag);
                   this.dataLoading = false;
                   this.$message.success("批量同意退货退款成功");
                   this.Order_Book_Ids = [];
@@ -581,17 +721,6 @@ export default {
           });
       }
     },
-    filterDate(value, row, column) {
-      const property = column["property"];
-      return row[property] === value;
-    },
-    filterTotalprice(value, row) {
-      return row.totalprice <= value && row.totalprice > value - 50;
-    },
-    filterState(value, row, column) {
-      const property = column["property"];
-      return row[property] === value;
-    },
     drawPieChart() {
       this.chartPie = echarts.init(
         document.getElementById("chartPie"),
@@ -605,7 +734,17 @@ export default {
           formatter: "{b}: <br/>{c}({d}%)",
         },
         legend: {
-          data: ["正在申请退款", "已退款", "已拒绝退款"],
+          data: [
+            "申请退款中",
+            "同意退款",
+            "拒绝退款",
+            "申请换货中",
+            "同意换货",
+            "拒绝换货",
+            "申请退货退款中",
+            "同意退货退款",
+            "拒绝退货退款",
+          ],
           right: 250,
           top: "center",
           itemGap: 5, //设置图例的间距
@@ -626,16 +765,40 @@ export default {
             center: ["40%", "50%"],
             data: [
               {
-                value: 234,
-                name: "正在申请退款",
+                value: this.num[0],
+                name: "申请退款中",
               },
               {
-                value: 135,
-                name: "已退款",
+                value: this.num[1],
+                name: "同意退款",
               },
               {
-                value: 548,
-                name: "已拒绝退款",
+                value: this.num[2],
+                name: "拒绝退款",
+              },
+              {
+                value: this.num[3],
+                name: "申请换货中",
+              },
+              {
+                value: this.num[4],
+                name: "同意换货",
+              },
+              {
+                value: this.num[5],
+                name: "拒绝换货",
+              },
+              {
+                value: this.num[6],
+                name: "申请退货退款中",
+              },
+              {
+                value: this.num[7],
+                name: "同意退货退款",
+              },
+              {
+                value: this.num[8],
+                name: "拒绝退货退款",
               },
             ],
             //动画持续时间：2秒
@@ -682,6 +845,11 @@ export default {
       });
     },
   },
+  async created() {
+    this.isLoading = true;
+    await this.getOrder();
+    this.isLoading = false;
+  },
 };
 </script>
 <style acoped>
@@ -719,5 +887,8 @@ export default {
   padding: 30px 10px;
   position: relative;
   left: 180px;
+}
+.btn_active {
+  color: black;
 }
 </style>

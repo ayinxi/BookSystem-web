@@ -418,6 +418,7 @@
               :model="applyShopInfo"
               label-width="80px"
               :rules="applyRules"
+              label-position="left"
             >
               <el-row>
                 <el-col>

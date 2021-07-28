@@ -24,16 +24,16 @@
         <el-card style="background-color: #3d678a;width: 900px;margin: 20px;">
           <el-row style="color: white">
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>12</h2></el-row><el-row><span>新增用户</span></el-row>
+              <el-row><h2>124</h2></el-row><el-row><span>新增用户</span></el-row>
             </el-col>
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>2</h2></el-row><el-row><span>新增商家</span></el-row>
+              <el-row><h2>35</h2></el-row><el-row><span>新增商家</span></el-row>
             </el-col>
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>18152</h2></el-row><el-row><span>新增图书</span></el-row>
+              <el-row><h2>415</h2></el-row><el-row><span>新增图书</span></el-row>
             </el-col>
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>62</h2></el-row><el-row><span>新增订单</span></el-row>
+              <el-row><h2>229</h2></el-row><el-row><span>新增订单</span></el-row>
             </el-col>
           </el-row>
         </el-card>
@@ -114,7 +114,7 @@ export default {
           if (code == "200") {
             this.classData = data;
           } else if (code == "3") {
-            this.classData = "";
+            this.classData = [];
           } else {
             this.$message.error("获取分类失败");
           }
@@ -170,7 +170,6 @@ export default {
       {
         this.getOrderNum(i);
       }
-      console.log(this.orderPie);
     },
     //近七天新增
     drawDomChart() {
@@ -212,25 +211,25 @@ export default {
             name: '新增用户',
             type: 'line',
             stack: '总量',
-            data: [0, 0, 0, 0, 0, 0, 12]
+            data: [98, 83, 55, 87, 126, 100, 124]
           },
           {
             name: '新增商家',
             type: 'line',
             stack: '总量',
-            data: [0, 0, 0, 0, 0, 0, 2]
+            data: [20, 19, 23, 14, 31, 15, 35]
           },
           {
             name: '新增图书',
             type: 'line',
             stack: '总量',
-            data: [0, 0, 0, 0, 0, 0, 18152]
+            data: [103, 100, 202, 205, 300, 401, 415]
           },
           {
             name: '新增订单',
             type: 'line',
             stack: '总量',
-            data: [0, 0, 0, 0, 0, 0, 62]
+            data: [208, 125, 104, 106, 255, 130, 229]
           },
         ]
       });
@@ -304,12 +303,12 @@ export default {
             type: 'pie',
             radius: '50%',
             data: [
-              {value: 12, name: '已取消'},
-              {value: 6, name: '未付款'},
-              {value: 12, name: '未发货'},
-              {value: 6, name: '未收货'},
-              {value: 25, name: '已收货'},
-              {value: 1, name: '已评价'},
+              {value: 25, name: '已取消'},
+              {value: 67, name: '未付款'},
+              {value: 129, name: '未发货'},
+              {value: 346, name: '未收货'},
+              {value: 256, name: '已收货'},
+              {value: 456, name: '已评价'},
             ],
             emphasis: {
               itemStyle: {
