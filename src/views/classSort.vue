@@ -95,46 +95,83 @@
     </div>
     <div>
       <el-container style="margin: 0% 5%">
-        <el-header style="padding: 0">
-          <el-row class="rowStyle1">
-            <el-col class="colStyle" @click.native="showAll"
-              >全部商品分类</el-col
-            >
-            <el-col>
-              <el-menu
-                :default-active="activeIndex1"
-                class="el-menu-demo"
-                mode="horizontal"
-              >
-                <el-menu-item
-                  v-for="item in categoryList"
-                  :key="item.main_id"
-                  style="color: rgb(250, 128, 114); font-weight: 1000"
-                  :index="item.main_id"
-                  @click.native="getClassBook(item.main_id)"
-                  >{{ item.main_name }}</el-menu-item
-                >
-              </el-menu>
-            </el-col>
-          </el-row>
-        </el-header>
         <el-container>
-          <el-aside width="18%" align="center">
-            <img class="avatar" :src="this.shop.avatar_b" />
-            <p>{{ this.shop.shop_name }}</p>
-            <el-rate
-              v-model="this.rate"
-              disabled
-              show-score
-              text-color="#ff9900"
-              score-template="{value}"
+          <el-aside width="18%">
+            <el-row class="rowStyle1">
+              <el-col class="colStyle" @click.native="showAll"
+                ><p>全部商品分类</p></el-col
+              >
+            </el-row>
+            <el-menu>
+              <div v-for="item in categoryList" :key="item.main_id">
+                <el-menu-item
+                  style="
+                    color: rgb(250, 128, 114);
+                    font-weight: 1000;
+                    font-size: 20px;
+                  "
+                  :index="item.main_id"
+                  @click.native="getOne(item.main_id)"
+                  >{{ item.main_name }}
+                </el-menu-item>
+                <div
+                  v-for="littleitem in item.second_category"
+                  :key="littleitem.second_id"
+                >
+                  <el-menu-item
+                    style="color: rgb(233, 150, 122); font-weight: 1000"
+                    :index="littleitem.second_id"
+                    @click.native="getTwo(littleitem.second_id)"
+                    >{{ littleitem.second_name }}
+                  </el-menu-item>
+                </div>
+              </div>
+            </el-menu>
+            <el-menu
+              class="el-menu-vertical-demo"
+              :default-active="activeIndex2"
             >
-            </el-rate>
+              <el-menu-item>
+                <span
+                  slot="title"
+                  style="
+                    color: rgb(250, 128, 114);
+                    font-weight: 1000;
+                    font-size: 20px;
+                  "
+                  >按出版时间分</span
+                >
+              </el-menu-item>
+              <el-menu-item
+                index="2021"
+                @click.native="getThree('2021')"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >2021年出版</el-menu-item
+              >
+              <el-menu-item
+                index="2020"
+                @click.native="getThree('2020')"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >2020年出版</el-menu-item
+              >
+              <el-menu-item
+                index="2019"
+                @click.native="getThree('2019')"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >2019年出版</el-menu-item
+              >
+              <el-menu-item
+                index="2018"
+                @click.native="getFour('2018')"
+                style="color: rgb(233, 150, 122); font-weight: 1000"
+                >2018年及以前出版</el-menu-item
+              >
+            </el-menu>
           </el-aside>
           <el-main>
             <el-row class="rowStyle" type="flex">
               <el-col :span="6" v-for="book in displayList" :key="book.id">
-                <el-card style="width: 90%; margin: 5%" @click.native="goToBookInfo(book.id)" class="card"> 
+                <el-card style="width: 90%; margin: 5%" @click.native="goToBookInfo(book.id)" class="card">
                   <el-container>
                     <el-header
                       style="
@@ -145,7 +182,7 @@
                       "
                     >
                       <el-image
-                        class="imgStyle"
+                        class="imgStyle5"
                         :src="book.image_b"
                         @click.native="goToBookInfo(book.id)"
                       >
@@ -153,6 +190,7 @@
                     </el-header>
                     <el-main
                       style="
+                        color: black;
                         padding-top: 0;
                         text-align: center;
                         padding-bottom: 10px;
@@ -163,10 +201,10 @@
                         class="book-name"
                         @click="goToBookInfo(book.id)"
                         :title="book.book_name"
-                        >{{ book.book_name | ellipsis }}</el-link
+                        >{{ book.book_name |ellipsis }}</el-link
                       >
-                      <p style="color: gray; margin: 0%" :title="book.author">
-                        {{ book.author | ellipsis }}
+                      <p style="color: rgb(128, 192, 192); margin: 0%" :title="book.author">
+                        {{ book.author |ellipsis }}
                       </p>
                       <p style="color: red; font-weight: 1000; margin: 0%">
                         ￥{{ book.price }}
@@ -178,10 +216,10 @@
             </el-row>
             <el-pagination
               :current-page="currentPage"
-              :page-size="16"
               @current-change="handleCurrentChange"
-              layout="prev, pager, next, jumper"
               :total="bookcount"
+              :page-size="20"
+              layout="prev, pager, next, jumper"
             >
             </el-pagination>
           </el-main>
@@ -206,13 +244,13 @@ export default {
   },
   data() {
     return {
-      isLoading: false,
+      goodsNum: "",
       activeIndex1: "",
       activeIndex2: "",
-      goodsNum: "",
+      activeIndex3: "",
+      activeIndex4: "",
       currentPage: 1,
-      bookcount: 1,
-      shop_id: this.$route.params.shop_id,
+      isLoading: false,
       input: "",
       categoryList: [
         {
@@ -222,12 +260,8 @@ export default {
           second_category: [{ book_num: "", second_name: "", second_id: "" }],
         },
       ],
-      shop: {
-        avatar_b: "",
-        shop_name: "",
-      },
-      rate:0,
       displayList: [],
+      bookcount: 0,
     };
   },
   computed: {
@@ -239,17 +273,21 @@ export default {
     },
   },
   methods: {
+    goToSearch() {
+      this.$store.commit("gobalSearchText", this.input);
+      this.$router.push("/searchBook");
+    },
     gotoSign() {
       this.$router.push("/sign");
     },
     gotoLogin() {
       this.$router.push("/login");
     },
-    gotoPersonPage() {
-      this.$router.push("/person");
-    },
     gotoShopCar() {
       this.$router.push("/shopping/0/0");
+    },
+    gotoPersonPage() {
+      this.$router.push("/person");
     },
     loginOut() {
       this.isLoading = true;
@@ -257,159 +295,22 @@ export default {
       sessionStorage.removeItem("token");
       this.isLoading = false;
     },
-    //展示这家店的所有书
     showAll() {
-      this.activeIndex1 = " ";
-      this.activeIndex2 = " ";
-      axios({
-        url: this.$store.state.yuming + "/book/getPage",
-        method: "GET",
-        params: {
-          page_num: this.currentPage,
-          book_num: 16,
-          style: 1,
-          main_category_id: "",
-          second_category_id: "",
-          year: "",
-          year_before: "",
-          year_after: "",
-          shop_id: this.shop_id,
-        },
-      })
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == "200") {
-            this.displayList = data;
-          } else {
-            this.$message.error("获取图书信息失败，请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
-      axios({
-        url: this.$store.state.yuming + "/book/getPageCount",
-        method: "GET",
-        params: {
-          main_category_id: "",
-          second_category_id: "",
-          year: "",
-          year_before: "",
-          year_after: "",
-          shop_id: this.shop_id,
-        },
-      })
-        .then((res) => {
-          const { code, count } = res.data;
-          if (code == "200") {
-            this.bookcount = count;
-          } else {
-            this.$message.error("获取图书数目失败，请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
+      this.$router.push("/#reloaded");
     },
-    //每次点导航栏能够将当前页改为1
-    getClassBook(id) {
-      this.currentPage = 1;
-      this.getMainClassBook(id);
-    },
-    //根据类型显示这家店的书
-    getMainClassBook(id) {
-      this.activeIndex1 = id;
-      axios({
-        url: this.$store.state.yuming + "/book/getPage",
-        method: "GET",
-        params: {
-          page_num: this.currentPage,
-          book_num: 16,
-          style: 1,
-          main_category_id: id,
-          second_category_id: "",
-          year: "",
-          year_before: "",
-          year_after: "",
-          shop_id: this.shop_id,
-        },
-      })
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == "200") {
-            this.displayList = data;
-          } else {
-            this.$message.error("获取图书信息失败，请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
-      axios({
-        url: this.$store.state.yuming + "/book/getPageCount",
-        method: "GET",
-        params: {
-          main_category_id: id,
-          second_category_id: "",
-          year: "",
-          year_before: "",
-          year_after: "",
-          shop_id: this.shop_id,
-        },
-      })
-        .then((res) => {
-          const { code, count } = res.data;
-          if (code == "200") {
-            this.bookcount = count;
-          } else {
-            this.$message.error("获取图书数目失败，请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
-    },
+    //实现分页
     handleCurrentChange(val) {
       this.currentPage = val;
-      if (this.activeIndex1 == " ") {
-        this.showAll();
-      } else this.getMainClassBook(this.activeIndex1);
+      if (this.activeIndex1 != "") {
+        this.getMainClassBook(this.activeIndex1);
+      } else if (this.activeIndex2 != "") {
+        this.getSecondClassBook(this.activeIndex2);
+      } else if (this.activeIndex3 != "") {
+        this.getYearBook(this.activeIndex3);
+      } else this.getYearBeforeBook(this.activeIndex4);
     },
-    handleSelect1() {
-      this.activeIndex2 = " ";
-    },
-    handleSelect2() {
-      this.activeIndex1 = " ";
-    },
-    //加入图书详情页
     goToBookInfo(id) {
       this.$router.push({ path: "/bookInfo", query: { book_id: id } });
-    },
-    //进行搜索
-    goToSearch() {
-      this.$store.commit("gobalSearchText", this.input);
-      this.$router.push("/searchBook");
-    },
-    //获取店铺信息
-    getShopInfo() {
-      axios({
-        url: this.$store.state.yuming + "/user/public/getShopById",
-        method: "GET",
-        params: {
-          shop_id: this.shop_id,
-        },
-      })
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == "200") {
-            this.shop = data;
-          } else {
-            this.$message.error("获取店铺信息失败,请刷新");
-          }
-        })
-        .catch(() => {
-          this.$message.error("出现错误，请稍后再试");
-        });
     },
     getGoodsNum() {
       axios({
@@ -421,26 +322,251 @@ export default {
           if (code == "200") {
             this.goodsNum = data;
           } else {
-            this.$message.error("获取购物车失败,请刷新");
+            this.$message.error("获取店铺状态失败,请刷新");
           }
         })
         .catch(() => {
           this.$message.error("出现错误，请稍后再试");
         });
     },
-    //获取评分
-    getRate(){
+    //点各导航栏都要会第一页
+    getOne(id) {
+      this.currentPage = 1;
+      this.getMainClassBook(id);
+    },
+    getTwo(id) {
+      this.currentPage = 1;
+      this.getSecondClassBook(id);
+    },
+    getThree(id) {
+      this.currentPage = 1;
+      this.getYearBook(id);
+    },
+    getFour(id) {
+      this.currentPage = 1;
+      this.getYearBeforeBook(id);
+    },
+    //通过index传来的参数进行一级分类筛选
+    getMainClassBook(id) {
+      this.activeIndex1 = id;
+      this.activeIndex2 = "";
+      this.activeIndex3 = "";
+      this.activeIndex4 = "";
       axios({
-        url: this.$store.state.yuming + "/shop/rate",
+        url: this.$store.state.yuming + "/book/getPage",
         method: "GET",
-        params: {shop_id:this.shop_id,}
+        params: {
+          page_num: this.currentPage,
+          book_num: 20,
+          style: 1,
+          main_category_id: id,
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
       })
         .then((res) => {
           const { code, data } = res.data;
           if (code == "200") {
-            this.rate = data;
+            this.displayList = data;
           } else {
-            this.$message.error("获取用户评价数量失败,请刷新");
+            this.$message.error("获取图书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取书的总数
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: id,
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //通过index传来的参数进行二级分类筛选
+    getSecondClassBook(id) {
+      this.activeIndex1 = "";
+      this.activeIndex2 = id;
+      this.activeIndex3 = "";
+      this.activeIndex4 = "";
+      axios({
+        url: this.$store.state.yuming + "/book/getPage",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 20,
+          style: 1,
+          main_category_id: "",
+          second_category_id: id,
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList = data;
+          } else {
+            this.$message.error("获取图书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取书的总数
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: "",
+          second_category_id: id,
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    //通过index传来的参数进行某一年份筛选
+    getYearBook(year) {
+      this.activeIndex1 = "";
+      this.activeIndex2 = "";
+      this.activeIndex3 = year;
+      this.activeIndex4 = "";
+      axios({
+        url: this.$store.state.yuming + "/book/getPage",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 20,
+          style: 1,
+          main_category_id: "",
+          second_category_id: "",
+          year: year,
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList = data;
+          } else {
+            this.$message.error("获取图书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取书的总数
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: "",
+          second_category_id: "",
+          year: year,
+          year_before: "",
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    getYearBeforeBook(year) {
+      this.activeIndex1 = "";
+      this.activeIndex2 = "";
+      this.activeIndex3 = "";
+      this.activeIndex4 = year;
+      axios({
+        url: this.$store.state.yuming + "/book/getPage",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 20,
+          style: 1,
+          main_category_id: "",
+          second_category_id: "",
+          year: "",
+          year_before: year,
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.displayList = data;
+          } else {
+            this.$message.error("获取图书信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取书的总数
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: "",
+          second_category_id: "",
+          year: "",
+          year_before: year,
+          year_after: "",
+          shop_id: "",
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
           }
         })
         .catch(() => {
@@ -468,14 +594,31 @@ export default {
     },
   },
   async created() {
+    var query = this.$route.query;
+    if (query) {
+      if (query.activeIndexMain != "") {
+        var temp = query.activeIndexMain;
+        this.activeIndex2 = temp;
+        this.getMainClassBook(this.activeIndex2);
+      } else if (query.activeIndexSecond != "") {
+        temp = query.activeIndexSecond;
+        this.activeIndex2 = temp;
+        this.getSecondClassBook(this.activeIndex2);
+      } else if (query.year != "") {
+        temp = query.year;
+        this.activeIndex2 = temp;
+        this.getYearBook(this.activeIndex2);
+      } else {
+        temp = query.year_before;
+        this.activeIndex2 = temp;
+        this.getYearBeforeBook(this.activeIndex2);
+      }
+    }
     this.isLoading = true;
     if (this.$store.state.token) {
       await this.getGoodsNum();
     }
     await this.getAllCategory();
-    await this.getShopInfo();
-    await this.getRate();
-    await this.showAll();
     this.isLoading = false;
   },
 };
@@ -488,7 +631,7 @@ export default {
 .book-name {
   font-size: 100%;
 }
-.imgStyle {
+.imgStyle5 {
   margin-left: 10%;
   width: 80%;
   height: 200px;
@@ -502,16 +645,43 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(205, 92, 92);
+  height: 60px;
 }
 .colStyle {
   text-align: center;
+  justify-content: center;
+  align-items: center;
   font-weight: 1000;
-  width: 21.93%;
+  width: 100%;
   color: white;
   cursor: pointer;
+  background-color: rgb(205, 92, 92);
+  height: 60px;
+}
+.menu-item {
+  color: rgb(188, 143, 143);
+  font-weight: 1000;
+}
+.imgStyle2 {
+  width: 100%;
+  height: 100%;
+}
+.carouselStyle {
+  border-radius: 10px;
+}
+.cStyle {
+  height: 400px;
+  position: relative;
+  left: 20px;
+  padding: 0px;
+}
+.tscStyle {
+  height: 100%;
 }
 
+.el-menu-item.is-active {
+  background-color: rgb(231, 241, 252) !important;
+}
 .header {
   display: flex;
   justify-content: flex-start;
@@ -558,15 +728,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  border-radius: 50%;
-  margin-top: 100px;
-}
-.el-menu-item.is-active {
-  background-color: rgb(231, 241, 252) !important;
 }
 .card:hover{
   box-shadow: 0 0 2px 6px #F3F3F3;

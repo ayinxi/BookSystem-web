@@ -2,7 +2,7 @@
   <div>
     <div class="header2">
       <div class="logo2">
-        <img width="250px" src="../assets/logo.png" />
+        <img width="250px" src="../../assets/jwbc.png" />
       </div>
     </div>
     <div style="margin: 0% 5%">
@@ -36,12 +36,13 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+          <el-form-item label="申请退款理由：" prop="reason">
+            <span>{{ tableData.reason }}</span>
+          </el-form-item>
+        </el-row>
         <el-form-item label-width="0">
-          <el-table
-            :data="tableData.bookList"
-            border
-            style="width: 100%"
-          >
+          <el-table :data="tableData.bookList" border style="width: 100%">
             <el-table-column label="图书图片" width="180">
               <template slot-scope="scope">
                 <img :src="scope.row.bookimg" class="imgStyle" />
@@ -52,8 +53,15 @@
             <el-table-column prop="booknum" label="图书数量" width="180">
             </el-table-column>
             <el-table-column prop="bookprice" label="图书单价" width="180">
+              <template slot-scope="scope"
+                >￥{{ scope.row.bookprice }}</template
+              >
             </el-table-column>
-            <el-table-column prop="totalprice" label="总价"> </el-table-column>
+            <el-table-column prop="totalprice" label="总价">
+              <template slot-scope="scope">{{
+                scope.row.totalprice
+              }}</template></el-table-column
+            >
           </el-table>
         </el-form-item>
         <el-form-item align="center" label-width="0">
@@ -74,20 +82,21 @@ export default {
         consigneeName: "李四",
         address: "计算机楼001",
         telephone: 12345678901,
+        reason: "这是退款理由这是退款理由",
         bookList: [
           {
             bookname: "书本1号",
             booknum: 5,
             bookprice: 10,
             totalprice: 50,
-            bookimg: require("../assets/kuku.png"),
+            bookimg: require("../../assets/kuku.png"),
           },
           {
             bookname: "书本2号",
             booknum: 6,
             bookprice: 11,
             totalprice: 66,
-            bookimg: require("../assets/kuku.png"),
+            bookimg: require("../../assets/kuku.png"),
           },
         ],
       },
@@ -95,7 +104,7 @@ export default {
   },
   methods: {
     returnToM() {
-      this.$router.push("/orderM");
+      this.$router.push("/refundM");
     },
   },
 };

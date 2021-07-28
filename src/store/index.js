@@ -11,17 +11,28 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   plugins: [vuexLocalStorage.plugin],
   state: {
-    token:localStorage.getItem('token') || '',
-    gobalSearchText:"",
-    gobalSearchType:"",
+    token: '',
+    gobalSearchText: "",
+    gobalSearchType: "",
     hasUnfinishedRoute: false,
     unfinishedRoute: {},
-    permission:[],
-    roleHasLoad:false,
-    function:{},
-    role:{},
+    roleHasLoad: false,
+    role: {},
+    username: "",
+    setToken: {},
+    detToken: {},
+    yuming:"http://47.94.131.208:8088",
+    hasClassChange: false,
   },
   mutations: {
+    setToken(state, payload) {
+      state.token = payload;
+      sessionStorage.token = payload;
+    },
+    delToken(state) {
+      state.token = ''
+      sessionStorage.removeItem('token')
+    },
     saveUnfinishedRoute(state, payload) {
       state.hasUnfinishedRoute = true
       state.unfinishedRoute = payload
@@ -30,42 +41,34 @@ export default new Vuex.Store({
       state.hasUnfinishedRoute = false
     },
     clearCache(state) {
-      state.hasUnfinishedRoute=false
-      state.unfinishedRoute= {}
-      state.ainiyou=''
+      sessionStorage.removeItem('token')
+      state.hasUnfinishedRoute = false
+      state.unfinishedRoute = {}
       state.token = ""
-      state.function  ={}
-      state.role ={}
-      state.cardnum =""
-      state.permission=[]
-      state.gobalSearchText=""
-      state.gobalSearchType=""
-      state.name = ""
+      state.role = {}
+      state.gobalSearchText = ""
+      state.gobalSearchType = ""
+      state.username = ""
       state.roleHasLoad = false
     },
-    clearCacheWithoutRoute(state){
-      state.ainiyou=''
+    clearCacheWithoutRoute(state) {
       state.token = ""
-      state.function  ={}
-      state.permission=[]
-      state.gobalSearchText=""
-      state.gobalSearchType=""
+      state.function = {}
+      state.gobalSearchText = ""
+      state.gobalSearchType = ""
       state.roleHasLoad = false
     },
     token(state, payload) {
       state.token = payload
     },
-    roleHasLoad(state,payload) {
+    username(state, payload) {
+      state.username = payload
+    },
+    roleHasLoad(state, payload) {
       state.roleHasLoad = payload
     },
-    permission(state, payload) {
-      state.permission = payload
-    },
-    role(state,payload){
+    role(state, payload) {
       state.role = payload;
-    },
-    function(state,payload){
-      state.function = payload;
     },
     gobalSearchType(state, payload) {
       state.gobalSearchType = payload

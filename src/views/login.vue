@@ -2,18 +2,17 @@
   <div>
     <div class="header">
       <div class="logo">
-        <img width="250px" src="../assets/logo.png" />
+        <img width="250px" src="../assets/jwbc.png" />
       </div>
     </div>
     <div>
-      <div class="back">
-        <div
-          style="display: flex; justify-content: center; align-items: center"
-        >
-          <div style="margin: 5%">
-            <img src="../assets/login.png" />
-          </div>
+      <div class="login"></div>
+      <div
+        style="display: flex; justify-content: flex-end; align-items: center"
+      >
+        <el-card shadow="always" class="loginCard">
           <div>
+<<<<<<< HEAD
             <el-card shadow="always">
               <div>
                 <h2 class="login-title">教我编程图书商城</h2>
@@ -60,8 +59,63 @@
                 </el-form>
               </div>
             </el-card>
+=======
+            <h2 class="login-title">教我编程图书商城</h2>
+            <el-form :model="form" status-icon :rules="rules" ref="form">
+              <el-form-item prop="username">
+                <el-row class="inputContent">
+                  <el-col :span="2">
+                    <i class="el-icon-user" style="font-size: 20px" />
+                  </el-col>
+                  <el-col :span="10">
+                    <el-input
+                      class="Myinput"
+                      v-model="form.username"
+                      placeholder="邮箱"
+                      clearable
+                    >
+                    </el-input>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-row class="inputContent">
+                  <el-col :span="2">
+                    <i class="el-icon-unlock" style="font-size: 20px" />
+                  </el-col>
+                  <el-col :span="10">
+                    <el-input
+                     class="Myinput"
+                      v-model="form.password"
+                      placeholder="密码"
+                      type="password"
+                      clearable
+                    >
+                    </el-input>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+              <el-form-item>
+                <el-row class="inputContent">
+                  <el-col :offset="2">
+                    <el-button
+                      type="primary"
+                      @click="onSubmit"
+                      style="
+                        width: 75%;
+                        margin-top: 10px;
+                        margin-left: 20px;
+                        margin-right: 10px;
+                      "
+                      >登录
+                    </el-button>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+            </el-form>
+>>>>>>> 6a020c9ed9ba1a62ad9015e52767204d13f5257b
           </div>
-        </div>
+        </el-card>
       </div>
     </div>
   </div>
@@ -69,7 +123,12 @@
 
 
 <script>
+<<<<<<< HEAD
 import axios from 'axios'
+=======
+//接口示例，引入axios
+import axios from "axios";
+>>>>>>> 6a020c9ed9ba1a62ad9015e52767204d13f5257b
 export default {
 
 
@@ -82,12 +141,23 @@ export default {
       },
       rules: {
         username: [
-          { required: true, message: "邮箱格式不正确！", trigger: "blur" ,type:"email"},
+          {
+            required: true,
+            message: "邮箱格式不正确！",
+            trigger: "blur",
+            type: "email",
+          },
         ],
       },
     };
   },
+  mounted(){
+    
+  },
+  computed:{
+  },
   methods: {
+<<<<<<< HEAD
     submit(){
       console.log(this.form.username)
       console.log(this.form.password)
@@ -125,12 +195,58 @@ export default {
           time: 2000,
           txt: massage || "登录失败",
           type: "error"
+=======
+    //接口示例函数
+    onSubmit() {
+      axios({
+        url: this.$store.state.yuming+"/login",
+        method: "POST",
+        params: {
+          username: this.form.username,
+          password: this.form.password,
+        },
+      })
+        .then((res) => {
+          const { code} = res.data;
+          //code=='200'表示登录成功，进行本地存储和store存储 并进行跳转。
+          //else 弹出错误提示
+          if (code == "200") {
+            sessionStorage.setItem("token",res.data.token);
+            this.$store.commit("token", res.data.token);
+            this.$store.commit("username", this.form.username);
+            this.$store.commit("role", res.data.identity);
+            this.$store.commit("roleHasLoad", true);
+            //localStorage.setItem("token", token);
+            //如果是由需要鉴权的页面跳转到登录页面 则redirect= this.$route.query.redirect，如果是直接点击登录跳转到登录页面，则redirect= '/'
+            if (this.$route.query.redirect) {
+              let redirect = this.$route.query.redirect;
+              this.$message({
+                message: "登陆成功",
+                type: "success",
+              });
+              this.$router.push(redirect);
+            } else {
+              this.$message({
+                message: "登陆成功",
+                type: "success",
+              });
+              if (res.data.identity != 2) {
+                this.$router.push("/");
+              } else {
+                this.$router.push("/adminManage");
+              }
+            }
+          } else {
+            this.$message({
+              message: "登陆失败",
+              type: "danger",
+            });
+          }
+        })
+        .catch((err) => {
+          this.$message.error(err);
+>>>>>>> 6a020c9ed9ba1a62ad9015e52767204d13f5257b
         });
-        toast.show();
-      }
-    },
-    onSign() {
-      this.$router.push("/sign");
     },
   },
 };
@@ -143,19 +259,15 @@ export default {
   background-color: rgb(255, 255, 255); /* 透明背景色 */
   padding: 30px;
 }
-
-/* 背景 */
-.back {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  margin-left: 8%;
-  margin-right: 8%;
-  width: 81%;
+.login {
+  background: url("../assets/login.jpg") no-repeat;
+  background-position: center;
   height: 70%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
 }
-
 /* 标题 */
 .login-title {
   color: #303133;
@@ -174,21 +286,21 @@ export default {
   justify-content: center;
   margin: 20px;
 }
-.el-input {
+.Myinput {
   width: 250px;
   margin: 10px 20px;
 }
 .inputContent {
   display: flex;
-  justify-content:flex-start;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
-  margin-left:20%;
+  margin-left: 10%;
 }
-.el-card {
-  margin: 5%;
-  width: 500px;
-  height: 400px;
+.loginCard {
+  margin: 5% 7%;
+  width: 400px;
+  height: 350px;
 }
 .submit {
   display: flex;
