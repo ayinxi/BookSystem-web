@@ -79,7 +79,9 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" type="text">编辑</el-button>
+                <el-button size="mini" type="text" @click="user.user_id=scope.row.user_id;
+                user.email=scope.row.username;user.user.name=scope.row.name;
+                user.img='';user.password=scope.row.password;">编辑</el-button>
                 <el-button size="mini" type="text" @click="deleteUser(scope.row.username)">注销</el-button>
               </template>
             </el-table-column>
@@ -95,7 +97,9 @@ import MyCropper from "../cropper.vue";
 import axios from "axios";
 import { Message } from "element-ui";
 export default {
-  components: {},
+  components: {
+    MyCropper,
+  },
   data() {
     return {
       //loading
@@ -103,6 +107,14 @@ export default {
       userDataLoading: false,
       //模糊搜索
       searchText: "",
+      //编辑用户信息
+      user: {
+        img: "",
+        user_id: "",
+        email: "",
+        password: "",
+        name: "",
+      },
       userList:[//用户列表
       /*
         {
