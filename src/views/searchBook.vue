@@ -178,7 +178,7 @@
           <el-main v-if="this.displayList.length != 0">
             <el-row class="rowStyle3" type="flex">
               <el-col :span="6" v-for="book in displayList" :key="book.id">
-                <el-card style="width: 90%; margin: 5%">
+                <el-card style="width: 90%; margin: 5%" @click.native="goToBookInfo(book.id)" class="card">
                   <el-container>
                     <el-header
                       style="
@@ -577,5 +577,8 @@ export default {
 .btn_active {
   background: #409eff;
   color: #fff;
+}
+.card:hover{
+  box-shadow: 0 0 2px 6px #F3F3F3;
 }
 </style>

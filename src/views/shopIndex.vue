@@ -134,7 +134,7 @@
           <el-main>
             <el-row class="rowStyle" type="flex">
               <el-col :span="6" v-for="book in displayList" :key="book.id">
-                <el-card style="width: 90%; margin: 5%">
+                <el-card style="width: 90%; margin: 5%" @click.native="goToBookInfo(book.id)" class="card"> 
                   <el-container>
                     <el-header
                       style="
@@ -567,5 +567,8 @@ export default {
 }
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
+}
+.card:hover{
+  box-shadow: 0 0 2px 6px #F3F3F3;
 }
 </style>
