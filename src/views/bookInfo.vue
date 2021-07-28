@@ -242,7 +242,7 @@ export default {
       num: 1,
       evaluationList: [],
       goodsNum: "",
-      bookid: "",
+      id: this.$route.params.id,
       book: {},
       categoryList: [
         {
@@ -377,7 +377,7 @@ export default {
       axios({
         url: this.$store.state.yuming + "/book/getDetail",
         method: "GET",
-        params: { book_id: this.bookid },
+        params: { book_id: this.id },
       })
         .then((res) => {
           const { code, data } = res.data;
@@ -396,7 +396,7 @@ export default {
       axios({
         url: this.$store.state.yuming + "/book/getRemark",
         method: "GET",
-        params: { book_id: this.bookid },
+        params: { book_id: this.id },
       })
         .then((res) => {
           const { code, data } = res.data;
@@ -431,10 +431,6 @@ export default {
     },
   },
   async created() {
-    var query = this.$route.query;
-    if (query) {
-      this.bookid = query.book_id;
-    }
     this.isLoading = true;
     if (this.$store.state.token) {
       await this.getGoodsNum();

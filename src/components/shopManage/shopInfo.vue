@@ -66,7 +66,7 @@
         <p>暂无评价</p>
       </div>
       <div v-if="this.evaluationList.length != 0">
-        <div v-for="item in evaluationList" :key="item.userName">
+        <div v-for="item of evaluationList" :key="item.userName">
           <el-card style="margin: 20px 0; height: 170px">
             <el-container>
               <el-aside style="width: 180px; text-align: center">
@@ -76,10 +76,12 @@
                 ></el-image>
                 <p>{{ item.remark.name }}</p>
               </el-aside>
-              <el-main style="padding:0 20px 20px">
-                <p style="margin:0 0 16px">评论书籍：{{ item.book.book_name }}</p>
+              <el-main style="padding: 0 20px 20px">
+                <p style="margin: 0 0 16px">
+                  评论书籍：{{ item.book.book_name }}
+                </p>
                 <el-rate
-                  v-model="item.remark.rate"
+                  v-model.number="item.remark.rate"
                   disabled
                   score-template="{value}"
                 >
@@ -123,8 +125,6 @@
               action="http://47.94.131.208:8888"
               :show-file-list="false"
               :on-change="changePhotoFile"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
               :auto-upload="false"
               :name="this.shopInfo.avatar_b"
             >
@@ -180,13 +180,44 @@ export default {
       count: 0,
       isLoading: false,
       shopInfo: {
-        id:"",
+        id: "",
         shop_name: "",
         shopper_name: "",
         avatar_b: "",
       },
-      rate:0,
-      evaluationList: [],
+      rate: 5,
+      evaluationList: [
+        {
+          book: {
+            create_time: "",
+            author: "",
+            edition: "",
+            image_b: "",
+            book_name: "",
+            repertory: 0,
+            main_category_id: "",
+            volume: 0,
+            shop_id: "",
+            update_time: "",
+            price: 0,
+            second_category_id: "",
+            print_time: "",
+            image_s: "",
+            id: "",
+            detail: "",
+            press: "",
+          },
+          remark: {
+            rate: 5,
+            remark_time: "",
+            name: "",
+            remark: "",
+            avatat_s: "",
+            book_id: "",
+            avatar_b: "",
+          },
+        },
+      ],
       formdata: new FormData(),
       imgdata: new FormData(),
       rules: {
@@ -231,8 +262,10 @@ export default {
                 type: "success",
               });
               this.dialogChangeVisible = false;
+              this.formdata = new FormData();
             } else {
               this.$message.error("更改信息失败，请重试");
+              this.formdata = new FormData();
             }
           });
         } else {
@@ -329,11 +362,11 @@ export default {
         });
     },
     //获取评分
-    getRate(){
+    getRate() {
       axios({
         url: this.$store.state.yuming + "/shop/rate",
         method: "GET",
-        params: {shop_id:this.shopInfo.id,}
+        params: { shop_id: this.shopInfo.id },
       })
         .then((res) => {
           const { code, data } = res.data;
@@ -348,7 +381,7 @@ export default {
         });
     },
     //获取数量
-    getCount(){
+    getCount() {
       axios({
         url: this.$store.state.yuming + "/getRemarkNum",
         method: "GET",
@@ -390,38 +423,39 @@ export default {
             message: "更改头像成功",
             type: "success",
           });
+          this.imgdata = new FormData();
         } else {
           this.$message.error("更改头像失败，请重试");
+          this.imgdata = new FormData();
         }
       });
       this.$refs.myCropper.close();
     },
-    //头像上传成功之后的方法,进行回调
-    handleAvatarSuccess(res) {
-      if (res.code === 0) {
-        this.shopInfo.avatar_b = res.img;
-        // this.handleCrop(file);
-      } else {
-        this.$message.error("上传出错");
-      }
+    // 提取文件后缀名
+    getSuffix(str) {
+      const fileExtension = str.substring(str.lastIndexOf(".") + 1);
+      return fileExtension;
     },
     //上传图片时会被调用
     changePhotoFile(file) {
-      this.handleCrop(file);
-    },
-    //头像上传之前的方法
-    beforeAvatarUpload(file) {
-      const isJPG =
-        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      let type = this.getSuffix(file.name);
       const isLt6M = file.size / 1024 / 1024 < 6;
-
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
+      if (
+        type == "JPG" ||
+        type == "JPEG" ||
+        type == "PNG" ||
+        type == "jpg" ||
+        type == "png" ||
+        type == "jpge"
+      ) {
+        if (!isLt6M) {
+          this.$message.error("上传头像图片大小不能超过 6MB!");
+        } else {
+          this.handleCrop(file);
+        }
+      } else {
+        this.$message.error("上传头像图片只能是 JPG、JPEG或PNG 格式!");
       }
-      if (!isLt6M) {
-        this.$message.error("上传头像图片大小不能超过 6MB!");
-      }
-      return isJPG && isLt6M;
     },
   },
   async created() {

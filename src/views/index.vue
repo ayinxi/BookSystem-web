@@ -103,31 +103,38 @@
               >
             </el-row>
             <el-menu>
-              <div v-for="item in categoryList" :key="item.main_id">
+              <div v-for="item in categoryList" :key="item.main_id" >
+                <div style="background-color: #fbfbfb;">
                 <el-menu-item
                   style="
                     color: rgb(250, 128, 114);
                     font-weight: 1000;
                     font-size: 20px;
+                    border-left:solid 1px #e6e6e6;
                   "
                   :index="item.main_id"
                   @click.native="getMainClassBook(item.main_id)"
-                  >{{ item.main_name }}
+                  ><span
+                    style="padding-bottom: 5px; "
+                    >{{ item.main_name }}</span
+                  >
                 </el-menu-item>
+                </div>
                 <div
                   v-for="littleitem in item.second_category"
                   :key="littleitem.second_id"
                 >
                   <el-menu-item
-                    style="color: rgb(233, 150, 122); font-weight: 1000"
+                    style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;"
                     :index="littleitem.second_id"
                     @click.native="getSecondClassBook(littleitem.second_id)"
                     >{{ littleitem.second_name }}
                   </el-menu-item>
                 </div>
               </div> </el-menu
-            ><el-menu class="el-menu-vertical-demo">
-              <el-menu-item>
+            ><el-menu>
+              <div style="background-color: #fbfbfb;">
+              <el-menu-item style="border-left:solid 1px #e6e6e6;">
                 <span
                   slot="title"
                   style="
@@ -138,28 +145,29 @@
                   >按出版时间分</span
                 >
               </el-menu-item>
+              </div>
               <el-menu-item
                 index="2021"
                 @click.native="getYearBook('2021')"
-                style="color: rgb(233, 150, 122); font-weight: 1000"
+                style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;"
                 >2021年出版</el-menu-item
               >
               <el-menu-item
                 index="2020"
                 @click.native="getYearBook('2020')"
-                style="color: rgb(233, 150, 122); font-weight: 1000"
+                style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;"
                 >2020年出版</el-menu-item
               >
               <el-menu-item
                 index="2019"
                 @click.native="getYearBook('2019')"
-                style="color: rgb(233, 150, 122); font-weight: 1000"
+                style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;"
                 >2019年出版</el-menu-item
               >
               <el-menu-item
                 index="2018"
                 @click.native="getYearBeforeBook('2018')"
-                style="color: rgb(233, 150, 122); font-weight: 1000"
+                style="color: rgb(233, 150, 122); font-weight: 1000;border-left:solid 1px #e6e6e6;border-bottom:solid 1px #e6e6e6;"
                 >2018年及以前出版</el-menu-item
               >
             </el-menu>
@@ -235,7 +243,11 @@
             </el-row>
             <el-row class="rowStyle" type="flex">
               <el-col :span="6" v-for="book in newBookList" :key="book.id">
-                <el-card style="width: 90%; margin: 5%" @click.native="goToBookInfo(book.id)" class="card">
+                <el-card
+                  style="width: 90%; margin: 5%"
+                  @click.native="goToBookInfo(book.id)"
+                  class="card"
+                >
                   <el-container>
                     <el-header
                       style="
@@ -302,7 +314,11 @@
           </el-row>
           <el-row class="rowStyle" type="flex">
             <el-col :span="4" v-for="book in displayList" :key="book.id">
-              <el-card style="width: 90%; margin: 5%" @click.native="goToBookInfo(book.id)" class="card">
+              <el-card
+                style="width: 90%; margin: 5%"
+                @click.native="goToBookInfo(book.id)"
+                class="card"
+              >
                 <el-container>
                   <el-header
                     style="
@@ -335,17 +351,10 @@
                       >{{ book.book_name | ellipsis2 }}</el-link
                     >
                     <p
-                      v-if="book.author !== ''"
                       style="color: rgb(128, 192, 192); margin: 0%"
                       :title="book.author"
                     >
                       {{ book.author | ellipsis2 }}
-                    </p>
-                    <p
-                      v-if="book.author === ''"
-                      style="color: rgb(128, 192, 192); margin: 0%"
-                    >
-                      佚名
                     </p>
                     <p style="color: red; font-weight: 1000; margin: 0%">
                       ￥{{ book.price }}
@@ -382,8 +391,8 @@ export default {
     },
     ellipsis2(value) {
       if (!value) return "";
-      if (value.length > 8) {
-        return value.slice(0, 8) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      if (value.length > 7) {
+        return value.slice(0, 7) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
       }
       return value;
     },
@@ -470,7 +479,7 @@ export default {
       this.activeIndex1 = " ";
     },
     goToBookInfo(id) {
-      this.$router.push({ path: "/bookInfo", query: { book_id: id } });
+      this.$router.push(`/bookInfo/${id}`);
     },
     //获取今日销量冠军
     getTodaySalesChampion() {
@@ -701,12 +710,12 @@ export default {
 .cStyle {
   height: 400px;
   padding: 0px;
+  text-align: center;
 }
 .tscStyle {
   height: 100%;
-  width: 100%;
+  width: 80%;
 }
-
 .el-menu-item.is-active {
   background-color: rgb(231, 241, 252) !important;
 }
@@ -757,7 +766,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.card:hover{
-  box-shadow: 0 0 2px 6px #F3F3F3;
+.card:hover {
+  box-shadow: 0 0 2px 6px #f3f3f3;
 }
 </style>
