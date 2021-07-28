@@ -113,15 +113,26 @@ export default {
     return {
       isLoading: false,
       newOrder: 123,
-      shopname: "这是一家好店",
+      shopname: "",
+      shop_id: "",
+      //七种图书的本数
+      num: [],
+      categoryList: [
+        {
+          book_num: 0,
+          main_name: "",
+          main_id: "",
+          second_category: [{ book_num: "", second_name: "", second_id: "" }],
+        },
+      ],
     };
   },
-  mounted() {
+  /*mounted() {
     this.drawBarChart();
     this.$nextTick(() => {
       this.drawPieChart();
     });
-  },
+  },*/
   computed: {
     hasUsername() {
       return this.$store.state.username;
@@ -143,6 +154,26 @@ export default {
     goToShopInfo() {
       this.$router.push("/shopInfo");
     },
+    //获取所有目录
+    getAllCategory() {
+      axios({
+        url: this.$store.state.yuming + "/category/getAll",
+        method: "GET",
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.categoryList = data;
+            for(let i =0;i<7;i++)this.getBooknums(i);
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
+    },
     drawBarChart() {
       this.chartBar = echarts.init(
         document.getElementById("chartBar"),
@@ -156,6 +187,10 @@ export default {
             "#fac858",
             "#ee6666",
             "#73c0de",
+            "#3ba272",
+            "#fc8452",
+            "#9a60b4",
+            "#ea7ccc",
           ];
           return colorList[params.dataIndex];
         },
@@ -176,7 +211,15 @@ export default {
         xAxis: [
           {
             type: "category",
-            data: ["网络文学", "教育", "小说", "文艺", "青春/动漫"],
+            data: [
+              "青春文学",
+              "小说",
+              "少儿文学",
+              "教育",
+              "网络文学",
+              "文艺",
+              "其他",
+            ],
             axisTick: {
               alignWithLabel: true,
             },
@@ -234,7 +277,7 @@ export default {
           {
             name: "数量",
             type: "bar",
-            data: [10, 52, 200, 334, 390],
+            data: this.num,
             animationDuration: 2000,
             itemStyle: {
               normal: {
@@ -245,6 +288,10 @@ export default {
                     "#fac858",
                     "#ee6666",
                     "#73c0de",
+                    "#3ba272",
+                    "#fc8452",
+                    "#9a60b4",
+                    "#ea7ccc",
                   ];
                   return colorList[params.dataIndex];
                 },
@@ -342,6 +389,36 @@ export default {
         ],
       });
     },
+    //获取各类书的数量
+    getBooknums(val) {
+      axios({
+        url: this.$store.state.yuming + "/book/getPageCount",
+        method: "GET",
+        params: {
+          main_category_id: this.categoryList[val].main_id,
+          second_category_id: "",
+          year: "",
+          year_before: "",
+          year_after: "",
+          shop_id: this.shop_id,
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.num[val] = count;
+            this.drawBarChart();
+            this.$nextTick(() => {
+              this.drawPieChart();
+            });
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
     getShopInfo() {
       axios({
         url: this.$store.state.yuming + "/shop/getPassed",
@@ -354,6 +431,7 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.shopname = data.shop_name;
+            this.shop_id = data.id;
           }
         })
         .catch(() => {
@@ -373,7 +451,8 @@ export default {
   async created() {
     this.isLoading = true;
     await this.getShopInfo();
-    this.mounted();
+    await this.getAllCategory();
+    await this.mounted();
     this.isLoading = false;
   },
 };

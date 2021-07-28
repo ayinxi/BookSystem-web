@@ -606,7 +606,7 @@ export default {
   methods: {
     //回到主页
     gotoHome() {
-      this.$router.push("/");
+      this.$router.push("/#reloaded");
     },
     //返回上一页
     goback(){

@@ -350,7 +350,7 @@ export default {
               message: "获取用户信息失败",
               type: "danger",
             });
-            this.$router.push("/");
+            this.$router.push("/#reloaded");
           }
         })
         .catch(() => {

@@ -200,10 +200,11 @@
                         :underline="false"
                         class="book-name"
                         @click="goToBookInfo(book.id)"
-                        >{{ book.book_name }}</el-link
+                        :title="book.book_name"
+                        >{{ book.book_name |ellipsis }}</el-link
                       >
-                      <p style="color: rgb(128, 192, 192); margin: 0%">
-                        {{ book.author }}
+                      <p style="color: rgb(128, 192, 192); margin: 0%" :title="book.author">
+                        {{ book.author |ellipsis }}
                       </p>
                       <p style="color: red; font-weight: 1000; margin: 0%">
                         ￥{{ book.price }}
@@ -231,6 +232,16 @@
 import axios from "axios";
 import { Message } from "element-ui";
 export default {
+  filters: {
+    //限制文本显示字数,超出部分用...代替
+    ellipsis(value) {
+      if (!value) return "";
+      if (value.length > 10) {
+        return value.slice(0, 10) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      }
+      return value;
+    },
+  },
   data() {
     return {
       goodsNum: "",
@@ -285,21 +296,18 @@ export default {
       this.isLoading = false;
     },
     showAll() {
-      this.$router.push("/");
+      this.$router.push("/#reloaded");
     },
     //实现分页
     handleCurrentChange(val) {
       this.currentPage = val;
-      if(this.activeIndex1 !=""){
+      if (this.activeIndex1 != "") {
         this.getMainClassBook(this.activeIndex1);
-      }
-      else if(this.activeIndex2!=""){
+      } else if (this.activeIndex2 != "") {
         this.getSecondClassBook(this.activeIndex2);
-      }
-      else if(this.activeIndex3!=""){
+      } else if (this.activeIndex3 != "") {
         this.getYearBook(this.activeIndex3);
-      }
-      else this.getYearBeforeBook(this.activeIndex4);
+      } else this.getYearBeforeBook(this.activeIndex4);
     },
     goToBookInfo(id) {
       this.$router.push({ path: "/bookInfo", query: { book_id: id } });
@@ -322,20 +330,20 @@ export default {
         });
     },
     //点各导航栏都要会第一页
-    getOne(id){
-      this.currentPage=1;
+    getOne(id) {
+      this.currentPage = 1;
       this.getMainClassBook(id);
     },
-    getTwo(id){
-      this.currentPage=1;
+    getTwo(id) {
+      this.currentPage = 1;
       this.getSecondClassBook(id);
     },
-    getThree(id){
-      this.currentPage=1;
+    getThree(id) {
+      this.currentPage = 1;
       this.getYearBook(id);
     },
-    getFour(id){
-      this.currentPage=1;
+    getFour(id) {
+      this.currentPage = 1;
       this.getYearBeforeBook(id);
     },
     //通过index传来的参数进行一级分类筛选

@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="用户名称：" prop="username">
-              <span>{{ tableData.username }}</span>
+              <span>{{ tableData.name }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -109,6 +109,7 @@ export default {
             exchange_address_id: "",
           },
         ],
+        name:"",
         create_time: "",
         firm_time: "",
         shop_name: "",
