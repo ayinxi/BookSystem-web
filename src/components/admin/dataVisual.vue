@@ -24,16 +24,16 @@
         <el-card style="background-color: #3d678a;width: 900px;margin: 20px;">
           <el-row style="color: white">
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>新增用户</span></el-row>
+              <el-row><h2>12</h2></el-row><el-row><span>新增用户</span></el-row>
             </el-col>
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>新增商家</span></el-row>
+              <el-row><h2>2</h2></el-row><el-row><span>新增商家</span></el-row>
             </el-col>
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>新增图书</span></el-row>
+              <el-row><h2>18152</h2></el-row><el-row><span>新增图书</span></el-row>
             </el-col>
             <el-col :span="6" style="text-align:center">
-              <el-row><h2>12345</h2></el-row><el-row><span>新增订单</span></el-row>
+              <el-row><h2>62</h2></el-row><el-row><span>新增订单</span></el-row>
             </el-col>
           </el-row>
         </el-card>
@@ -212,25 +212,25 @@ export default {
             name: '新增用户',
             type: 'line',
             stack: '总量',
-            data: [120, 132, 101, 134, 90, 230, 210]
+            data: [0, 0, 0, 0, 0, 0, 12]
           },
           {
             name: '新增商家',
             type: 'line',
             stack: '总量',
-            data: [220, 182, 191, 234, 290, 330, 310]
+            data: [0, 0, 0, 0, 0, 0, 2]
           },
           {
             name: '新增图书',
             type: 'line',
             stack: '总量',
-            data: [150, 232, 201, 154, 190, 330, 410]
+            data: [0, 0, 0, 0, 0, 0, 18152]
           },
           {
             name: '新增订单',
             type: 'line',
             stack: '总量',
-            data: [320, 332, 301, 334, 390, 330, 320]
+            data: [0, 0, 0, 0, 0, 0, 62]
           },
         ]
       });
@@ -256,14 +256,17 @@ export default {
         },
         series: [
           {
-            name: '访问来源',
+            name: '图书数量',
             type: 'pie',
             radius: '50%',
             data: [
-              {value: 100, name: '分类2'},
-              {value: 580, name: '分类3'},
-              {value: 484, name: '分类4'},
-              {value: 300, name: '分类5'},
+              {value: 95, name: '青春文学'},
+              {value: 5649, name: '小说'},
+              {value: 134, name: '少儿文学'},
+              {value: 136, name: '教育'},
+              {value: 991, name: '网络文学'},
+              {value: 2282, name: '文艺'},
+              {value: 8865, name: '其他'},
             ],
             emphasis: {
               itemStyle: {
@@ -297,16 +300,16 @@ export default {
         },
         series: [
           {
-            name: '访问来源',
+            name: '订单数量',
             type: 'pie',
             radius: '50%',
             data: [
-              {value: this.orderPie[0], name: '已取消'},
-              {value: this.orderPie[1], name: '未付款'},
-              {value: this.orderPie[2], name: '未发货'},
-              {value: 735, name: '未收货'},
-              {value: 580, name: '未评价'},
-              {value: 580, name: '已评价'},
+              {value: 12, name: '已取消'},
+              {value: 6, name: '未付款'},
+              {value: 12, name: '未发货'},
+              {value: 6, name: '未收货'},
+              {value: 25, name: '已收货'},
+              {value: 1, name: '已评价'},
             ],
             emphasis: {
               itemStyle: {

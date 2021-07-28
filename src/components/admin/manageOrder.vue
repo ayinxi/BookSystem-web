@@ -25,12 +25,13 @@
               <el-input
               v-model="searchText"
               placeholder="输入买家邮箱模糊搜索"
+              @change="search(searchText)"
               ></el-input>
             </el-form-item>
           </el-form>
           <el-table
           v-loading="orderDataLoading"
-          :data="orderList.filter((data) => {return data.username.includes(searchText);})"
+          :data="orderList"
           style="width: 100%"
           :default-sort = "{prop: 'create_time', order: 'descending'}">
             <template slot="empty">
@@ -231,7 +232,59 @@ export default {
     //分页
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.reloadOrderData();
+      if(this.searchText=="") {
+        this.getOrderNum();
+        this.getOrder();
+      }
+      else this.searchOrder(this.searchText);
+    },
+    //模糊查询订单
+    search(username) {
+      this.currentPage = 1;
+      this.searchOrder(username);
+    },
+    searchOrder(username) {
+      axios({
+        url: this.$store.state.yuming + "/order/fuzzyQuery",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          order_num: this.orderCountPerPage,
+          status: 0,
+          content: username,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.orderList = data;
+          } else {
+            this.$message.error("查询订单失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取订单的数目
+      axios({
+        url: this.$store.state.yuming + "/order/fuzzyQueryCount",
+        method: "GET",
+        params: {
+          status: 0,
+          content: username,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.orderCount = data;
+          } else {
+            this.$message.error("获取订单数量失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     //重新加载订单数据
     reloadOrderData() {
