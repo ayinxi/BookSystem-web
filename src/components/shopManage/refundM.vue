@@ -137,6 +137,15 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-row style="text-align: center">
+          <el-pagination
+            :current-page="currentPage"
+            @current-change="handleCurrentChange"
+            :total="count"
+            layout="prev, pager, next, jumper"
+          >
+          </el-pagination>
+        </el-row>
       </el-card>
     </div>
     <div style="margin: 0% 10% 3%">
@@ -156,6 +165,8 @@ export default {
       isLoading: false,
       dataLoading: false,
       newRefundOrder: 12345,
+      currentPage:1,
+      count:0,
       reason: "",
       multipleSelection: [],
       Order_Book_Ids: [],
@@ -199,6 +210,29 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    //获取数据
+    getReback(val) {
+      axios({
+        url: this.$store.state.yuming + "/order/reback",
+        method: "POST",
+        params: {
+          status: val,
+          page_num:this.currentPage,
+          order_num:10,
+        },
+      })
+        .then((res) => {
+          const { code,data } = res.data;
+          if (code == "200") {
+            this.tableData=data;
+          } else {
+            this.$message.error("同意退款失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
     },
     //根据不同的状态来同意退款，换货，还是退货退款
     handleConfirm(state, id) {
@@ -436,19 +470,19 @@ export default {
               .then((res) => {
                 const { code } = res.data;
                 if (code == "200") {
-                  this.dataLoading=true;
+                  this.dataLoading = true;
                   //获取数据
-                  this.dataLoading=false;
+                  this.dataLoading = false;
                   this.$message.success("批量同意退款成功");
-                  this.Order_Book_Ids=[];
+                  this.Order_Book_Ids = [];
                 } else {
                   this.$message.error("批量同意退款失败，请刷新");
-                  this.Order_Book_Ids=[];
+                  this.Order_Book_Ids = [];
                 }
               })
               .catch(() => {
                 this.$message.error("出现错误，请稍后再试");
-                this.Order_Book_Ids=[];
+                this.Order_Book_Ids = [];
               });
           })
           .catch(() => {
@@ -457,8 +491,7 @@ export default {
               message: "已放弃批量同意退款",
             });
           });
-      }
-      else if(this.multipleSelection[0].state == 2){
+      } else if (this.multipleSelection[0].state == 2) {
         this.$confirm("是否批量同意换货?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -481,19 +514,19 @@ export default {
               .then((res) => {
                 const { code } = res.data;
                 if (code == "200") {
-                  this.dataLoading=true;
+                  this.dataLoading = true;
                   //获取数据
-                  this.dataLoading=false;
+                  this.dataLoading = false;
                   this.$message.success("批量同意换货成功");
-                  this.Order_Book_Ids=[];
+                  this.Order_Book_Ids = [];
                 } else {
                   this.$message.error("批量同意换货失败，请刷新");
-                  this.Order_Book_Ids=[];
+                  this.Order_Book_Ids = [];
                 }
               })
               .catch(() => {
                 this.$message.error("出现错误，请稍后再试");
-                this.Order_Book_Ids=[];
+                this.Order_Book_Ids = [];
               });
           })
           .catch(() => {
@@ -502,8 +535,7 @@ export default {
               message: "已放弃批量同意换货",
             });
           });
-      }
-      else {
+      } else {
         this.$confirm("是否批量同意退货退款?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -526,19 +558,19 @@ export default {
               .then((res) => {
                 const { code } = res.data;
                 if (code == "200") {
-                  this.dataLoading=true;
+                  this.dataLoading = true;
                   //获取数据
-                  this.dataLoading=false;
+                  this.dataLoading = false;
                   this.$message.success("批量同意退货退款成功");
-                  this.Order_Book_Ids=[];
+                  this.Order_Book_Ids = [];
                 } else {
                   this.$message.error("批量同意退货退款失败，请刷新");
-                  this.Order_Book_Ids=[];
+                  this.Order_Book_Ids = [];
                 }
               })
               .catch(() => {
                 this.$message.error("出现错误，请稍后再试");
-                this.Order_Book_Ids=[];
+                this.Order_Book_Ids = [];
               });
           })
           .catch(() => {

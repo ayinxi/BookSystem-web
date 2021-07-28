@@ -171,7 +171,7 @@
           <el-main>
             <el-row class="rowStyle" type="flex">
               <el-col :span="6" v-for="book in displayList" :key="book.id">
-                <el-card style="width: 90%; margin: 5%">
+                <el-card style="width: 90%; margin: 5%" @click.native="goToBookInfo(book.id)" class="card">
                   <el-container>
                     <el-header
                       style="
@@ -182,7 +182,7 @@
                       "
                     >
                       <el-image
-                        class="imgStyle1"
+                        class="imgStyle5"
                         :src="book.image_b"
                         @click.native="goToBookInfo(book.id)"
                       >
@@ -631,7 +631,7 @@ export default {
 .book-name {
   font-size: 100%;
 }
-.imgStyle1 {
+.imgStyle5 {
   margin-left: 10%;
   width: 80%;
   height: 200px;
@@ -728,5 +728,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.card:hover{
+  box-shadow: 0 0 2px 6px #F3F3F3;
 }
 </style>

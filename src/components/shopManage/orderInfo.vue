@@ -22,17 +22,17 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="收货人名称：" prop="receiver_name">
-              <span>{{ tableData.receiver_name }}</span>
+              <span>{{ this.person.receiver_name }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="收货人地址：" prop="address">
-              <span>{{ tableData.address }}</span>
+              <span>{{ this.person.address }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="收货人电话：" prop="phone">
-              <span>{{ tableData.phone }}</span>
+              <span>{{ this.person.phone }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -117,10 +117,8 @@ export default {
         username: "",
         status: "",
         address_id: "",
-        receiver_name:"",
-        address:"",
-        phone:"",
       },
+      person:{},
     };
   },
   methods: {
@@ -165,9 +163,7 @@ export default {
         .then((res) => {
           const { code, data } = res.data;
           if (code == "200") {
-            this.tableData.address=data.address;
-            this.tableData.phone=data.phone;
-            this.tableData.receiver_name=data.receiver_name;
+            this.person=data;
           } else {
             this.$message.error("获取收货人相关信息失败，请刷新");
           }

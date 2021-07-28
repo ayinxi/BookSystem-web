@@ -448,8 +448,9 @@ export default {
 </script>
 <style acoped>
 .imgStyle3 {
-  width: 340px;
-  height: 440px;
+  width:100%;
+  height: auto;
+  max-height: 440px;
 }
 .rowStyle1 {
   display: flex;
