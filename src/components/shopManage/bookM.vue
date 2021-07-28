@@ -47,9 +47,7 @@
           style="width: 100%"
           @selection-change="handleSelectionChange"
           v-loading="dataLoading"
-        ><!--.filter((x) => {
-              return x.book_name.includes(searchText);
-            })-->
+        >
           <el-table-column type="selection" width="55"> </el-table-column>
           <el-table-column label="图片" width="130">
             <template slot-scope="scope"

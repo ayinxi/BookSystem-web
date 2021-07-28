@@ -123,7 +123,7 @@
             <img class="avatar" :src="this.shop.avatar_b" />
             <p>{{ this.shop.shop_name }}</p>
             <el-rate
-              v-model="this.shop.rate"
+              v-model="this.rate"
               disabled
               show-score
               text-color="#ff9900"
@@ -198,8 +198,8 @@ export default {
     //限制文本显示字数,超出部分用...代替
     ellipsis(value) {
       if (!value) return "";
-      if (value.length > 15) {
-        return value.slice(0, 15) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      if (value.length > 10) {
+        return value.slice(0, 10) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
       }
       return value;
     },
@@ -225,8 +225,8 @@ export default {
       shop: {
         avatar_b: "",
         shop_name: "",
-        rate: 0,
       },
+      rate:0,
       displayList: [],
     };
   },
@@ -428,6 +428,25 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
+    //获取评分
+    getRate(){
+      axios({
+        url: this.$store.state.yuming + "/shop/rate",
+        method: "GET",
+        params: {shop_id:this.shop_id,}
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.rate = data;
+          } else {
+            this.$message.error("获取用户评价数量失败,请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
     //获取所有目录
     getAllCategory() {
       axios({
@@ -455,6 +474,7 @@ export default {
     }
     await this.getAllCategory();
     await this.getShopInfo();
+    await this.getRate();
     await this.showAll();
     this.isLoading = false;
   },

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="isLoading">
     <div class="header">
       <div class="logo3">
         <img width="250px" src="../../assets/jwbc.png" />
@@ -61,6 +61,7 @@
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
+          v-loading="dataLoading"
         >
           <el-table-column type="selection" width="55"> </el-table-column>
           <el-table-column
@@ -117,21 +118,21 @@
               <el-button
                 type="text"
                 style="font-size: 15px"
-                @click="handleConfirm(scope.$index, scope.row)"
+                @click="handleConfirm(scope.row.state, scope.row.order_book_id)"
                 :disabled="
                   scope.row.state == '已退款' || scope.row.state == '已拒绝退款'
                 "
-                >同意退款</el-button
+                >同意</el-button
               >
               <el-divider direction="vertical"></el-divider>
               <el-button
                 type="text"
                 style="font-size: 15px"
-                @click="handleRefuse(scope.$index, scope.row)"
+                @click="handleRefuse(scope.row.state, scope.row.order_book_id)"
                 :disabled="
                   scope.row.state == '已退款' || scope.row.state == '已拒绝退款'
                 "
-                >拒绝退款</el-button
+                >拒绝</el-button
               >
             </template>
           </el-table-column>
@@ -139,10 +140,9 @@
       </el-card>
     </div>
     <div style="margin: 0% 10% 3%">
-      <el-button @click="batchConfirm" style="margin-left: 78%" type="primary"
-        >批量同意退款</el-button
+      <el-button @click="batchConfirm" style="margin-left: 92%" type="primary"
+        >批量同意</el-button
       >
-      <el-button @click="batchRefuse" type="warning">批量拒绝退款</el-button>
     </div>
   </div>
 </template>
@@ -153,7 +153,12 @@ import qs from "qs";
 export default {
   data() {
     return {
+      isLoading: false,
+      dataLoading: false,
       newRefundOrder: 12345,
+      reason: "",
+      multipleSelection: [],
+      Order_Book_Ids: [],
       tableData: [
         {
           date: "2021-7-8",
@@ -192,145 +197,357 @@ export default {
     handleInfo() {
       this.$router.push("/refundInfo");
     },
-    //同意退款
-    handleConfirm(index, row) {
-      this.$confirm("是否同意退款?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        axios({
-          url: this.$store.state.yuming + "/shop/returnPass",
-          method: "POST",
-          params: {
-            order_book_id: "asdasasdf",
-          },
-        })
-          .then((res) => {
-            const { code, data } = res.data;
-            if (code == "200") {
-              this.$message.success("同意退款成功");
-            } else {
-              this.$message.error("同意退款失败，请刷新");
-            }
-          })
-          .catch(() => {
-            this.$message.error("出现错误，请稍后再试");
-          });
-      });
-    },
-    handleRefuse(index, row) {
-      this.$confirm("是否拒绝退款?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          row.state = "已拒绝退款";
-          this.$message({
-            type: "success",
-            message: "拒绝退款成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消拒绝退款",
-          });
-        });
-    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    //批量同意退款
-    batchConfirm() {
-      this.$confirm("是否批量同意退款?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        axios({
-          url: this.$store.state.yuming + "/shop/batReturnPass",
-          method: "POST",
-          params: {
-            Order_Book_Ids: ["asdasasdf", "afsafsdgf"],
-          },
-          paramsSerializer: (params) => {
-            return qs.stringify(params, { indices: false });
-          },
+    //根据不同的状态来同意退款，换货，还是退货退款
+    handleConfirm(state, id) {
+      if (state == 1) {
+        this.$confirm("是否同意退款?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(() => {
+          axios({
+            url: this.$store.state.yuming + "/shop/returnPass",
+            method: "POST",
+            params: {
+              order_book_id: id,
+            },
+          })
+            .then((res) => {
+              const { code } = res.data;
+              if (code == "200") {
+                this.dataLoading = true;
+                //获取数据
+                this.dataLoading = false;
+                this.$message.success("同意退款成功");
+              } else {
+                this.$message.error("同意退款失败，请刷新");
+              }
+            })
+            .catch(() => {
+              this.$message.error("出现错误，请稍后再试");
+            });
+        });
+      } else if (state == 2) {
+        this.$confirm("是否同意换货?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(() => {
+          axios({
+            url: this.$store.state.yuming + "/shop/exchangePass",
+            method: "POST",
+            params: {
+              order_book_id: id,
+            },
+          })
+            .then((res) => {
+              const { code } = res.data;
+              if (code == "200") {
+                this.dataLoading = true;
+                //获取数据
+                this.dataLoading = false;
+                this.$message.success("同意换货成功");
+              } else {
+                this.$message.error("同意换货失败，请刷新");
+              }
+            })
+            .catch(() => {
+              this.$message.error("出现错误，请稍后再试");
+            });
+        });
+      } else {
+        this.$confirm("是否同意退货退款?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(() => {
+          axios({
+            url: this.$store.state.yuming + "/shop/returnAllPass",
+            method: "POST",
+            params: {
+              order_book_id: id,
+            },
+          })
+            .then((res) => {
+              const { code } = res.data;
+              if (code == "200") {
+                this.dataLoading = true;
+                //获取数据
+                this.dataLoading = false;
+                this.$message.success("同意退货退款成功");
+              } else {
+                this.$message.error("同意退货退款失败，请刷新");
+              }
+            })
+            .catch(() => {
+              this.$message.error("出现错误，请稍后再试");
+            });
+        });
+      }
+    },
+    handleRefuse(state, id) {
+      if (state == 1) {
+        this.$prompt("请输入拒绝退款的理由", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          input: this.reason,
+          type: "warning",
         })
-          .then((res) => {
-            const { code, count } = res.data;
-            if (code == "200") {
-              this.$message.success("批量同意退款成功");
-            } else {
-              this.$message.error("批量同意退款失败，请刷新");
-            }
+          .then(({ value }) => {
+            axios({
+              url: this.$store.state.yuming + "/shop/returnFail",
+              method: "POST",
+              params: {
+                order_book_id: id,
+                check_reason: value,
+              },
+            })
+              .then((res) => {
+                const { code } = res.data;
+                if (code == "200") {
+                  this.dataLoading = true;
+                  //获取数据
+                  this.dataLoading = false;
+                  this.$message.success("拒绝退款成功");
+                  this.reason = "";
+                } else {
+                  this.$message.error("拒绝退款失败，请刷新");
+                  this.reason = "";
+                }
+              })
+              .catch(() => {
+                this.$message.error("出现错误，请稍后再试");
+                this.reason = "";
+              });
           })
           .catch(() => {
-            this.$message.error("出现错误，请稍后再试");
+            this.$message({
+              type: "info",
+              message: "已放弃拒绝退款",
+            });
           });
-      });
-      /*let multData = this.multipleSelection;
-          let tableData1 = this.tableData;
-          let multDataLen = multData.length;
-          let tableDataLen = tableData1.length;
-          for (let i = 0; i < multDataLen; i++) {
-            for (let y = 0; y < tableDataLen; y++) {
-              if (
-                JSON.stringify(tableData1[y]) == JSON.stringify(multData[i]) &&
-                tableData1[y].state == "正在申请退款"
-              ) {
-                //判断是否相等，相等就更改状态
-                this.tableData[y].state = "已退款";
-              }
-            }
-          }
-          this.$message({
-            type: "success",
-            message: "批量同意退款成功!",
-          });
+      } else if (state == 2) {
+        this.$prompt("请输入拒绝换货的理由", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          input: this.reason,
+          type: "warning",
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已放弃批量同意退款",
+          .then(({ value }) => {
+            axios({
+              url: this.$store.state.yuming + "/shop/exchangeFail",
+              method: "POST",
+              params: {
+                order_book_id: id,
+                check_reason: value,
+              },
+            })
+              .then((res) => {
+                const { code } = res.data;
+                if (code == "200") {
+                  this.dataLoading = true;
+                  //获取数据
+                  this.dataLoading = false;
+                  this.$message.success("拒绝换货成功");
+                  this.reason = "";
+                } else {
+                  this.$message.error("拒绝换货失败，请刷新");
+                  this.reason = "";
+                }
+              })
+              .catch(() => {
+                this.$message.error("出现错误，请稍后再试");
+                this.reason = "";
+              });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已放弃拒绝换货",
+            });
           });
-        });*/
+      } else {
+        this.$prompt("请输入拒绝退货退款的理由", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          input: this.reason,
+          type: "warning",
+        })
+          .then(({ value }) => {
+            axios({
+              url: this.$store.state.yuming + "/shop/returnAllFail",
+              method: "POST",
+              params: {
+                order_book_id: id,
+                check_reason: value,
+              },
+            })
+              .then((res) => {
+                const { code } = res.data;
+                if (code == "200") {
+                  this.dataLoading = true;
+                  //获取数据
+                  this.dataLoading = false;
+                  this.$message.success("拒绝退货退款成功");
+                  this.reason = "";
+                } else {
+                  this.$message.error("拒绝退货退款失败，请刷新");
+                  this.reason = "";
+                }
+              })
+              .catch(() => {
+                this.$message.error("出现错误，请稍后再试");
+                this.reason = "";
+              });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已放弃拒绝退货退款",
+            });
+          });
+      }
     },
-    batchRefuse() {
-      this.$confirm("是否批量拒绝退款?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          let multData = this.multipleSelection;
-          let tableData1 = this.tableData;
-          let multDataLen = multData.length;
-          let tableDataLen = tableData1.length;
-          for (let i = 0; i < multDataLen; i++) {
-            for (let y = 0; y < tableDataLen; y++) {
-              if (
-                JSON.stringify(tableData1[y]) == JSON.stringify(multData[i]) &&
-                tableData1[y].state == "正在申请退款"
-              ) {
-                //判断是否相等，相等就更改状态
-                this.tableData[y].state = "已拒绝退款";
-              }
-            }
-          }
-          this.$message({
-            type: "success",
-            message: "批量拒绝退款成功!",
-          });
+    //批量同意退款
+    batchConfirm() {
+      if (this.multipleSelection[0].state == 1) {
+        this.$confirm("是否批量同意退款?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已放弃批量拒绝退款",
+          .then(() => {
+            for (let i = 0; i < this.multipleSelection.length; i++) {
+              this.Order_Book_Ids.push(this.multipleSelection[i].order_book_id);
+            }
+            axios({
+              url: this.$store.state.yuming + "/shop/batReturnPass",
+              method: "POST",
+              params: {
+                Order_Book_Ids: this.Order_Book_Ids,
+              },
+              paramsSerializer: (params) => {
+                return qs.stringify(params, { indices: false });
+              },
+            })
+              .then((res) => {
+                const { code } = res.data;
+                if (code == "200") {
+                  this.dataLoading=true;
+                  //获取数据
+                  this.dataLoading=false;
+                  this.$message.success("批量同意退款成功");
+                  this.Order_Book_Ids=[];
+                } else {
+                  this.$message.error("批量同意退款失败，请刷新");
+                  this.Order_Book_Ids=[];
+                }
+              })
+              .catch(() => {
+                this.$message.error("出现错误，请稍后再试");
+                this.Order_Book_Ids=[];
+              });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已放弃批量同意退款",
+            });
           });
-        });
+      }
+      else if(this.multipleSelection[0].state == 2){
+        this.$confirm("是否批量同意换货?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            for (let i = 0; i < this.multipleSelection.length; i++) {
+              this.Order_Book_Ids.push(this.multipleSelection[i].order_book_id);
+            }
+            axios({
+              url: this.$store.state.yuming + "/shop/batExchangePass",
+              method: "POST",
+              params: {
+                Order_Book_Ids: this.Order_Book_Ids,
+              },
+              paramsSerializer: (params) => {
+                return qs.stringify(params, { indices: false });
+              },
+            })
+              .then((res) => {
+                const { code } = res.data;
+                if (code == "200") {
+                  this.dataLoading=true;
+                  //获取数据
+                  this.dataLoading=false;
+                  this.$message.success("批量同意换货成功");
+                  this.Order_Book_Ids=[];
+                } else {
+                  this.$message.error("批量同意换货失败，请刷新");
+                  this.Order_Book_Ids=[];
+                }
+              })
+              .catch(() => {
+                this.$message.error("出现错误，请稍后再试");
+                this.Order_Book_Ids=[];
+              });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已放弃批量同意换货",
+            });
+          });
+      }
+      else {
+        this.$confirm("是否批量同意退货退款?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            for (let i = 0; i < this.multipleSelection.length; i++) {
+              this.Order_Book_Ids.push(this.multipleSelection[i].order_book_id);
+            }
+            axios({
+              url: this.$store.state.yuming + "/shop/batReturnAllPass",
+              method: "POST",
+              params: {
+                Order_Book_Ids: this.Order_Book_Ids,
+              },
+              paramsSerializer: (params) => {
+                return qs.stringify(params, { indices: false });
+              },
+            })
+              .then((res) => {
+                const { code } = res.data;
+                if (code == "200") {
+                  this.dataLoading=true;
+                  //获取数据
+                  this.dataLoading=false;
+                  this.$message.success("批量同意退货退款成功");
+                  this.Order_Book_Ids=[];
+                } else {
+                  this.$message.error("批量同意退货退款失败，请刷新");
+                  this.Order_Book_Ids=[];
+                }
+              })
+              .catch(() => {
+                this.$message.error("出现错误，请稍后再试");
+                this.Order_Book_Ids=[];
+              });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已放弃批量同意退货退款",
+            });
+          });
+      }
     },
     filterDate(value, row, column) {
       const property = column["property"];

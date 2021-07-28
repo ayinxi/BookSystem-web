@@ -14,15 +14,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="用户名称：" prop="username">
+            <el-form-item label="用户名称：" prop="name">
               <span>{{ tableData.name }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="收货人名称：" prop="bookname">
-              <span>{{ tableData.consigneeName }}</span>
+            <el-form-item label="收货人名称：" prop="receiver_name">
+              <span>{{ tableData.receiver_name }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -31,8 +31,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="收货人电话：" prop="telephone">
-              <span>{{ tableData.telephone }}</span>
+            <el-form-item label="收货人电话：" prop="phone">
+              <span>{{ tableData.phone }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -117,6 +117,9 @@ export default {
         username: "",
         status: "",
         address_id: "",
+        receiver_name:"",
+        address:"",
+        phone:"",
       },
     };
   },
@@ -141,6 +144,7 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.tableData = data;
+            this.getAddress(this.tableData.address_id)
           } else {
             this.$message.error("获取订单失败，请刷新");
           }
@@ -149,6 +153,29 @@ export default {
           this.$message.error("出现错误，请稍后再试");
         });
     },
+    //获取收货人相关信息
+    getAddress(id){
+      axios({
+        url: this.$store.state.yuming + "/address/public/getByID",
+        method: "GET",
+        params: {
+          address_id: id,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.tableData.address=data.address;
+            this.tableData.phone=data.phone;
+            this.tableData.receiver_name=data.receiver_name;
+          } else {
+            this.$message.error("获取收货人相关信息失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    }
   },
   async created() {
     this.isLoading = true;
