@@ -198,7 +198,6 @@
                   :show-file-list="false"
                   :on-change="changePhotoFile"
                   :on-success="handleAvatarSuccess"
-                  :before-upload="beforeAvatarUpload"
                   :auto-upload="false"
                   :name="editShop.img">
                     <img :src="editShop.img" class="avatar" />
@@ -209,32 +208,6 @@
                   @upAgain="upAgain"
                   ></my-cropper>
                 </el-form-item>
-                <!--
-                <el-row>
-                  <el-col>
-                    <el-form-item label="店铺封面" :label-width="formLabelWidth">
-                      <el-upload
-                      class="avatar-uploader"
-                      ref="upload"
-                      action="http://47.94.131.208:8888"
-                      :show-file-list="false"
-                      :on-change="changePhotoFile"
-                      :on-success="handleAvatarSuccess"
-                      :before-upload="beforeAvatarUpload"
-                      :auto-upload="false"
-                      :name="this.editShop.avatar_b">
-                        <img v-if="this.editShop.avatar_b" :src="this.editShop.avatar_b" class="avatar" />
-                        <img v-else :src="this.imgUrl" class="avatar" />
-                      </el-upload>
-                      <my-cropper
-                      ref="myCropper"
-                      @getFile="getFile"
-                      @upAgain="upAgain"
-                      ></my-cropper>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                -->
                 <el-form-item label="店铺名称" prop="shop_name">
                   <el-input v-model="editShop.shop_name" autocomplete="off" maxlength="10" show-word-limit class="editInput"></el-input>
                 </el-form-item>
@@ -244,7 +217,7 @@
               </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button @click="EditVisible = false;formdata=''">取 消</el-button>
-                <el-button type="primary" @click="updateShop">确 定</el-button>
+                <el-button type="primary" @click="editShopData">确 定</el-button>
               </div>
             </el-dialog>
             <el-button size="mini" type="text" style="margin-left:10px" @click="logoutShop(scope.row.username)">注销</el-button>
@@ -382,23 +355,31 @@ export default {
         this.$message.error("上传出错");
       }
     },
+    //提取文件后缀名
+    getSuffix(str) {
+      const fileExtension = str.substring(str.lastIndexOf(".") + 1);
+      return fileExtension;
+    },
     //上传图片时会被调用
     changePhotoFile(file) {
-      this.handleCrop(file);
-    },
-    //头像上传之前的方法
-    beforeAvatarUpload(file) {
-      const isJPG =
-        file.type === "image/jpeg" || "image/jpg" || "image/gif" || "image/png";
+      let type = this.getSuffix(file.name);
       const isLt6M = file.size / 1024 / 1024 < 6;
-
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG、JPEG、GIF或PNG 格式!");
+      if (
+        type == "JPG" ||
+        type == "JPEG" ||
+        type == "PNG" ||
+        type == "jpg" ||
+        type == "png" ||
+        type == "jpge"
+      ) {
+        if (!isLt6M) {
+          this.$message.error("上传头像图片大小不能超过 6MB!");
+        } else {
+          this.handleCrop(file);
+        }
+      } else {
+        this.$message.error("上传头像图片只能是 JPG、JPEG或PNG 格式!");
       }
-      if (!isLt6M) {
-        this.$message.error("上传头像图片大小不能超过 6MB!");
-      }
-      return isJPG && isLt6M;
     },
     //获取未审核的店铺数量
     getNonCheckShopNum() {
@@ -478,7 +459,7 @@ export default {
           if (code == "200") {
             this.checkList = data;
           } else if (code == "3") {
-            this.checkList = "";
+            this.checkList = [];
           } else {
             this.$message.error("获取未审核店铺失败");
           }
@@ -502,7 +483,7 @@ export default {
           if (code == "200") {
             this.checkedList = data;
           } else if (code == "3") {
-            this.checkedList = "";
+            this.checkedList = [];
           } else {
             this.$message.error("获取审核历史失败");
           }
@@ -526,7 +507,7 @@ export default {
           if (code == "200") {
             this.shopList = data;
           } else if (code == "3") {
-            this.shopList = "";
+            this.shopList = [];
           } else {
             this.$message.error("获取现有商家失败");
           }
@@ -580,12 +561,17 @@ export default {
         });
     },
     //编辑店铺信息
-    updateShop() {
+    editShopData() {
+      this.updateAvatar();
+      this.updateShop();
+      this.formdata="";
+      this.EditVisible = false;
+      this.reloadData();
+    },
+    updateAvatar() {
       this.formdata.append("username", this.editShop.username);
-      this.formdata.append("shopper_name", this.editShop.shopper_name);
-      this.formdata.append("shop_name", this.editShop.shop_name);
       axios({
-        url: this.$store.state.yuming+"/admin/updateShop",
+        url: this.$store.state.yuming+"/shop/updateAvatar",
         method: "POST",
         data: this.formdata,
         headers: {
@@ -594,13 +580,10 @@ export default {
       })
         .then((res) => {
           if (res.data.code == 200) {
-            this.reloadData();
             this.$message({
               type: "success",
-              message: "编辑成功",
+              message: "编辑头像成功",
         });
-          } else {
-            this.$message.error("编辑失败");
           }
         })
         .catch(() => {
@@ -609,8 +592,33 @@ export default {
             message: "出现错误，请稍后再试",
           });
         });
-      this.EditVisible = false;
-      this.formdata="";
+    },
+    updateShop() {
+      axios({
+        url: this.$store.state.yuming+"/admin/updateShop",
+        method: "POST",
+        params: {
+          username: this.editShop.username,
+          shopper_name: this.editShop.shopper_name,
+          shop_name: this.editShop.shop_name,
+        }
+      })
+        .then((res) => {
+          if (res.data.code == 200) {
+            this.$message({
+              type: "success",
+              message: "编辑信息成功",
+        });
+          } else {
+            this.$message.error("编辑信息失败");
+          }
+        })
+        .catch(() => {
+          Message({
+            type: "error",
+            message: "出现错误，请稍后再试",
+          });
+        });
     },
     //注销店铺
     logoutShop(name) {

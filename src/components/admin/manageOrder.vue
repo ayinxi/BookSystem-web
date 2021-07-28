@@ -12,7 +12,7 @@
             <el-aside width="35px"><div class="verticalBar2"></div></el-aside>
             <el-main>
           <div style="font-size: 15px padding: 18px 0">
-            在此处，您可以查看、查找、编辑、删除订单。
+            在此处，您可以查看、查找、编辑、取消订单。
           </div>
             </el-main>
           </el-container>
@@ -51,23 +51,25 @@
                     </el-table-column>
                     <el-table-column prop="return_status" label="状态" width="210px">
                       <template slot-scope="scope_s">
-                        <div v-if="scope_s.row.return_status==-1||scope_s.row.return_status==3
-                        ||scope_s.row.return_status==6||scope_s.row.return_status==9">正常</div>
+                        <div v-if="scope_s.row.return_status==-1">正常</div>
                         <div v-if="scope_s.row.return_status==1">
                           <el-button type="text" @click="returnPass(scope_s.row.order_book_id)">同意退款</el-button>
                           <el-button type="text" @click="preReturnFail(scope_s.row.order_book_id)">拒绝退款</el-button>
                         </div>
                         <div v-if="scope_s.row.return_status==2">已退款</div>
+                        <div v-if="scope_s.row.return_status==3">已拒绝退款</div>
                         <div v-if="scope_s.row.return_status==4">
                           <el-button type="text" @click="exchangePass(scope_s.row.order_book_id)">同意换货</el-button>
                           <el-button type="text" @click="preExchangeFail(scope_s.row.order_book_id)">拒绝换货</el-button>
                         </div>
                         <div v-if="scope_s.row.return_status==5">已换货</div>
+                        <div v-if="scope_s.row.return_status==6">已拒绝换货</div>
                         <div v-if="scope_s.row.return_status==7">
                           <el-button type="text" @click="returnAllPass(scope_s.row.order_book_id)">同意退货退款</el-button>
                           <el-button type="text" @click="preReturnAllFail(scope_s.row.order_book_id)">拒绝退货退款</el-button>
                         </div>
                         <div v-if="scope_s.row.return_status==8">已退货退款</div>
+                        <div v-if="scope_s.row.return_status==9">已拒绝退货退款</div>
                       </template>
                     </el-table-column>
                 </el-table>
@@ -493,7 +495,7 @@ export default {
         method: "POST",
         params: {
           order_book_id: this.orderId,
-          check_reason: this.checkOpinion,
+          check_opinion: this.checkOpinion,
         },
       })
         .then((res) => {
@@ -524,7 +526,7 @@ export default {
         method: "POST",
         params: {
           order_book_id: this.orderId,
-          check_reason: this.checkOpinion,
+          check_opinion: this.checkOpinion,
         },
       })
         .then((res) => {
@@ -555,7 +557,7 @@ export default {
         method: "POST",
         params: {
           order_book_id: this.orderId,
-          check_reason: this.checkOpinion,
+          check_opinion: this.checkOpinion,
         },
       })
         .then((res) => {
