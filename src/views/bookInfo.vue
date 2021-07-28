@@ -146,7 +146,8 @@
             ><el-link
               :underline="false"
               @click.native="goToShopIndex(book.shop_id)"
-              >{{ book.shop_name }}</el-link
+              style="color: #FF7F50;font-size:17px"
+              >所属店铺：{{ book.shop_name }}</el-link
             >
             <h2>{{ book.book_name }}</h2>
             <p style="color: gray; margin: 0%">
@@ -157,8 +158,8 @@
             <p>
               {{ book.detail }}
             </p>
-            <p style="color: red; font-weight: 1000; margin: 0%">
-              ￥{{ book.price }}
+            <p style="color: red; font-weight: 1000; margin: 0%;font-size:17px">
+              价格：￥{{ book.price }}
             </p>
             <p v-if="book.repertory > 0">库存：{{ book.repertory }}</p>
             <p v-if="book.repertory <= 0">库存不足</p>
@@ -191,9 +192,9 @@
             ><span style="font-size: 25px">用户评价</span></el-divider
           >
         </div>
-        <el-footer>
+        <el-footer style="height:100%">
           <div v-for="item in evaluationList" :key="item.userName">
-            <el-card style="margin: 0 0 20px">
+            <el-card style="margin: 20px 0 20px;height:170px">
               <el-container>
                 <el-aside style="width: 160px; text-align: center">
                   <el-image class="avatar" :src="item.userImg"></el-image>
@@ -284,7 +285,7 @@ export default {
       this.isLoading = false;
     },
     goBackToIndex() {
-      this.$router.push("/");
+      this.$router.push("/#reloaded");
     },
     goToShopIndex(e) {
       this.$router.push(`/shopIndex/${e}`);
@@ -312,10 +313,15 @@ export default {
           this.getGoodsNum();
           this.dataLoading = false;
           this.num = 1;
+          this.formdata=new FormData();
         } else if (this.num > this.book.repertory) {
           this.$message.warning("库存不足");
+          this.num = 1;
+          this.formdata=new FormData();
         } else {
           this.$message.warning("加入购物车失败");
+          this.num = 1;
+          this.formdata=new FormData();
         }
       });
     },
@@ -424,8 +430,8 @@ export default {
 </script>
 <style acoped>
 .imgStyle3 {
-  width: 100%;
-  height: 95%;
+  width: 340px;
+  height: 440px;
 }
 .rowStyle1 {
   display: flex;

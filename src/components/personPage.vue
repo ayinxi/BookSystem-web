@@ -845,7 +845,7 @@ export default {
   methods: {
     //返回首页
     gotoIndex() {
-      this.$router.push("/");
+      this.$router.push("/#reloaded");
     },
     //跳转资料修改页面
     gotoChange() {
@@ -1102,7 +1102,7 @@ export default {
             this.$store.commit("role", data.identity);
           } else {
             this.$message.error("获取用户信息失败");
-            this.$router.push("/");
+            this.$router.push("/#reloaded");
           }
         })
         .catch(() => {

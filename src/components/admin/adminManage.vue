@@ -83,7 +83,7 @@ export default {
   computed: {},
   methods:{
     gotoHome() {
-      this.$router.push("/");
+      this.$router.push("/#reloaded");
     },
     gotoClass() {
       this.$router.push("/manageClass");

@@ -162,9 +162,12 @@
                         :underline="false"
                         class="book-name"
                         @click="goToBookInfo(book.id)"
-                        >{{ book.book_name }}</el-link
+                        :title="book.book_name"
+                        >{{ book.book_name | ellipsis }}</el-link
                       >
-                      <p style="color: gray; margin: 0%">{{ book.author }}</p>
+                      <p style="color: gray; margin: 0%" :title="book.author">
+                        {{ book.author | ellipsis }}
+                      </p>
                       <p style="color: red; font-weight: 1000; margin: 0%">
                         ￥{{ book.price }}
                       </p>
@@ -191,6 +194,16 @@
 import axios from "axios";
 import { Message } from "element-ui";
 export default {
+  filters: {
+    //限制文本显示字数,超出部分用...代替
+    ellipsis(value) {
+      if (!value) return "";
+      if (value.length > 15) {
+        return value.slice(0, 15) + "..."; //0:下标,从第一个字开始显示,15:显示字数,多余用...代替
+      }
+      return value;
+    },
+  },
   data() {
     return {
       isLoading: false,
@@ -299,8 +312,8 @@ export default {
         });
     },
     //每次点导航栏能够将当前页改为1
-    getClassBook(id){
-      this.currentPage=1;
+    getClassBook(id) {
+      this.currentPage = 1;
       this.getMainClassBook(id);
     },
     //根据类型显示这家店的书
