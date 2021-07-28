@@ -34,21 +34,22 @@
             <el-input
               v-model="searchText"
               placeholder="输入书名模糊搜索"
+              @change="search(searchText)"
             ></el-input>
           </el-form-item>
         </el-form>
         <el-table
           ref="multipleTable"
           :data="
-            tableData.filter((x) => {
-              return x.book_name.includes(searchText);
-            })
+            tableData
           "
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
           v-loading="dataLoading"
-        >
+        ><!--.filter((x) => {
+              return x.book_name.includes(searchText);
+            })-->
           <el-table-column type="selection" width="55"> </el-table-column>
           <el-table-column label="图片" width="130">
             <template slot-scope="scope"
@@ -567,6 +568,9 @@ export default {
   methods: {
     handleCurrentChange(val) {
       this.currentPage = val;
+      if(this.searchText=="")
+      this.getBook();
+      else this.searchBook(this.searchText);
     },
     //时间格式化
     dateFormat(row, column) {
@@ -590,13 +594,62 @@ export default {
     goToManage() {
       this.$router.push("/shopManage#reloaded");
     },
+    //模糊查询图书
+    search(book_name) {
+      this.currentPage = 1;
+      this.searchBook(book_name);
+    },
+    searchBook(book_name) {
+      axios({
+        url: this.$store.state.yuming + "/book/fuzzyQuery",
+        method: "GET",
+        params: {
+          page_num: this.currentPage,
+          book_num: 10,
+          style: 1,
+          queryWhat: 1,
+          content: book_name,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.tableData = data;
+          } else {
+            this.$message.error("查询图书失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+      //获取这些书的数目
+      axios({
+        url: this.$store.state.yuming + "/book/fuzzyQueryCount",
+        method: "GET",
+        params: {
+          queryWhat: 1,
+          content: book_name,
+        },
+      })
+        .then((res) => {
+          const { code, count } = res.data;
+          if (code == "200") {
+            this.bookcount = count;
+          } else {
+            this.$message.error("获取图书数目失败，请刷新");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
     //获取这家店铺里的书
     getBook() {
       axios({
         url: this.$store.state.yuming + "/book/getPage",
         method: "GET",
         params: {
-          page_num: 1,
+          page_num: this.currentPage,
           book_num: 10,
           style: 2,
           main_category_id: "",
