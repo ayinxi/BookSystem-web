@@ -48,7 +48,7 @@
                       {{ books.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ books.book_total_book }}
+                      ￥{{ books.book_total_price }}
                     </div>
                   </el-col>
                 </el-row>
@@ -88,8 +88,8 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="退款金额：" class="book-total">
-                ￥{{ bookList.book_total }}
+              <el-form-item label="退款金额：" class="book-total" v-for="(books, idx) in bookList.books" :key="idx">
+                ￥{{ books.book_total_price }}
               </el-form-item>
               <el-form-item label="退款说明：" prop="reason">
                 <el-input
@@ -181,7 +181,7 @@
                       {{ books.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ books.book_total_book }}
+                      ￥{{ books.book_total_price }}
                     </div>
                   </el-col>
                 </el-row>
@@ -199,7 +199,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="退款金额：" class="book-total">
-                ￥{{ bookList.book_total_book }}
+                ￥{{ bookList.book_total_price }}
               </el-form-item>
               <el-form-item label="退款说明：" prop="reason">
                 <el-input
@@ -292,7 +292,7 @@
                       {{ books.book_name }}
                     </div>
                     <div class="book-total" style="margin-top: 20px">
-                      ￥{{ books.book_total_book }}
+                      ￥{{ books.book_total_price }}
                     </div>
                   </el-col>
                 </el-row>
@@ -533,13 +533,13 @@ export default {
         ],
       },
       bookList: {
-        books: [
+        books: [      
           {
             book_image_b: "",
             book_name: "",
             author: "",
             press: "",
-            book_total_book: 0,
+            book_total_price: "",
           },
         ],
       },

@@ -12,10 +12,36 @@
     </div>
     <el-row>
       <el-col :offset="3" :span="21">
-        <el-steps :space="300" :active="atWhere" finish-status="success" align-center>
-          <el-step title="拍下商品" :description="this.orderDetailList.status==3?this.orderDetailList.create_time:''"></el-step>
-          <el-step title="卖家已发货" :description="this.orderDetailList.status==4?this.orderDetailList.send_time:''"></el-step>
-          <el-step title="确认收货" :description="this.orderDetailList.status==5?this.orderDetailList.firm_time:''"></el-step>
+        <el-steps
+          :space="300"
+          :active="atWhere"
+          finish-status="success"
+          align-center
+        >
+          <el-step
+            title="拍下商品"
+            :description="
+              this.orderDetailList.status == 3
+                ? this.orderDetailList.create_time
+                : ''
+            "
+          ></el-step>
+          <el-step
+            title="卖家已发货"
+            :description="
+              this.orderDetailList.status == 4
+                ? this.orderDetailList.send_time
+                : ''
+            "
+          ></el-step>
+          <el-step
+            title="确认收货"
+            :description="
+              this.orderDetailList.status == 5
+                ? this.orderDetailList.firm_time
+                : ''
+            "
+          ></el-step>
           <el-step title="评价"></el-step>
         </el-steps>
       </el-col>
@@ -31,9 +57,15 @@
           </el-col>
         </el-row>
         <el-divider></el-divider>
-        <el-row>
+        <el-row style="margin: 20px 0">
+          <el-col :span="2">收货人： </el-col>
+          <el-col :span="5">{{this.addressList.receiver_name}}</el-col>
+          <el-col :span="2">电话号码： </el-col>
+          <el-col :span="10">{{this.addressList.phone}}</el-col>
+        </el-row>
+        <el-row style="margin: 20px 0">
           <el-col :span="2">收货地址： </el-col>
-          <el-col :span="22">{{ orderDetailList.address }}</el-col>
+          <el-col :span="22">{{this.addressList.address}}</el-col>
         </el-row>
       </el-card>
       <el-card>
@@ -129,16 +161,16 @@
 
 <script>
 import axios from "axios";
-import { Message } from "element-ui";
 export default {
   data() {
     return {
       isLoading: false,
-      atWhere:0,
+      atWhere: 0,
       id: "",
       orderId: this.$route.params.orderId,
+      addressId: "",
       orderDetailList: {
-        address: "",
+        address_id: "",
         order_id: "",
         status: "",
         create_time: "",
@@ -155,6 +187,11 @@ export default {
             book_total_price: "",
           },
         ],
+      },
+      addressList: {
+        receiver_name: "",
+        phone: "",
+        address: "",
       },
     };
   },
@@ -175,18 +212,39 @@ export default {
           const { code, data } = res.data;
           if (code == "200") {
             this.orderDetailList = data;
-            if(this.orderDetailList.status==2){
-              this.atWhere=0;
-            }
-            else if(this.orderDetailList.status==3){
-              this.atWhere=1;
-            }else if(this.orderDetailList.status==4){
-              this.atWhere=2;
-            }else{
-              this.atWhere=3;
+            this.addressId = this.orderDetailList.address_id;
+            this.getAddress();
+            if (this.orderDetailList.status == 2) {
+              this.atWhere = 0;
+            } else if (this.orderDetailList.status == 3) {
+              this.atWhere = 1;
+            } else if (this.orderDetailList.status == 4) {
+              this.atWhere = 2;
+            } else {
+              this.atWhere = 3;
             }
           } else {
             this.$message.error("获取订单详情失败");
+          }
+        })
+        .catch(() => {
+          this.$message.error("出现错误，请稍后再试");
+        });
+    },
+    getAddress() {
+      axios({
+        url: this.$store.state.yuming + "/address/public/getByID",
+        method: "GET",
+        params: {
+          address_id: this.addressId,
+        },
+      })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == "200") {
+            this.addressList = data;
+          } else {
+            this.$message.error("获取订单地址信息失败");
           }
         })
         .catch(() => {

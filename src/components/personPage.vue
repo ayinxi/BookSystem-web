@@ -110,19 +110,23 @@
                   "
                 >
                   <el-col :span="8">
-                    <div class="noCard">
+                    <el-card shadow="never" class="noCard">
                       <i
                         class="iconfont-dingdanlan-copy"
                         style="font-size: 50px; margin: 50px"
                         @click="gotoAllOrder"
                       />
                       <el-button
-                       type="text"
-                        style="font-size: 15px; margin: 20px 50px"
+                        type="text"
+                        style="
+                          font-size: 15px;
+                          margin: 20px 50px;
+                          color: #3d678a;
+                        "
                         @click="gotoAllOrder"
                         >全部订单</el-button
                       >
-                    </div>
+                    </el-card>
                   </el-col>
                   <el-col :span="8">
                     <el-card class="cccard" shadow="never">
@@ -133,31 +137,35 @@
                       />
                       <el-button
                         type="text"
-                        style="font-size: 15px; margin: 20px 50px"
+                        style="font-size: 15px; margin: 20px 50px; color:	#FFFFF0"
                         @click="gotoDaifahuo"
                         >待付款</el-button
                       >
                     </el-card>
                   </el-col>
                   <el-col :span="8">
-                   
+                    <el-card shadow="never" class="noCard">
                       <i
-                        class="iconfont-daishouhuo"
+                        class="iconfont-daifahuoL"
                         style="font-size: 50px; margin: 50px"
-                        @click="gotoDaishouhuo"
+                        @click="gotoDaifahuo"
                       />
                       <el-button
                         type="text"
-                        style="font-size: 15px; margin: 20px 50px"
-                        @click="gotoDaishouhuoW"
-                        >待收货</el-button
+                        style="
+                          font-size: 15px;
+                          margin: 20px 50px;
+                          color: #3d678a;
+                        "
+                        @click="gotoDaifahuo"
+                        >待发货</el-button
                       >
-                  
+                    </el-card>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="8">
-                    <el-card class="cccard">
+                    <el-card class="cccard" shadow="never">
                       <i
                         class="iconfont-daishouhuoW"
                         style="font-size: 50px; margin: 50px"
@@ -165,37 +173,41 @@
                       />
                       <el-button
                         type="text"
-                        style="font-size: 15px; margin: 20px 50px"
-                        @click="gotoDaishouhuoW"
+                        style="font-size: 15px; margin: 20px 50px; color:	#FFFFF0"
+                        @click="gotoDaishouhuo"
                         >待收货</el-button
                       >
                     </el-card>
                   </el-col>
                   <el-col :span="8">
-                    <div class="noCard">
+                    <el-card shadow="never" class="noCard">
                       <i
-                        class="iconfont-fankui"
+                        class="iconfont-fankuiL"
                         style="font-size: 50px; margin: 50px"
                         @click="gotoDaipingjia"
                       />
                       <el-button
                         type="text"
-                        style="font-size: 15px; margin: 20px 50px"
+                        style="
+                          font-size: 15px;
+                          margin: 20px 50px;
+                          color: #3d678a;
+                        "
                         @click="gotoDaipingjia"
                         >待评价</el-button
                       >
-                    </div>
+                    </el-card>
                   </el-col>
                   <el-col :span="8">
-                    <el-card class="cccard">
+                    <el-card class="cccard" shadow="never">
                       <i
-                        class="iconfont-shouhou"
+                        class="iconfont-shouhouW"
                         style="font-size: 50px; margin: 50px"
                         @click="gotoTuikuan"
                       />
                       <el-button
                         type="text"
-                        style="font-size: 15px; margin: 20px 50px"
+                        style="font-size: 15px; margin: 20px 60px; color:	#FFFFF0"
                         @click="gotoTuikuan"
                       >
                         退款</el-button
@@ -1275,10 +1287,10 @@ export default {
   margin: 10px 20px;
   width: 200px;
   height: 150px;
-  background-color: rgb(61,103,138);
+  background-color: rgb(61, 103, 138);
 }
 .noCard {
-  margin: 20px 20px;
+  margin: 10px 20px;
   width: 200px;
   height: 150px;
 }

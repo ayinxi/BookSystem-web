@@ -132,14 +132,14 @@
                             type="text"
                             size="mini"
                             @click="gotoRemark(book.order_book_id)"
-                            v-if="book.remark_status == 0"
+                            v-if="item.status == 5&&book.remark_status == 0"
                             >评价
                           </el-button>
                           <el-button
                             type="text"
                             size="mini"
                             disabled
-                            v-if="book.remark_status == 1"
+                            v-if="item.status == 6&&book.remark_status == 1"
                             >已评价
                           </el-button>
                         </div>
@@ -251,7 +251,7 @@
           <div v-for="(item, index) in this.daifahuoList" :key="index">
             <el-card style="margin-bottom: 20px">
               <el-row style="margin-bottom: 30px">
-                <el-col class="shop-name" :span="10">
+                <el-col class="shop-name" :span="6">
                   {{ item.create_time }}</el-col
                 >
                 <el-col class="shop-name" :span="10"
@@ -388,7 +388,7 @@
           <div v-for="(item, index) in this.daishouhuoList" :key="index">
             <el-card style="margin-bottom: 20px">
               <el-row style="margin-bottom: 30px">
-                <el-col class="shop-name" :span="10">
+                <el-col class="shop-name" :span="6">
                   {{ item.create_time }}</el-col
                 >
                 <el-col class="shop-name" :span="10"
@@ -536,7 +536,7 @@
                 <el-col class="shop-name" :span="10">
                   {{ item.create_time }}</el-col
                 >
-                <el-col class="shop-name" :span="10"
+                <el-col class="shop-name" :span="6"
                   ><i class="el-icon-goods"></i> {{ item.shop_name }}</el-col
                 >
               </el-row>
@@ -683,7 +683,7 @@
           <div v-for="(item, index) in this.tuikuanList" :key="index">
             <el-card style="margin-bottom: 20px">
               <el-row style="margin-bottom: 30px">
-                <el-col class="shop-name" :span="10">
+                <el-col class="shop-name" :span="6">
                   {{ item.create_time }}</el-col
                 >
                 <el-col class="shop-name" :span="10"
@@ -787,7 +787,7 @@ export default {
       orderNum: this.$route.params.orderId,
       allOrderCurrent: 1,
       allOrderTotal: 1,
-      allOrderReturn: false,
+      allOrderReturn:true,
       allOrderList: [
         {
           order_id: "",
@@ -919,7 +919,7 @@ export default {
     gotoRefund(id, time) {
       axios({
         url: this.$store.state.yuming + "/order/compareTime",
-        method: "GET",
+        method: "POST",
         params: {
           firm_time: time,
         },
