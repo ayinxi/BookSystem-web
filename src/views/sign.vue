@@ -266,14 +266,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.el-form-item__error {
-  top: 80%;
-  right: unset;
-  left:10% !important ;
-}
-.el-form-item {
-  margin-bottom: 5px;
-}
+
 .login {
   background: url("../assets/login.jpg") no-repeat;
   background-position: center;

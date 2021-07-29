@@ -214,9 +214,5 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.el-form-item__error {
-  top: 80%;
-  right: 25% !important;
-  left: unset;
-}
+
 </style> 
